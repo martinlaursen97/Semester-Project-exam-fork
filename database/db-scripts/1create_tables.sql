@@ -75,11 +75,9 @@ CREATE TABLE relation (
         created_at DATE NOT NULL,
         PRIMARY KEY(id),
         CONSTRAINT fk_user1_user FOREIGN KEY(user1_id) REFERENCES base_user(id) ON
-	DELETE
-		CASCADE,
+		DELETE CASCADE,
 	  	CONSTRAINT fk_user2_user FOREIGN KEY(user2_id) REFERENCES base_user(id) ON
-	DELETE
-		CASCADE
+		DELETE CASCADE
 );
 
 
