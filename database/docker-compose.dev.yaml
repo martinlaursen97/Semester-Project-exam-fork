@@ -15,6 +15,7 @@ services:
       - "5433:5432"
     volumes:
       - rpg-db-data:/var/lib/postgresql/data
+      - ./db-scripts:/docker-entrypoint-initdb.d
     networks:
       - rpg-network
 
