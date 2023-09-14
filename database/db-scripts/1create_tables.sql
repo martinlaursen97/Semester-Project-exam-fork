@@ -224,7 +224,7 @@ BEGIN
         SELECT 1
         FROM place p
         WHERE p.id <> NEW.id
-        AND public.calculate_distance(NEW.x, NEW.y, p.x, p.y) <= NEW.radius
+        AND public.calculate_distance(NEW.x, NEW.y, p.x, p.y) <= NEW.radius + p.radius
     ) THEN
         RAISE EXCEPTION 'New place overlaps with an existing place';
     END IF;
