@@ -68,13 +68,13 @@ INSERT INTO attribute (
 -- Place
 INSERT INTO place (
 	place_name, radius, x, y, created_at)
-	VALUES('Fire City', 4, 0, 10, NOW());
+	VALUES('Fire City', 6, 0, 10, NOW());
 INSERT INTO place (
 	place_name, radius, x, y, created_at)
-	VALUES('Forest City', 4, 10, 0, NOW());
+	VALUES('Forest City', 6, 10, 0, NOW());
 INSERT INTO place (
 	place_name, radius, x, y, created_at)
-	VALUES('Mountain City', 4, -10, 0, NOW());
+	VALUES('Mountain City', 6, -10, 0, NOW());
 
 -- Relation
 INSERT INTO relation (
@@ -114,7 +114,6 @@ INSERT INTO character_location  (
 INSERT INTO character_location  (
 	character_id, x, y, created_at)
 	VALUES(4, 30, 20, NOW());
-
 
 -- Ability
 INSERT INTO ability  (
