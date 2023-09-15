@@ -239,3 +239,24 @@ CREATE TRIGGER check_place_overlap_trigger
 BEFORE INSERT ON place
 FOR EACH ROW
 EXECUTE FUNCTION public.check_place_overlap();
+
+
+-- Stored Procedures
+
+CREATE OR REPLACE PROCEDURE sp_insert_relation(p_user1_id int, p_user2_id int)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF p_user1_id = p_user2_id THEN
+        RAISE NOTICE 'A user can''t be in a relation with itself.';
+        RETURN;
+    END IF;
+
+    -- Check relation already exists
+    IF NOT EXISTS (SELECT 1 FROM relation WHERE (user1_id = p_user1_id AND user2_id = p_user2_id) OR (user1_id = p_user2_id AND user2_id = p_user1_id)) THEN
+        INSERT INTO relation (user1_id, user2_id, created_at) VALUES (p_user1_id, p_user2_id, CURRENT_DATE);
+    ELSE
+        RAISE NOTICE 'The relation already exists between user1_id % and user2_id %', p_user1_id, p_user2_id;
+    END IF;
+END;
+$$;
