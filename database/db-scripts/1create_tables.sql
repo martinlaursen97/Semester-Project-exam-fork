@@ -248,7 +248,7 @@ SELECT
     bc.character_name,
     g.gender_type AS gender,
     c.name AS class_name,
-    get_character_place(bc.id),
+    get_character_place(bc.id) AS place_name,
     bc.alive,
     bc.level,
     bc.xp,
