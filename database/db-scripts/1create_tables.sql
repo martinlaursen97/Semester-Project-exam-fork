@@ -153,6 +153,7 @@ CREATE TABLE character_attribute (
 	DELETE CASCADE
 );
 
+
 -- Functions
 CREATE OR REPLACE FUNCTION public.calculate_distance(x1 integer, y1 integer, x2 integer, y2 integer)
 	RETURNS double precision
@@ -259,3 +260,23 @@ JOIN
     gender g ON bc.gender_id = g.id
 JOIN
     base_class c ON bc.class_id = c.id;
+    
+
+-- Stored Procedures
+CREATE OR REPLACE PROCEDURE sp_insert_relation(p_user1_id int, p_user2_id int)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF p_user1_id = p_user2_id THEN
+        RAISE NOTICE 'A user can''t be in a relation with itself.';
+        RETURN;
+    END IF;
+
+    -- Check relation already exists
+    IF NOT EXISTS (SELECT 1 FROM relation WHERE (user1_id = p_user1_id AND user2_id = p_user2_id) OR (user1_id = p_user2_id AND user2_id = p_user1_id)) THEN
+        INSERT INTO relation (user1_id, user2_id, created_at) VALUES (p_user1_id, p_user2_id, CURRENT_DATE);
+    ELSE
+        RAISE NOTICE 'The relation already exists between user1_id % and user2_id %', p_user1_id, p_user2_id;
+    END IF;
+END;
+$$;
