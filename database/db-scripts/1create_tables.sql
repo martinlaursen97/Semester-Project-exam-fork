@@ -153,6 +153,7 @@ CREATE TABLE character_attribute (
 	DELETE CASCADE
 );
 
+
 -- Functions
 CREATE OR REPLACE FUNCTION public.calculate_distance(x1 integer, y1 integer, x2 integer, y2 integer)
 	RETURNS double precision
@@ -241,8 +242,27 @@ FOR EACH ROW
 EXECUTE FUNCTION public.check_place_overlap();
 
 
--- Stored Procedures
+-- Views
+CREATE OR REPLACE VIEW character_details_view AS
+SELECT
+    bc.id AS character_id,
+    bc.character_name,
+    g.gender_type AS gender,
+    c.name AS class_name,
+    get_character_place(bc.id) AS place_name,
+    bc.alive,
+    bc.level,
+    bc.xp,
+    bc.money
+FROM
+    base_character bc
+JOIN
+    gender g ON bc.gender_id = g.id
+JOIN
+    base_class c ON bc.class_id = c.id;
+    
 
+-- Stored Procedures
 CREATE OR REPLACE PROCEDURE sp_insert_relation(p_user1_id int, p_user2_id int)
 LANGUAGE plpgsql
 AS $$
