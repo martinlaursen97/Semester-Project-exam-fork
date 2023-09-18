@@ -1,7 +1,7 @@
 ## Project setup:
 
-### Run the following commands
-* `cp .env.example .env`
+### Run the following commands from the root of the project
+* `cp database/.env.example database/.env`
 * `docker-compose -f ./database/docker-compose.dev.yaml up`
 
 ### Connect to the database, using the environment variables set in .env
