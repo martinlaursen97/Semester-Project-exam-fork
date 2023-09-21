@@ -1,0 +1,62 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: rpg_api:${RPG_API_VERSION:-latest}
+    restart: always
+    env_file:
+    - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RPG_API_HOST: 0.0.0.0
+      RPG_API_DB_HOST: rpg_api-db
+      RPG_API_DB_PORT: 5432
+      RPG_API_DB_USER: rpg_api
+      RPG_API_DB_PASS: rpg_api
+      RPG_API_DB_BASE: rpg_api
+
+  db:
+    image: postgres:13.8-bullseye
+    hostname: rpg_api-db
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_PASSWORD: "rpg_api"
+      POSTGRES_USER: "rpg_api"
+      POSTGRES_DB: "rpg_api"
+    volumes:
+    - rpg_api-db-data:/var/lib/postgresql/data
+    - ../db-scripts:/docker-entrypoint-initdb.d
+    restart: always
+    healthcheck:
+      test: pg_isready -U rpg_api
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  migrator:
+    image: rpg_api:${RPG_API_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      RPG_API_DB_HOST: rpg_api-db
+      RPG_API_DB_PORT: 5432
+      RPG_API_DB_USER: rpg_api
+      RPG_API_DB_PASS: rpg_api
+      RPG_API_DB_BASE: rpg_api
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+
+volumes:
+  rpg_api-db-data:
+    name: rpg_api-db-data
+  
