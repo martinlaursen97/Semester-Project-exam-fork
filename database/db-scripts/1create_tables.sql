@@ -95,11 +95,11 @@ CREATE TABLE base_character(
 	money INT NOT NULL,
 	created_at DATE NOT NULL,
 	PRIMARY KEY(id),
-	CONSTRAINT fk_class_chararacter FOREIGN KEY(class_id) REFERENCES base_class(id) ON
+	CONSTRAINT fk_class_character FOREIGN KEY(class_id) REFERENCES base_class(id) ON
 	DELETE CASCADE,
-	CONSTRAINT fk_user_chararacter FOREIGN KEY(user_id) REFERENCES base_user(id) ON
+	CONSTRAINT fk_user_character FOREIGN KEY(user_id) REFERENCES base_user(id) ON
 	DELETE CASCADE,
-	CONSTRAINT fk_gender_chararacter FOREIGN KEY(gender_id) REFERENCES gender(id) ON
+	CONSTRAINT fk_gender_character FOREIGN KEY(gender_id) REFERENCES gender(id) ON
 	DELETE CASCADE
 );
 
