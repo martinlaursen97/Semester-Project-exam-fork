@@ -1,7 +1,8 @@
 from fastapi.routing import APIRouter
-from fastapi import Depends
 from rpg_api.db.dependencies import get_db_session
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Depends, HTTPException
 
 from rpg_api.web.api import monitoring
 
@@ -15,7 +16,12 @@ def hello_world() -> None:
 
 
 @api_router.get("/base-char")
-def get_base_chars_from_view(dbsession=Depends(get_db_session)):
-    result = dbsession.execute(text("SELECT * FROM base_char_view")).fetchall()
-    columns = result[0].keys()
-    return [dict(zip(columns, row)) for row in result]
+async def get_base_chars(dbsession: AsyncSession = Depends(get_db_session)):
+    result = await dbsession.execute(text("SELECT * FROM character_details_view"))
+    rows = result.fetchall()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail="No data found")
+
+    columns = result.keys()
+    return [dict(zip(columns, row)) for row in rows]
