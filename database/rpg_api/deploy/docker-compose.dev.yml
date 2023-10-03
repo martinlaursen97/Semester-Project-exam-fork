@@ -4,7 +4,7 @@ services:
   api:
     ports:
       # Exposes application port.
-    - "8000:8000"
+    - "7070:7070"
     build:
       target: dev
     volumes:
