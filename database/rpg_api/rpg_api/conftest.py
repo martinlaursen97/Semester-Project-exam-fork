@@ -1,4 +1,5 @@
-from typing import Any, AsyncGenerator
+from collections.abc import AsyncGenerator
+from typing import Any
 
 import pytest
 import sqlparse
@@ -26,7 +27,7 @@ async def run_sql_script(engine: AsyncEngine, script_path: str) -> None:
     :param script_path: The path to the SQL script file.
     """
     async with engine.begin() as conn:
-        with open(script_path, "r") as file:
+        with open(script_path) as file:
             sql_script = file.read()
             statements = sqlparse.split(sql_script)
             for statement in statements:

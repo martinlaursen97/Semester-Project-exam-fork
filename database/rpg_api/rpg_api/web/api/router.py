@@ -14,13 +14,15 @@ api_router.include_router(monitoring.router)
 
 @api_router.get("/")
 def hello_world() -> str:
+    """Hello World."""
     return "Hello world"
 
 
 @api_router.get("/base-char")
 async def get_base_chars(
-    dbsession: AsyncSession = Depends(get_db_session),
+    dbsession: AsyncSession = Depends(get_db_session),  # noqa: B008
 ) -> list[dict[str, Any]]:
+    """Just a test end point."""
     result = await dbsession.execute(text("SELECT * FROM character_details_view"))
     rows = result.fetchall()
 
@@ -28,4 +30,4 @@ async def get_base_chars(
         raise HTTPException(status_code=404, detail="No data found")
 
     columns = result.keys()
-    return [dict(zip(columns, row)) for row in rows]
+    return [dict(zip(columns, row, strict=False)) for row in rows]
