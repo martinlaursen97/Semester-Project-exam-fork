@@ -17,7 +17,8 @@ jobs:
           POETRY_VIRTUALENVS_CREATE: false
       - name: Run black check
         run: |
-          cd database/rpg_api poetry run black --check .
+          cd database/rpg_api
+          poetry run black --check .
   flake8:
     runs-on: ubuntu-latest
     steps:
@@ -31,7 +32,9 @@ jobs:
         env:
           POETRY_VIRTUALENVS_CREATE: false
       - name: Run flake8 check
-        run: poetry run flake8 --count .
+        run: |
+          cd database/rpg_api
+          poetry run flake8 --count .
   mypy:
     runs-on: ubuntu-latest
     steps:
@@ -45,7 +48,9 @@ jobs:
         env:
           POETRY_VIRTUALENVS_CREATE: false
       - name: Run mypy check
-        run: poetry run mypy .
+        run: |
+          cd database/rpg_api
+          poetry run mypy .
   pytest:
     runs-on: ubuntu-latest
     services:
@@ -73,7 +78,9 @@ jobs:
         env:
           POETRY_VIRTUALENVS_CREATE: false
       - name: Run pytest check
-        run: poetry run pytest -vv --cov="rpg_api" .
+        run: |
+          cd database/rpg_api
+          poetry run pytest -vv --cov="rpg_api" .
         env:
           RPG_API_HOST: "0.0.0.0"
           RPG_API_DB_HOST: localhost
