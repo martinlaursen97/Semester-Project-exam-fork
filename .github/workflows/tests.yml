@@ -77,7 +77,7 @@ jobs:
         uses: knowsuchagency/poetry-install@v1
         env:
           POETRY_VIRTUALENVS_CREATE: false
-      - name: Run pytest check
+      - name: Run pytest check what
         run: |
           cd database/rpg_api
           poetry run pytest -vv --cov="rpg_api" .
