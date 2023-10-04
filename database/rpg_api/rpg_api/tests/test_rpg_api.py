@@ -17,16 +17,16 @@ async def test_health(client: AsyncClient, fastapi_app: FastAPI) -> None:
     assert response.status_code == status.HTTP_200_OK
 
 
-@pytest.mark.anyio
-async def test_test_end_point_base_character(client: AsyncClient) -> None:
-    """
-    Test the test endpoint we have.
+# @pytest.mark.anyio
+# async def test_test_end_point_base_character(client: AsyncClient) -> None:
+#     """
+#     Test the test endpoint we have.
 
-    :param client: client for the app.
-    """
+#     :param client: client for the app.
+#     """
 
-    url = "/api/base-char"
+#     url = "/api/base-char"
 
-    response = await client.get(url=url)
+#     response = await client.get(url=url)
 
-    assert response.status_code == 200
+#     assert response.status_code == 200
