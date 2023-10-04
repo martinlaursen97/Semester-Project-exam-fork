@@ -30,4 +30,3 @@ async def test_test_end_point_base_character(client: AsyncClient) -> None:
     response = await client.get(url=url)
 
     assert response.status_code == 200
-    print(response.__dict__)
