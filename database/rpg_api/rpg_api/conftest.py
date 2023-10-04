@@ -1,21 +1,21 @@
 from typing import Any, AsyncGenerator
 
 import pytest
+import sqlparse
 from fastapi import FastAPI
 from httpx import AsyncClient
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy import text
 
 from rpg_api.db.dependencies import get_db_session
 from rpg_api.db.utils import create_database, drop_database
 from rpg_api.settings import settings
 from rpg_api.web.application import get_app
-import sqlparse
 
 
 async def run_sql_script(engine: AsyncEngine, script_path: str) -> None:
@@ -69,7 +69,7 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
 
     #  SQL scripts
     script1_path = current_path.parent.parent / "db-scripts" / "1create_tables.sql"
-    script2_path = current_path.parent.parent  / "db-scripts" / "2create_test_data.sql"
+    script2_path = current_path.parent.parent / "db-scripts" / "2create_test_data.sql"
 
     # # Execute SQL scripts
     await run_sql_script(engine, str(script1_path))
