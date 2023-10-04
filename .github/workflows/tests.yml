@@ -11,11 +11,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.9"
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python -
       - name: Install deps
         run: |
-            cd database/rpg_api
-            # your dependencies installation steps here, for example:
-            poetry install
+          cd database/rpg_api
+          # your dependencies installation steps here, for example:
+          poetry install
       - name: Run black check
         run: |
           cd database/rpg_api
