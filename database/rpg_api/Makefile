@@ -7,4 +7,4 @@ make lint: ## Run linter
 
 make run: ## Run the application
 	@echo "Running application..."
-	docker-compose -f docker-compose.yml up --build
+	docker-compose -f deploy/docker-compose.yml -f deploy/docker-compose.dev.yml --project-directory . up --build

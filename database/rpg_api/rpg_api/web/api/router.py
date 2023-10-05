@@ -20,7 +20,7 @@ def hello_world() -> str:
 
 @api_router.get("/base-char")
 async def get_base_chars(
-    dbsession: AsyncSession = Depends(get_db_session),  # noqa: B008
+    dbsession: AsyncSession = Depends(get_db_session),
 ) -> list[dict[str, Any]]:
     """Just a test end point."""
     result = await dbsession.execute(text("SELECT * FROM character_details_view"))
@@ -30,4 +30,4 @@ async def get_base_chars(
         raise HTTPException(status_code=404, detail="No data found")
 
     columns = result.keys()
-    return [dict(zip(columns, row)) for row in rows]  # noqa: B905
+    return [dict(zip(columns, row)) for row in rows]

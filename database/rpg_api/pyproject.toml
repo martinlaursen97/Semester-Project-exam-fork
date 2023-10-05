@@ -114,7 +114,7 @@ select = [
     "D400", # first line should end with a period
 ]
 target-version = "py311"
-ignore = ["A003"]
+ignore = ["A003", "B008", "B905"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
