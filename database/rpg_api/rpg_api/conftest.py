@@ -1,8 +1,11 @@
-from typing import Any, AsyncGenerator
+from collections.abc import AsyncGenerator
+from typing import Any
 
 import pytest
+import sqlparse
 from fastapi import FastAPI
 from httpx import AsyncClient
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -14,6 +17,22 @@ from rpg_api.db.dependencies import get_db_session
 from rpg_api.db.utils import create_database, drop_database
 from rpg_api.settings import settings
 from rpg_api.web.application import get_app
+
+
+async def run_sql_script(engine: AsyncEngine, script_path: str) -> None:
+    """
+    Run an SQL script against the provided engine.
+
+    :param engine: The AsyncEngine to run the script against.
+    :param script_path: The path to the SQL script file.
+    """
+    async with engine.begin() as conn:
+        with open(script_path) as file:
+            sql_script = file.read()
+            statements = sqlparse.split(sql_script)
+            for statement in statements:
+                if statement.strip():
+                    await conn.execute(text(statement))
 
 
 @pytest.fixture(scope="session")
@@ -43,6 +62,19 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
     engine = create_async_engine(str(settings.db_url))
     async with engine.begin() as conn:
         await conn.run_sync(meta.create_all)
+
+    from pathlib import Path
+
+    # Get the current script path
+    current_path = Path(__file__).resolve().parent
+
+    #  SQL scripts
+    script1_path = current_path.parent.parent / "db-scripts" / "1create_tables.sql"
+    script2_path = current_path.parent.parent / "db-scripts" / "2create_test_data.sql"
+
+    # # Execute SQL scripts
+    await run_sql_script(engine, str(script1_path))
+    await run_sql_script(engine, str(script2_path))
 
     try:
         yield engine
