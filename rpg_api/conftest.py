@@ -65,16 +65,13 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
 
     from pathlib import Path
 
-    # Get the current script path
-    current_path = Path(__file__).resolve().parent
+    # Create a Path object for the scripts folder
+    scripts_folder = Path("db-scripts")
 
-    #  SQL scripts
-    script1_path = current_path.parent.parent / "db-scripts" / "1create_tables.sql"
-    script2_path = current_path.parent.parent / "db-scripts" / "2create_test_data.sql"
-
-    # # Execute SQL scripts
-    await run_sql_script(engine, str(script1_path))
-    await run_sql_script(engine, str(script2_path))
+    # Execute SQL scripts
+    for script_path in scripts_folder.iterdir():
+        if script_path.is_file():
+            await run_sql_script(engine, str(script_path))
 
     try:
         yield engine

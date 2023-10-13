@@ -24,9 +24,6 @@ async def test_test_end_point_base_character(client: AsyncClient) -> None:
 
     :param client: client for the app.
     """
-
     url = "/api/base-char"
-
     response = await client.get(url=url)
-
     assert response.status_code == 200
