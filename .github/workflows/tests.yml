@@ -66,23 +66,23 @@ jobs:
   #         --health-retries=5
   #       ports:
   #         - 5435:5432
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11.3'
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python -
-      - name: Install deps
-        run: |
-          cd rpg_api
-          # your dependencies installation steps here, for example:
-          poetry install
-      - name: Run pytest check what
-        run: |
-          cd rpg_api
-          poetry run pytest -vv --cov="rpg_api" .
-        env:
-          RPG_API_HOST: "0.0.0.0"
-          RPG_API_DB_HOST: localhost
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.11.3'
+  #     - name: Install Poetry
+  #       run: |
+  #         curl -sSL https://install.python-poetry.org | python -
+  #     - name: Install deps
+  #       run: |
+  #         cd /rpg_api
+  #         # your dependencies installation steps here, for example:
+  #         poetry install
+  #     - name: Run pytest check what
+  #       run: |
+  #         cd rpg_api
+  #         poetry run pytest -vv --cov="rpg_api" .
+  #       env:
+  #         RPG_API_HOST: "0.0.0.0"
+  #         RPG_API_DB_HOST: localhost
