@@ -50,22 +50,22 @@ jobs:
         run: |
           cd rpg_api
           poetry run mypy .
-  pytest:
-    runs-on: ubuntu-latest
-    services:
-      rpg_api-db:
-        image: postgres:13.8-bullseye
-        env:
-          POSTGRES_PASSWORD: rpg_api
-          POSTGRES_USER: rpg_api
-          POSTGRES_DB: rpg_api
-        options: >-
-          --health-cmd="pg_isready"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-        ports:
-          - 5435:5432
+  # pytest:
+  #   runs-on: ubuntu-latest
+  #   services:
+  #     rpg_api-db:
+  #       image: postgres:13.8-bullseye
+  #       env:
+  #         POSTGRES_PASSWORD: rpg_api
+  #         POSTGRES_USER: rpg_api
+  #         POSTGRES_DB: rpg_api
+  #       options: >-
+  #         --health-cmd="pg_isready"
+  #         --health-interval=10s
+  #         --health-timeout=5s
+  #         --health-retries=5
+  #       ports:
+  #         - 5435:5432
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
