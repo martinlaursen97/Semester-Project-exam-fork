@@ -1,6 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase
 
-from rpg_api.db.meta import meta
+from rpg_api.db.postgres.meta import meta
 
 
 class Base(DeclarativeBase):

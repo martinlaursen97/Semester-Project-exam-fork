@@ -13,8 +13,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from rpg_api.db.dependencies import get_db_session
-from rpg_api.db.utils import create_database, drop_database
+from rpg_api.db.postgres.dependencies import get_db_session
+from rpg_api.db.postgres.utils import create_database, drop_database
 from rpg_api.settings import settings
 from rpg_api.web.application import get_app
 
@@ -52,8 +52,8 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
 
     :yield: new engine.
     """
-    from rpg_api.db.meta import meta  # noqa: WPS433
-    from rpg_api.db.models import load_all_models  # noqa: WPS433
+    from rpg_api.db.postgres.meta import meta  # noqa: WPS433
+    from rpg_api.db.postgres.models import load_all_models  # noqa: WPS433
 
     load_all_models()
 
