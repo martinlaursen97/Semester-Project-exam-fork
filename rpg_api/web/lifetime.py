@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from rpg_api.settings import settings
 
 
-def _setup_db(app: FastAPI) -> None:  # pragma: no cover
+def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
     """
-    Creates connection to the database.
+    Creates connection to the postgresql database.
 
     This function creates SQLAlchemy engine instance,
     session_factory for creating sessions
@@ -23,6 +23,14 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
     )
     app.state.db_engine = engine
     app.state.db_session_factory = session_factory
+
+
+def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
+    """
+    Creates connection to the mongodb database.
+    """
+
+    app.state.mongodb_client = None
 
 
 def register_startup_event(
@@ -41,7 +49,8 @@ def register_startup_event(
     @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
         app.middleware_stack = None
-        _setup_db(app)
+        _setup_pg(app)
+        _setup_mongodb(app)
         app.middleware_stack = app.build_middleware_stack()
         pass  # noqa: WPS420
 
