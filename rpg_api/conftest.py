@@ -65,12 +65,12 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
 
     from pathlib import Path
 
-    # Get the current script path
-    current_path = Path(__file__).resolve().parent
+    current_path = Path(__file__).resolve().parent.parent
+    scripts_dir = current_path / "db-scripts"
 
     #  SQL scripts
-    script1_path = current_path.parent.parent / "db-scripts" / "1create_tables.sql"
-    script2_path = current_path.parent.parent / "db-scripts" / "2create_test_data.sql"
+    script1_path = scripts_dir / "1create_tables.sql"
+    script2_path = scripts_dir / "2create_test_data.sql"
 
     # # Execute SQL scripts
     await run_sql_script(engine, str(script1_path))
