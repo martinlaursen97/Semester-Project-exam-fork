@@ -2,12 +2,8 @@
 name = "rpg_api"
 version = "0.1.0"
 description = ""
-authors = [
-
-]
-maintainers = [
-
-]
+authors = []
+maintainers = []
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -18,9 +14,9 @@ pydantic = "^2"
 pydantic-settings = "^2"
 yarl = "^1.9.2"
 ujson = "^5.8.0"
-SQLAlchemy = {version = "^2.0.18", extras = ["asyncio"]}
+SQLAlchemy = { version = "^2.0.18", extras = ["asyncio"] }
 alembic = "^1.11.1"
-asyncpg = {version = "^0.28.0", extras = ["sa"]}
+asyncpg = { version = "^0.28.0", extras = ["sa"] }
 httptools = "^0.6.0"
 loguru = "^0.7.0"
 sqlparse = "^0.4.4"
@@ -45,7 +41,7 @@ httpx = "^0.23.3"
 [tool.isort]
 profile = "black"
 multi_line_output = 3
-src_paths = ["rpg_api",]
+src_paths = ["rpg_api"]
 
 [tool.mypy]
 strict = true
@@ -66,10 +62,7 @@ filterwarnings = [
     "ignore::DeprecationWarning",
     "ignore:.*unclosed.*:ResourceWarning",
 ]
-env = [
-    "RPG_API_ENVIRONMENT=pytest",
-    "RPG_API_DB_BASE=rpg_api_test",
-]
+env = ["RPG_API_ENVIRONMENT=pytest", "RPG_API_DB_BASE=rpg_api_test"]
 
 [fastapi-template.options]
 project_name = "rpg_api"
