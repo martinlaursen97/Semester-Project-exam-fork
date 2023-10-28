@@ -366,6 +366,21 @@ files = [
 ]
 
 [[package]]
+name = "email-validator"
+version = "2.1.0.post1"
+description = "A robust email address syntax and deliverability validation library."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "email_validator-2.1.0.post1-py3-none-any.whl", hash = "sha256:c973053efbeddfef924dc0bd93f6e77a1ea7ee0fce935aea7103c7a3d6d2d637"},
+    {file = "email_validator-2.1.0.post1.tar.gz", hash = "sha256:a4b0bd1cf55f073b924258d19321b1f3aa74b4b5a71a42c305575dba920e1a44"},
+]
+
+[package.dependencies]
+dnspython = ">=2.0.0"
+idna = ">=2.0.0"
+
+[[package]]
 name = "eradicate"
 version = "2.3.0"
 description = "Removes commented-out code."
@@ -1335,6 +1350,7 @@ files = [
 
 [package.dependencies]
 annotated-types = ">=0.4.0"
+email-validator = {version = ">=2.0.0", optional = true, markers = "extra == \"email\""}
 pydantic-core = "2.10.1"
 typing-extensions = ">=4.6.1"
 
@@ -2475,4 +2491,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ee78e029dfc56441614be5fb44c7242db2acc6d1c7c818bf3c16c22135e7935d"
+content-hash = "09612d634c79b14156c11ae840ad967ebd577c8f73b5a1bb2da8f302625e9e01"
