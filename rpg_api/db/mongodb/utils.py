@@ -1,11 +1,11 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo.server_api import ServerApi
+from motor.core import AgnosticClient
 
 
-async def create_async_motor_client() -> AsyncIOMotorClient:
+def create_motor_client(url: str) -> AgnosticClient:
     """
-    Create async motor client.
+    Create motor client.
 
-    :return: async motor client.
+    :return: motor client.
     """
-    return AsyncIOMotorClient(str(settings.mongodb_url))
+    return AsyncIOMotorClient(url)

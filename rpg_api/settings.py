@@ -46,6 +46,13 @@ class Settings(BaseSettings):
     db_base: str = "rpg_api"
     db_echo: bool = False
 
+    # Variables for the mongodb
+    mongo_host: str = "localhost"
+    mongo_port: int = 27017
+    mongo_user: str = "rpg_api"
+    mongo_pass: str = "rpg_api"
+    mongo_database: str = "rpg_api"
+
     @property
     def db_url(self) -> URL:
         """
@@ -53,6 +60,7 @@ class Settings(BaseSettings):
 
         :return: database URL.
         """
+
         return URL.build(
             scheme="postgresql+asyncpg",
             host=self.db_host,
@@ -60,6 +68,23 @@ class Settings(BaseSettings):
             user=self.db_user,
             password=self.db_pass,
             path=f"/{self.db_base}",
+        )
+
+    @property
+    def mongodb_url(self) -> URL:
+        """
+        Assemble database URL from settings.
+
+        :return: database URL.
+        """
+        return URL.build(
+            scheme="mongodb",
+            host=self.mongo_host,
+            port=self.mongo_port,
+            user=self.mongo_user,
+            password=self.mongo_pass,
+            path=f"/{self.mongo_database}",
+            query={"authSource": "admin"},
         )
 
     model_config = SettingsConfigDict(

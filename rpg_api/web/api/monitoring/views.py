@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-import motor.motor_asyncio
 from typing import Any
 from rpg_api.settings import settings
+from rpg_api.db.mongodb.dependencies import MongoClient
 
 router = APIRouter()
 
@@ -14,24 +14,22 @@ def health_check() -> Any:
     It returns 200 if the project is healthy.
     """
 
-    return str(settings.db_url)
+    return (
+        str(settings.db_url),
+        str(settings.mongodb_url),
+        "mongodb://rpg_api:rpg_api@127.0.0.1:27017/?authMechanism=DEFAULT",
+    )
 
 
 @router.get("/mongodb")
-async def mongodb_check() -> Any:
+async def mongodb_check(mongo_client: MongoClient) -> Any:
     """
     Checks the health of the mongodb.
 
     It returns 200 if the mongodb is healthy.
     """
-    mongodb_url = "mongodb://rpg_api:rpg_api@127.0.0.1:27017/?authMechanism=DEFAULT"
-    client = motor.motor_asyncio.AsyncIOMotorClient(mongodb_url)
-    db = client["rpg"]
-    res = await db.command("ping")
-    return res
 
+    db = mongo_client["test_database"]
+    db["test_collection"]
 
-# asd
-# db = client["rpg"]
-# res = await db.command("ping")
-# return res
+    return await db.command("ping")

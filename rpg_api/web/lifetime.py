@@ -2,6 +2,7 @@ from collections.abc import Awaitable, Callable
 
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from rpg_api.db.mongodb.utils import create_motor_client
 
 from rpg_api.settings import settings
 
@@ -28,9 +29,11 @@ def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
 def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
     """
     Creates connection to the mongodb database.
+
+    :param app: fastAPI application.
     """
 
-    app.state.mongodb_client = None
+    app.state.mongodb_client = create_motor_client(str(settings.mongodb_url))
 
 
 def register_startup_event(
@@ -70,6 +73,7 @@ def register_shutdown_event(
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
         await app.state.db_engine.dispose()
+        await app.state.mongodb_client.close()
 
         pass  # noqa: WPS420
 
