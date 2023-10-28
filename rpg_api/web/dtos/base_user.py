@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, SecretStr
+from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
 
 

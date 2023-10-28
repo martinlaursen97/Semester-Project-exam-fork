@@ -48,6 +48,6 @@ async def mongodb_insert(input_dto: BaseUserInsert, mongo_client: MongoClient) -
     db["test_collection"]
 
     # insert a document
-    result = await db.test_collection.insert_one(input_dto.model_dump())
+    await db.test_collection.insert_one(input_dto.model_dump())
 
     return await db.command("ping")
