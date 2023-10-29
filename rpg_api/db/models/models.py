@@ -138,5 +138,5 @@ class CharacterAttribute(Base):
     base_character_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("base_character.id")
     )
-    attribute_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("attkribute.id"))
+    attribute_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("attribute.id"))
     value: Mapped[int] = mapped_column(sa.Integer)
