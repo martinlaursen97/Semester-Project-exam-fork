@@ -12,6 +12,7 @@ class UserStatus(StrEnum):
     active = "active"
     inactive = "inactive"
 
+
 class Gender(StrEnum):
     """
     Gender Enum.
