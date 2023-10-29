@@ -3,8 +3,9 @@ from collections.abc import Awaitable, Callable
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from rpg_api.db.mongodb.utils import create_motor_client
-
+from beanie import init_beanie
 from rpg_api.settings import settings
+from rpg_api.db.mongodb.models.base_user_model import MBaseUser
 
 
 def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
@@ -36,6 +37,19 @@ def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
     app.state.mongodb_client = create_motor_client(str(settings.mongodb_url))
 
 
+async def _setup_mongodb_startup_data(app: FastAPI) -> None:  # pragma: no cover
+    """
+    Creates connection to the mongodb database.
+
+    :param app: fastAPI application.
+    """
+
+    await init_beanie(
+        database=app.state.mongodb_client.base_user,
+        document_models=[MBaseUser],
+    )
+
+
 def register_startup_event(
     app: FastAPI,
 ) -> Callable[[], Awaitable[None]]:  # pragma: no cover
@@ -54,6 +68,7 @@ def register_startup_event(
         app.middleware_stack = None
         _setup_pg(app)
         _setup_mongodb(app)
+        await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()
         pass  # noqa: WPS420
 
