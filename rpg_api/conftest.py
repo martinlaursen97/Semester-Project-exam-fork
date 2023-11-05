@@ -2,10 +2,8 @@ from collections.abc import AsyncGenerator
 from typing import Any
 
 import pytest
-import sqlparse
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -14,25 +12,14 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from rpg_api.db.postgres.dependencies import get_db_session
-from rpg_api.db.postgres.utils import create_database, drop_database
+from rpg_api.db.postgres.utils import (
+    create_database,
+    drop_database,
+    create_extensions,
+    run_scripts,
+)
 from rpg_api.settings import settings
 from rpg_api.web.application import get_app
-
-
-async def run_sql_script(engine: AsyncEngine, script_path: str) -> None:
-    """
-    Run an SQL script against the provided engine.
-
-    :param engine: The AsyncEngine to run the script against.
-    :param script_path: The path to the SQL script file.
-    """
-    async with engine.begin() as conn:
-        with open(script_path) as file:
-            sql_script = file.read()
-            statements = sqlparse.split(sql_script)
-            for statement in statements:
-                if statement.strip():
-                    await conn.execute(text(statement))
 
 
 @pytest.fixture(scope="session")
@@ -47,35 +34,20 @@ def anyio_backend() -> str:
 
 @pytest.fixture(scope="session")
 async def _engine() -> AsyncGenerator[AsyncEngine, None]:
-    """
-    Create engine and databases.
-
-    :yield: new engine.
-    """
-    from rpg_api.db.postgres.meta import meta  # noqa: WPS433
-    from rpg_api.db.postgres.models import load_all_models  # noqa: WPS433
+    """Create engine and databases."""
+    from rpg_api.db.postgres.meta import meta
+    from rpg_api.db.postgres.models import load_all_models
 
     load_all_models()
 
     await create_database()
+    await create_extensions()
 
     engine = create_async_engine(str(settings.db_url))
     async with engine.begin() as conn:
         await conn.run_sync(meta.create_all)
-        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
 
-    from pathlib import Path
-
-    current_path = Path(__file__).resolve().parent.parent
-    scripts_dir = current_path / "db-scripts"
-
-    #  SQL scripts
-    script1_path = scripts_dir / "1create_tables.sql"
-    script2_path = scripts_dir / "2create_test_data.sql"
-
-    # # Execute SQL scripts
-    await run_sql_script(engine, str(script1_path))
-    await run_sql_script(engine, str(script2_path))
+    await run_scripts(engine)
 
     try:
         yield engine

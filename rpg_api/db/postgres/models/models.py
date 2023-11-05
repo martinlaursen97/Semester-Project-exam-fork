@@ -26,6 +26,14 @@ class BaseUser(Base):
     base_characters: Mapped[list["BaseCharacter"]] = relationship()
 
 
+# class Gender(Base):
+#     """Gender model."""
+
+#     __tablename__ = "gender"
+
+#     name: Mapped[str] = mapped_column(sa.String(50))
+
+
 class AbilityType(Base):
     """Ability type model."""
 
