@@ -62,6 +62,7 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
     engine = create_async_engine(str(settings.db_url))
     async with engine.begin() as conn:
         await conn.run_sync(meta.create_all)
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
 
     from pathlib import Path
 

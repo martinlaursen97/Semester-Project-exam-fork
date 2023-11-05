@@ -5,10 +5,13 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from rpg_api.db.mongodb.utils import create_motor_client
 from beanie import init_beanie
 from rpg_api.settings import settings
+from rpg_api.db.postgres.meta import meta
+from sqlalchemy.sql import text
 from rpg_api.db.mongodb.models.base_user_model import MBaseUser
+from loguru import logger
 
 
-def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
+async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
     """
     Creates connection to the postgresql database.
 
@@ -25,6 +28,13 @@ def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
     )
     app.state.db_engine = engine
     app.state.db_session_factory = session_factory
+
+    async with engine.begin() as conn:
+        await conn.run_sync(meta.create_all)
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
+
+    await engine.dispose()
+    logger.info("Setting up database")
 
 
 def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
@@ -66,7 +76,7 @@ def register_startup_event(
     @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
         app.middleware_stack = None
-        _setup_pg(app)
+        await _setup_pg(app)
         _setup_mongodb(app)
         await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()
