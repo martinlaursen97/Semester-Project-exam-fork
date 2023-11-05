@@ -16,7 +16,6 @@ from rpg_api.db.postgres.utils import (
     create_database,
     drop_database,
     create_extensions,
-    run_scripts,
 )
 from rpg_api.settings import settings
 from rpg_api.web.application import get_app
