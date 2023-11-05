@@ -47,7 +47,7 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
     async with engine.begin() as conn:
         await conn.run_sync(meta.create_all)
 
-    await run_scripts(engine)
+    # await run_scripts(engine)
 
     try:
         yield engine

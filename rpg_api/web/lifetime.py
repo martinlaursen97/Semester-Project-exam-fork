@@ -9,9 +9,6 @@ from rpg_api.db.postgres.meta import meta
 from sqlalchemy.sql import text
 from rpg_api.db.mongodb.models.base_user_model import MBaseUser
 from loguru import logger
-from rpg_api.db.postgres.utils import (
-    run_scripts,
-)
 
 
 async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
@@ -36,7 +33,7 @@ async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
         await conn.run_sync(meta.create_all)
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
 
-    await run_scripts(engine)
+    # await run_scripts(engine)
 
     await engine.dispose()
     logger.info("Setting up database")

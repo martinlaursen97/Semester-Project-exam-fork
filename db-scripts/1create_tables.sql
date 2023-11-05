@@ -247,9 +247,9 @@ CREATE OR REPLACE VIEW character_details_view AS
 SELECT
     bc.id AS character_id,
     bc.character_name,
-    g.gender_type AS gender,
+    bc.gender AS gender,
     c.name AS class_name,
-    get_character_place(bc.id) AS place_name,
+    public.get_character_place(bc.id) AS place_name,
     bc.alive,
     bc.level,
     bc.xp,
@@ -257,9 +257,7 @@ SELECT
 FROM
     base_character bc
 JOIN
-    gender g ON bc.gender_id = g.id
-JOIN
-    base_class c ON bc.class_id = c.id;
+    base_class c ON bc.base_class_id = c.id;
     
 
 -- Stored Procedures
