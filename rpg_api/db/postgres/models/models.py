@@ -1,11 +1,10 @@
-from rpg_api.db.base import Base
+from rpg_api.db.postgres.base import Base
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import CITEXT
 from sqlalchemy.orm import Mapped, mapped_column
 from rpg_api.enums import UserStatus, Gender
 import uuid
 from sqlalchemy import ForeignKey
-from typing import List
 from sqlalchemy.orm import relationship
 
 
@@ -23,8 +22,8 @@ class BaseUser(Base):
     status: Mapped[UserStatus] = mapped_column(
         sa.Enum(UserStatus, name="user_status"), default=UserStatus.active
     )
-    relations: Mapped[List["Relation"]] = relationship()
-    base_characters: Mapped[List["BaseCharacter"]] = relationship()
+    relations: Mapped[list["Relation"]] = relationship()
+    base_characters: Mapped[list["BaseCharacter"]] = relationship()
 
 
 class AbilityType(Base):
@@ -34,7 +33,7 @@ class AbilityType(Base):
 
     name: Mapped[str] = mapped_column(sa.String(50))
     description: Mapped[str] = mapped_column(sa.String(500))
-    abilities: Mapped[List["Ability"]] = relationship()
+    abilities: Mapped[list["Ability"]] = relationship()
 
 
 class BaseClass(Base):
@@ -43,8 +42,8 @@ class BaseClass(Base):
     __tablename__ = "base_class"
 
     name: Mapped[str] = mapped_column(sa.String(50))
-    base_characters: Mapped[List["BaseCharacter"]] = relationship()
-    class_abilities: Mapped[List["ClassAbility"]] = relationship()
+    base_characters: Mapped[list["BaseCharacter"]] = relationship()
+    class_abilities: Mapped[list["ClassAbility"]] = relationship()
 
 
 class Attribute(Base):
@@ -55,7 +54,7 @@ class Attribute(Base):
     name: Mapped[str] = mapped_column(sa.String(50))
     description: Mapped[str] = mapped_column(sa.String(500))
 
-    character_attributes: Mapped[List["CharacterAttribute"]] = relationship()
+    character_attributes: Mapped[list["CharacterAttribute"]] = relationship()
 
 
 class Place(Base):
@@ -79,7 +78,7 @@ class Relation(Base):
 
 
 class BaseCharacter(Base):
-    """Model for base character"""
+    """Model for base character."""
 
     __tablename__ = "base_character"
 
@@ -94,8 +93,8 @@ class BaseCharacter(Base):
     xp: Mapped[int] = mapped_column(sa.Integer, default=1)
     money: Mapped[int] = mapped_column(sa.Integer, default=1)
 
-    locations: Mapped[List["CharacterLocation"]] = relationship()
-    attributes: Mapped[List["CharacterAttribute"]] = relationship()
+    locations: Mapped[list["CharacterLocation"]] = relationship()
+    attributes: Mapped[list["CharacterAttribute"]] = relationship()
 
 
 class CharacterLocation(Base):
@@ -118,7 +117,7 @@ class Ability(Base):
     name: Mapped[str] = mapped_column(sa.String(50))
     ability_type_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("ability_type.id"))
 
-    class_ability: Mapped[List["ClassAbility"]] = relationship()
+    class_ability: Mapped[list["ClassAbility"]] = relationship()
 
 
 class ClassAbility(Base):

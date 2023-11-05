@@ -46,7 +46,7 @@ async def _setup_mongodb_startup_data(app: FastAPI) -> None:  # pragma: no cover
 
     await init_beanie(
         database=app.state.mongodb_client.base_user,
-        document_models=[MBaseUser],
+        document_models=[MBaseUser],  # type: ignore
     )
 
 
@@ -70,7 +70,6 @@ def register_startup_event(
         _setup_mongodb(app)
         await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()
-        pass  # noqa: WPS420
 
     return _startup
 
