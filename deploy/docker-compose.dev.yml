@@ -3,13 +3,10 @@ version: '3.9'
 services:
   api:
     ports:
-      # Exposes application port.
     - "7070:7070"
     build:
       target: dev
     volumes:
-      # Adds current directory as volume.
     - .:/app/src/
     environment:
-      # Enables autoreload.
       RPG_API_RELOAD: "True"

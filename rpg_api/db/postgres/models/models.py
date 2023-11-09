@@ -1,4 +1,4 @@
-from rpg_api.db.base import Base
+from rpg_api.db.postgres.base import Base
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import CITEXT
 from sqlalchemy.orm import Mapped, mapped_column

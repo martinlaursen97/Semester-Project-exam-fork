@@ -2,13 +2,18 @@ from collections.abc import Awaitable, Callable
 
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-
+from rpg_api.db.mongodb.utils import create_motor_client
+from beanie import init_beanie
 from rpg_api.settings import settings
+from rpg_api.db.postgres.meta import meta
+from sqlalchemy.sql import text
+from rpg_api.db.mongodb.models.base_user_model import MBaseUser
+from loguru import logger
 
 
-def _setup_db(app: FastAPI) -> None:  # pragma: no cover
+async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
     """
-    Creates connection to the database.
+    Creates connection to the postgresql database.
 
     This function creates SQLAlchemy engine instance,
     session_factory for creating sessions
@@ -23,6 +28,38 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
     )
     app.state.db_engine = engine
     app.state.db_session_factory = session_factory
+
+    async with engine.begin() as conn:
+        await conn.run_sync(meta.create_all)
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
+
+    # await run_scripts(engine)
+
+    await engine.dispose()
+    logger.info("Setting up database")
+
+
+def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
+    """
+    Creates connection to the mongodb database.
+
+    :param app: fastAPI application.
+    """
+
+    app.state.mongodb_client = create_motor_client(str(settings.mongodb_url))
+
+
+async def _setup_mongodb_startup_data(app: FastAPI) -> None:  # pragma: no cover
+    """
+    Creates connection to the mongodb database.
+
+    :param app: fastAPI application.
+    """
+
+    await init_beanie(
+        database=app.state.mongodb_client.base_user,
+        document_models=[MBaseUser],  # type: ignore
+    )
 
 
 def register_startup_event(
@@ -41,9 +78,10 @@ def register_startup_event(
     @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
         app.middleware_stack = None
-        _setup_db(app)
+        await _setup_pg(app)
+        _setup_mongodb(app)
+        await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()
-        pass  # noqa: WPS420
 
     return _startup
 
@@ -61,6 +99,7 @@ def register_shutdown_event(
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
         await app.state.db_engine.dispose()
+        await app.state.mongodb_client.close()
 
         pass  # noqa: WPS420
 

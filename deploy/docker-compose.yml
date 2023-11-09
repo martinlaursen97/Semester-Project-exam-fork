@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+
   api:
     build:
       context: .
@@ -11,19 +12,26 @@ services:
     env_file:
     - .env
     depends_on:
-      db:
+      mongo:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
     environment:
       RPG_API_HOST: 0.0.0.0
-      RPG_API_DB_HOST: rpg_api-db
+      RPG_API_DB_HOST: rpg_api-pg
       RPG_API_DB_PORT: 5432
       RPG_API_DB_USER: rpg_api
       RPG_API_DB_PASS: rpg_api
       RPG_API_DB_BASE: rpg_api
+      RPG_API_MONGO_HOST: rpg_api-mongo
+      RPG_API_MONGO_PORT: 27017
+      RPG_API_MONGO_DATABASE: rpg_api
+      RPG_API_MONGO_USER: rpg_api
+      RPG_API_MONGO_PASS: rpg_api
 
-  db:
+  postgres:
     image: postgres:13.8-bullseye
-    hostname: rpg_api-db
+    hostname: rpg_api-pg
     ports:
       - "5435:5432"
     environment:
@@ -31,7 +39,7 @@ services:
       POSTGRES_USER: "rpg_api"
       POSTGRES_DB: "rpg_api"
     volumes:
-    - rpg_api-db-data:/var/lib/postgresql/data
+    - pg-data:/var/lib/postgresql/data
     # - ./db-scripts:/docker-entrypoint-initdb.d
     restart: always
     healthcheck:
@@ -40,23 +48,43 @@ services:
       timeout: 3s
       retries: 40
 
-  migrator:
-    image: rpg_api:${RPG_API_VERSION:-latest}
+  postgres-migrator:
+    image: rpg_api:latest
     restart: "no"
     command: alembic upgrade head
     environment:
-      RPG_API_DB_HOST: rpg_api-db
+      RPG_API_DB_HOST: rpg_api-pg
       RPG_API_DB_PORT: 5432
       RPG_API_DB_USER: rpg_api
       RPG_API_DB_PASS: rpg_api
       RPG_API_DB_BASE: rpg_api
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
-
+        
+  mongo:
+    image: mongo:latest
+    hostname: rpg_api-mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: rpg_api
+      MONGO_INITDB_ROOT_USERNAME: rpg_api
+      MONGO_INITDB_ROOT_PASSWORD: rpg_api
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 2s
+      timeout: 3s
+      retries: 40
+    command: 
+      - '--logpath'
+      - '/var/log/mongodb/mongod.log'
+    restart: always
 
 
 volumes:
-  rpg_api-db-data:
-    name: rpg_api-db-data
-  
+  pg-data:
+  mongo-data:

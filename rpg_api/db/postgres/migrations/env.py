@@ -5,8 +5,8 @@ from alembic import context
 from sqlalchemy.ext.asyncio.engine import create_async_engine
 from sqlalchemy.future import Connection
 
-from rpg_api.db.meta import meta
-from rpg_api.db.models import load_all_models
+from rpg_api.db.postgres.meta import meta
+from rpg_api.db.postgres.models import load_all_models
 from rpg_api.settings import settings
 
 # this is the Alembic Config object, which provides

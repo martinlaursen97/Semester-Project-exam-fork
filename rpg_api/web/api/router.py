@@ -5,7 +5,7 @@ from fastapi.routing import APIRouter
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from rpg_api.db.dependencies import get_db_session
+from rpg_api.db.postgres.dependencies import get_db_session
 from rpg_api.web.api import monitoring
 
 api_router = APIRouter()
