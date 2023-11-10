@@ -1,14 +1,14 @@
 import sqlalchemy as sa
 from fastapi import Depends
-from rpg_api.db.models.models import BaseUser
+from rpg_api.db.postgres.models.models import BaseUser
 from rpg_api.core.daos.base_dao import BaseDAO
-from rpg_api.db.dependencies import get_db_session
+from rpg_api.db.postgres.dependencies import get_db_session
 from rpg_api.utils.dtos import (
     BaseUserDTO,
     BaseUserInputDTO,
     BaseUserUpdateDTO,
 )
-from rpg_api.db.session import AsyncSessionWrapper as AsyncSession
+from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 
 
 class BaseUserDAO(BaseDAO[BaseUser, BaseUserDTO, BaseUserInputDTO, BaseUserUpdateDTO]):

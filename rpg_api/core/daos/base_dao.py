@@ -8,8 +8,8 @@ from pydantic import BaseModel
 from sqlalchemy import exc as sa_exc
 
 from rpg_api import exceptions as intree_exc
-from rpg_api.db.base import Base
-from rpg_api.db.session import AsyncSessionWrapper as AsyncSession
+from rpg_api.db.postgres.base import Base
+from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 from rpg_api import exceptions as rpg_exc
 
 Model = TypeVar("Model", bound=Base)
