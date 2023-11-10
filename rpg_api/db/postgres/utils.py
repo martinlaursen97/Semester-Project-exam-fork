@@ -1,8 +1,16 @@
 from sqlalchemy import text
 from sqlalchemy.engine import make_url
-from sqlalchemy.ext.asyncio import create_async_engine
+
 
 from rpg_api.settings import settings
+
+
+import sqlparse
+
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    create_async_engine,
+)
 
 
 async def create_database() -> None:
@@ -42,3 +50,39 @@ async def drop_database() -> None:
         )
         await conn.execute(text(disc_users))
         await conn.execute(text(f'DROP DATABASE "{settings.db_base}"'))
+
+
+async def create_extensions() -> None:
+    """Create extensions for current DB."""
+
+    db_url = str(settings.db_url)
+    engine = create_async_engine(db_url)
+    async with engine.begin() as conn:
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
+
+
+async def run_sql_script(engine: AsyncEngine, script_path: str) -> None:
+    """
+    Run an SQL script against the provided engine.
+
+    :param engine: The AsyncEngine to run the script against.
+    :param script_path: The path to the SQL script file.
+    """
+    async with engine.begin() as conn:
+        with open(script_path) as file:
+            sql_script = file.read()
+            statements = sqlparse.split(sql_script)
+            for statement in statements:
+                if statement.strip():
+                    await conn.execute(text(statement))
+
+
+async def run_scripts(engine: AsyncEngine) -> None:
+    """Run all scripts."""
+    from pathlib import Path
+
+    current_path = Path(__file__).resolve().parent.parent.parent.parent
+    scripts_dir = current_path / "db-scripts"
+    script1_path = scripts_dir / "1create_tables.sql"
+
+    await run_sql_script(engine, str(script1_path))
