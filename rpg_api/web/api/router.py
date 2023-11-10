@@ -7,9 +7,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from rpg_api.db.dependencies import get_db_session
 from rpg_api.web.api import monitoring
+from rpg_api.web.api import auth
 
 api_router = APIRouter()
-api_router.include_router(monitoring.router)
+api_router.include_router(monitoring.router, prefix="/monitoring", tags=["monitoring"])
+api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+
+
+# TODO: Move to a separate file
 
 
 @api_router.get("/")

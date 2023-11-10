@@ -11,4 +11,3 @@ from rpg_api.db.models.models import (
     ClassAbility,
     CharacterAttribute,
 )
-    

@@ -4,6 +4,7 @@ from tempfile import gettempdir
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from yarl import URL
+from pydantic import SecretStr
 
 TEMP_DIR = Path(gettempdir())
 
@@ -45,6 +46,11 @@ class Settings(BaseSettings):
     db_pass: str = "rpg_api"
     db_base: str = "rpg_api"
     db_echo: bool = False
+
+    # Variables for the JWT
+    secret_key: SecretStr = SecretStr("secret")
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 20
 
     @property
     def db_url(self) -> URL:

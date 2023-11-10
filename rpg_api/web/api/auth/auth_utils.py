@@ -4,7 +4,7 @@ from typing import Any
 import jwt
 from passlib.context import CryptContext
 
-from rpg_api import exceptions as exc
+from rpg_api import exceptions as rpg_exc
 from rpg_api.settings import settings
 from rpg_api.utils import dtos
 
@@ -31,8 +31,8 @@ def _encode_token(data: dtos.TokenData, expires_at: datetime) -> str:
 
     return jwt.encode(
         to_encode,
-        settings.jwt_settings.secret_key.get_secret_value(),
-        algorithm=settings.jwt_settings.algorithm,
+        settings.secret_key.get_secret_value(),
+        algorithm=settings.algorithm,
     )
 
 
@@ -41,8 +41,7 @@ def create_access_token(data: dtos.TokenData) -> str:
 
     return _encode_token(
         data,
-        datetime.utcnow()
-        + timedelta(minutes=settings.jwt_settings.access_token_expire_minutes),
+        datetime.utcnow() + timedelta(minutes=settings.access_token_expire_minutes),
     )
 
 
@@ -52,13 +51,13 @@ def _decode_token(token: str) -> dict[str, Any]:
     try:
         payload = jwt.decode(
             token,
-            settings.jwt_settings.secret_key.get_secret_value(),
-            algorithms=[settings.jwt_settings.algorithm],
+            settings.secret_key.get_secret_value(),
+            algorithms=[settings.algorithm],
         )
         return payload
 
     except jwt.exceptions.PyJWTError:
-        raise exc.HttpUnauthorized(message="Invalid token")
+        raise rpg_exc.HttpUnauthorized(message="Invalid token")
 
 
 def decode_token(token: str) -> dtos.TokenData:

@@ -1,10 +1,11 @@
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 
-from rpg_api import exceptions as exc
+from rpg_api import exceptions as rpg_exc
 from rpg_api.utils import dtos
 from rpg_api.utils.daos import AllDAOs
-from rpg_api.web.apis.api.auth import auth_utils
+from rpg_api.web.api.auth import auth_utils
+from typing import Annotated
 
 
 class RpgHTTPBearer(HTTPBearer):
@@ -19,7 +20,7 @@ class RpgHTTPBearer(HTTPBearer):
             obj = await super().__call__(request)
             return obj.credentials if obj else None
         except HTTPException:
-            raise exc.HttpUnauthorized("Missing token.")
+            raise rpg_exc.HttpUnauthorized("Missing token.")
 
 
 auth_scheme = RpgHTTPBearer()
@@ -32,13 +33,16 @@ def get_token(token: str = Depends(auth_scheme)) -> str:
 
 async def get_current_user(
     token: str = Depends(get_token), daos: AllDAOs = Depends()
-) -> dtos.UserDTO:
+) -> dtos.BaseUserDTO:
     """Get current user from token data."""
     token_data = auth_utils.decode_token(token)
 
     try:
-        return await daos.user.get_by_id(
+        return await daos.base_user.get_by_id(
             token_data.user_id,  # type: ignore
         )
-    except exc.RowNotFoundError:
-        raise exc.HttpNotFound("Decoded user not found.")
+    except rpg_exc.RowNotFoundError:
+        raise rpg_exc.HttpNotFound("Decoded user not found.")
+
+
+GetCurrentUser = Annotated[dtos.BaseUserDTO, Depends(get_current_user)]

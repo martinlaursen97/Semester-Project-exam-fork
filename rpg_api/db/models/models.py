@@ -15,15 +15,15 @@ class BaseUser(Base):
 
     first_name: Mapped[str | None] = mapped_column(sa.String(50), default=None)
     last_name: Mapped[str | None] = mapped_column(sa.String(50), default=None)
-    email: Mapped[str] = mapped_column(CITEXT(50), unique=True)
+    email: Mapped[str] = mapped_column(CITEXT(100), unique=True)
     phone: Mapped[str | None] = mapped_column(sa.String(20), default=None)
-    password: Mapped[str | None] = mapped_column(sa.String(50))
-
+    password: Mapped[str] = mapped_column(sa.String(255))
     status: Mapped[UserStatus] = mapped_column(
         sa.Enum(UserStatus, name="user_status"), default=UserStatus.active
     )
-    relations: Mapped[list["Relation"]] = relationship()
-    base_characters: Mapped[list["BaseCharacter"]] = relationship()
+
+    # relations: Mapped[list["Relation"]] = relationship()
+    # base_characters: Mapped[list["BaseCharacter"]] = relationship()
 
 
 class AbilityType(Base):

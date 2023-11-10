@@ -1,5 +1,5 @@
-import operator
-from typing import Any, Awaitable, Callable, Generic, Iterable, Type, TypeVar
+from typing import Generic, TypeVar
+from collections.abc import Awaitable, Callable, Iterable
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
@@ -10,7 +10,7 @@ from sqlalchemy import exc as sa_exc
 from rpg_api import exceptions as intree_exc
 from rpg_api.db.base import Base
 from rpg_api.db.session import AsyncSessionWrapper as AsyncSession
-from rpg_api.db.session import ScalarResultWrapper
+from rpg_api import exceptions as rpg_exc
 
 Model = TypeVar("Model", bound=Base)
 BaseDTO = TypeVar("BaseDTO", bound=BaseModel)
@@ -24,8 +24,8 @@ class BaseDAO(Generic[Model, BaseDTO, InputDTO, UpdateDTO]):  # noqa: WPS338
 
     def __init__(
         self,
-        model: Type[Model],
-        base_dto: Type[BaseDTO],
+        model: type[Model],
+        base_dto: type[BaseDTO],
         session: AsyncSession,
     ):
         self.session = session
@@ -86,3 +86,15 @@ class BaseDAO(Generic[Model, BaseDTO, InputDTO, UpdateDTO]):  # noqa: WPS338
             if err is not None:
                 raise err
             raise exc
+
+    async def get_by_id(self, id: UUID) -> BaseDTO:
+        """Get an instance of the model from the database by id."""
+
+        query = sa.select(self.model).filter(self.model.id == id)
+        instance = await self.session.execute(query)
+        result = instance.scalars().first()
+
+        if result is None:
+            raise rpg_exc.RowNotFoundError(model_name=self.model.__name__)
+
+        return self.base_dto.model_validate(result)

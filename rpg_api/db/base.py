@@ -3,7 +3,7 @@ import uuid
 
 from rpg_api.db.meta import meta
 import sqlalchemy as sa
-from rpg_api import utils
+from rpg_api.utils import date_utils
 from datetime import datetime
 
 
@@ -16,5 +16,5 @@ class Base(DeclarativeBase):
         sa.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     created_at: Mapped[datetime] = mapped_column(
-        sa.DateTime(timezone=True), default=utils.get_datetime_utc()
+        sa.DateTime(timezone=True), default=date_utils.get_datetime_utc()
     )
