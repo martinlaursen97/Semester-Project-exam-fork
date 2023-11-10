@@ -7,7 +7,6 @@ from datetime import datetime
 from typing import Any
 from collections.abc import Callable
 
-import sqlalchemy as sa
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
