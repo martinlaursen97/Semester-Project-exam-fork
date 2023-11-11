@@ -21,6 +21,8 @@ httptools = "^0.6.0"
 loguru = "^0.7.0"
 sqlparse = "^0.4.4"
 ruff = "^0.0.292"
+passlib = "^1.7.4"
+pyjwt = "^2.8.0"
 motor = "^3.3.1"
 beanie = "^1.23.1"
 
@@ -109,7 +111,7 @@ select = [
     "D400", # first line should end with a period
 ]
 target-version = "py311"
-ignore = ["A003", "B008", "B905"]
+ignore = ["A001", "A002", "A003", "B008", "B904", "B905"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [
@@ -185,6 +187,9 @@ exclude = [
     "settings.py",
     "migrations",
     "__init__.py",
+    "dtos.py",
+    "models.py",
+    "dependencies.py",
 
 ] # Exclude a variety of commonly ignored directories.
 
