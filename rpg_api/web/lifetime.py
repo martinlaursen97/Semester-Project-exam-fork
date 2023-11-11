@@ -9,6 +9,7 @@ from rpg_api.db.postgres.meta import meta
 from sqlalchemy.sql import text
 from rpg_api.db.mongodb.models.base_user_model import MBaseUser
 from loguru import logger
+from fastapi.staticfiles import StaticFiles
 
 
 async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
@@ -82,6 +83,9 @@ def register_startup_event(
         _setup_mongodb(app)
         await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()
+        app.mount(
+            "/static", StaticFiles(directory="rpg_api/templates/static"), name="static"
+        )
 
     return _startup
 

@@ -4,6 +4,10 @@ from rpg_api.utils.dependencies import GetCurrentUser
 from rpg_api.web.api.auth import auth_utils as utils
 from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
+from fastapi.responses import HTMLResponse
+from fastapi import Request
+from starlette.responses import Response
+from rpg_api.services.templates import templates
 
 router = APIRouter()
 
@@ -64,3 +68,20 @@ async def get_me(
     """Get current user."""
 
     return dtos.DataResponse(data=current_user)
+
+
+@router.get(
+    "/login-html",
+    response_class=HTMLResponse,
+)
+async def login_html(
+    request: Request,
+) -> Response:
+    """Get current user."""
+
+    return templates.TemplateResponse(
+        "login.html",
+        {
+            "request": request,
+        },
+    )

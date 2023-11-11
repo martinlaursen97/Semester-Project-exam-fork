@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Log In</title>
+    <!-- <script src="rpg_api/templates/static/js.js" defer></script> -->
+</head>
+
+<body>
+    Login form
+    <form method="post">
+        <input type="email" name="email" placeholder="Email" value="user@example.com" required>
+        <input type="password" name="password" placeholder="Password" value="fagstian1" required>
+        <input type="submit" value="Log In">
+    </form>
+
+    <script defer>
+        // login
+        const loginForm = document.querySelector('form');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = loginForm.email.value;
+            const password = loginForm.password.value;
+            const data = {
+                email,
+                password
+            };
+            const url = 'http://localhost:7070/rpg_api/auth/login-email';
+            await fetch('login-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(async (response) => {
+                if (response.ok) {
+                    const responseJson = await response.json();
+                    const accessToken = responseJson.data.access_token;
+                    document.cookie = `access_token=${accessToken}`;
+                    return responseJson;
+                } else {
+                    throw new Error('Something went wrong');
+                }
+            })
+                .then((data) => {
+                    window.location.href = 'http://localhost:7070/rpg_api/html/world';
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        });
+    </script>
+</body>
+
+</html>
