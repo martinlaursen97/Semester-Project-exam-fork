@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from typing import Any
 from rpg_api.settings import settings
 from rpg_api.db.mongodb.dependencies import MongoClient
-from rpg_api.web.dtos.base_user import BaseUserInsert
+from rpg_api.web.dtos.base_user_mongo import BaseUserInsert
 
 router = APIRouter()
 

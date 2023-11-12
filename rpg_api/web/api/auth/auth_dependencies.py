@@ -38,8 +38,8 @@ async def get_current_user(
     token_data = auth_utils.decode_token(token)
 
     try:
-        return await daos.base_user.get_by_id(
-            token_data.user_id,  # type: ignore
+        return await daos.base_user.filter_first(
+            id=token_data.user_id,  # type: ignore
         )
     except rpg_exc.RowNotFoundError:
         raise rpg_exc.HttpNotFound("Decoded user not found.")

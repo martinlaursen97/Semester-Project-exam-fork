@@ -19,7 +19,7 @@ async def login(
 ) -> dtos.DataResponse[dtos.LoginResponse]:
     """Login by email and password."""
 
-    user = await daos.base_user.get_by_email(email=input_dto.email)
+    user = await daos.base_user.filter_first(email=input_dto.email)
 
     if user is None:
         raise rpg_exc.HttpUnauthorized("Wrong email or password")
@@ -43,7 +43,7 @@ async def register(
 ) -> dtos.DefaultCreatedResponse:
     """Register by email and password."""
 
-    user = await daos.base_user.get_by_email(email=input_dto.email)
+    user = await daos.base_user.filter(email=input_dto.email)
 
     if user:
         raise rpg_exc.HttpForbidden("User already exists")

@@ -11,10 +11,22 @@ from rpg_api.web.dtos.base_user_dtos import (
 )
 from rpg_api.core.dtos.base_schemas import (
     DataResponse,
-    DataResponse,
     EmptyDefaultResponse,
+    DataListResponse,
     DefaultResponse,
     SuccessAndMessage,
     DefaultCreatedResponse,
     OrmBasicModel,
+)
+from rpg_api.web.dtos.base_character_dtos import (
+    BaseCharacterDTO,
+    BaseCharacterInputDTO,
+    BaseCharacterUpdateDTO,
+    BaseCharacterNestedWithClassDTO,
+    BaseCharacterPartialInputDTO,
+)
+from rpg_api.web.dtos.base_class_dtos import (
+    BaseClassDTO,
+    BaseClassInputDTO,
+    BaseClassUpdateDTO,
 )

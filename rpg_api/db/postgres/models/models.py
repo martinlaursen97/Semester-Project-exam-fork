@@ -42,8 +42,8 @@ class BaseClass(Base):
     __tablename__ = "base_class"
 
     name: Mapped[str] = mapped_column(sa.String(50))
-    base_characters: Mapped[list["BaseCharacter"]] = relationship()
-    class_abilities: Mapped[list["ClassAbility"]] = relationship()
+    # base_characters: Mapped[list["BaseCharacter"]] = relationship()
+    # class_abilities: Mapped[list["ClassAbility"]] = relationship()
 
 
 class Attribute(Base):
@@ -93,8 +93,10 @@ class BaseCharacter(Base):
     xp: Mapped[int] = mapped_column(sa.Integer, default=1)
     money: Mapped[int] = mapped_column(sa.Integer, default=1)
 
-    locations: Mapped[list["CharacterLocation"]] = relationship()
-    attributes: Mapped[list["CharacterAttribute"]] = relationship()
+    base_class: Mapped["BaseClass"] = relationship(
+        "BaseClass", foreign_keys=[base_class_id]
+    )
+    user: Mapped["BaseUser"] = relationship("BaseUser", foreign_keys=[user_id])
 
 
 class CharacterLocation(Base):
