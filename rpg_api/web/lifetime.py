@@ -11,6 +11,9 @@ from rpg_api.db.mongodb.models.base_user_model import MBaseUser
 from loguru import logger
 from fastapi.staticfiles import StaticFiles
 
+from rpg_api.web.daos.base_class_dao import BaseClassDAO
+from rpg_api.web.dtos.base_class_dtos import BaseClassInputDTO
+
 
 async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
     """
@@ -63,6 +66,23 @@ async def _setup_mongodb_startup_data(app: FastAPI) -> None:  # pragma: no cover
     )
 
 
+async def _setup_startdata(app: FastAPI) -> None:  # pragma: no cover
+    """Create startup data for the postgresql database."""
+
+    session = app.state.db_session_factory()
+    base_class_dao = BaseClassDAO(session=session)
+
+    classes = ["Warrior", "Mage", "Shaman"]
+    db_classes = await base_class_dao.filter()
+
+    for class_name in classes:
+        if not any([db_class.name == class_name for db_class in db_classes]):
+            await base_class_dao.create(input_dto=BaseClassInputDTO(name=class_name))
+
+    await session.commit()
+    await session.close()
+
+
 def register_startup_event(
     app: FastAPI,
 ) -> Callable[[], Awaitable[None]]:  # pragma: no cover
@@ -80,6 +100,7 @@ def register_startup_event(
     async def _startup() -> None:  # noqa: WPS430
         app.middleware_stack = None
         await _setup_pg(app)
+        await _setup_startdata(app)
         _setup_mongodb(app)
         await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()

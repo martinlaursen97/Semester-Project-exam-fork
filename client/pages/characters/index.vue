@@ -31,13 +31,14 @@
       Name: {{ character.character_name }} Gender: {{ character.gender }} Alive:
       {{ character.alive }} Level: {{ character.level }} XP:
       {{ character.xp }} Money: {{ character.money }} Class:
-      {{ character.base_class.name }}
+      {{ character.base_class.name }} ID: {{ character.id }}
     </button>
   </div>
 </template>
 
 <script setup>
 import { get, post } from "~/requests";
+import { useCharacterStore } from "~/store/character";
 
 // data
 const characters = ref([]);
@@ -55,14 +56,13 @@ const router = useRouter();
 const fetchCharacters = async () => {
   const { data } = await get("/base-characters");
   characters.value = data.value.data;
-  console.log(data.value.data);
 };
 
 const fetchClasses = async () => {
   const { data } = await get("/base-classes");
 
   if (!data.value.data.length) {
-    throw new Error("No base classes");
+    return;
   }
   base_classes_dropdown.value = data.value.data;
 };
@@ -78,17 +78,10 @@ const createCharacter = async (e) => {
   characters.value.push(data.value.data);
 };
 
-const enterWorld = async (character) => {
-  //   const { data } = await post("/characters/enter-world", {
-  //     character_id: character.id,
-  //   });
-
-  //   const { access_token } = data.value.data;
-
-  //   if (!access_token) {
-  //     throw new Error("No access token");
-  //   }
-
+const enterWorld = async (char) => {
+  const characterStore = useCharacterStore();
+  const { setCharacter, getCharacter } = characterStore;
+  setCharacter(char);
   router.push("/world");
 };
 
