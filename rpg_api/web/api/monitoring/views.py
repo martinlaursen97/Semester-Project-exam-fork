@@ -2,7 +2,9 @@ from fastapi import APIRouter
 from typing import Any
 from rpg_api.settings import settings
 from rpg_api.db.mongodb.dependencies import MongoClient
+from rpg_api.db.neo4j.dependencies import Neo4jSession
 from rpg_api.web.dtos.base_user import BaseUserInsert
+from neo4j import AsyncSession
 
 router = APIRouter()
 
@@ -51,3 +53,35 @@ async def mongodb_insert(input_dto: BaseUserInsert, mongo_client: MongoClient) -
     await db.test_collection.insert_one(input_dto.model_dump())
 
     return await db.command("ping")
+
+
+@router.get("/example")
+async def read_example(session: Neo4jSession) -> dict[str, Any]:
+    result = await session.run("MATCH (n) RETURN n LIMIT 5")
+    items = []
+    async for record in result:
+        node = record["n"]
+
+        # Convert the node to a dict
+        node_data = {
+            "id": node.id,
+            "labels": list(node.labels),
+            "properties": dict(node),
+        }
+        items.append(node_data)
+    return {"items": items}
+
+
+@router.post("/add-node")
+async def add_node(
+    session: Neo4jSession, name: str = "", age: int = 0
+) -> dict[str, Any]:
+    cypher_query = "CREATE (n:Person {name: $name, age: $age}) RETURN n"
+    result = await session.run(cypher_query, name=name, age=age)
+    record = await result.single()
+    node = record["n"]
+    
+    # Convert the node to a dict
+    node_data = {"id": node.id, "labels": list(node.labels), "properties": dict(node)}
+
+    return {"node": node_data}

@@ -25,6 +25,7 @@ passlib = "^1.7.4"
 pyjwt = "^2.8.0"
 motor = "^3.3.1"
 beanie = "^1.23.1"
+neo4j = "^5.14.1"
 
 
 [tool.poetry.dev-dependencies]
