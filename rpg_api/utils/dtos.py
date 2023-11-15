@@ -30,3 +30,13 @@ from rpg_api.web.dtos.base_class_dtos import (
     BaseClassInputDTO,
     BaseClassUpdateDTO,
 )
+from rpg_api.web.dtos.place_dtos import (
+    PlaceDTO,
+    PlaceInputDTO,
+    PlaceUpdateDTO,
+)
+from rpg_api.web.dtos.character_location_dtos import (
+    CharacterLocationDTO,
+    CharacterLocationInputDTO,
+    CharacterLocationUpdateDTO,
+)

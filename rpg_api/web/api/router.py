@@ -10,6 +10,7 @@ from rpg_api.web.api import monitoring
 from rpg_api.web.api import auth
 from rpg_api.web.api import base_character
 from rpg_api.web.api import base_class
+from rpg_api.web.api import place
 
 api_router = APIRouter()
 api_router.include_router(monitoring.router, prefix="/monitoring", tags=["monitoring"])
@@ -20,6 +21,7 @@ api_router.include_router(
 api_router.include_router(
     base_class.router, prefix="/base-classes", tags=["base-classes"]
 )
+api_router.include_router(place.router, prefix="/places", tags=["places"])
 
 
 # TODO: Move to a separate file

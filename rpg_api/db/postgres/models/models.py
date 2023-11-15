@@ -84,6 +84,9 @@ class BaseCharacter(Base):
 
     base_class_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("base_class.id"))
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("base_user.id"))
+    character_location_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("character_location.id")
+    )
     gender: Mapped[Gender] = mapped_column(
         sa.Enum(Gender, name="gender"), default=Gender.other
     )
@@ -97,6 +100,9 @@ class BaseCharacter(Base):
         "BaseClass", foreign_keys=[base_class_id]
     )
     user: Mapped["BaseUser"] = relationship("BaseUser", foreign_keys=[user_id])
+    character_location: Mapped["CharacterLocation"] = relationship(
+        "CharacterLocation", foreign_keys=[character_location_id]
+    )
 
 
 class CharacterLocation(Base):
