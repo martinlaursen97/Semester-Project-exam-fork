@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from rpg_api.db.mongodb.utils import create_motor_client
 from beanie import init_beanie
+from rpg_api.db.postgres.utils import run_scripts
 from rpg_api.settings import settings
 from rpg_api.db.postgres.meta import meta
 from sqlalchemy.sql import text
@@ -36,7 +37,10 @@ async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
         await conn.run_sync(meta.create_all)
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
 
-    # await run_scripts(engine)
+    try:
+        await run_scripts(engine)
+    except Exception as e:
+        logger.info(e)
 
     await engine.dispose()
     logger.info("Setting up database")

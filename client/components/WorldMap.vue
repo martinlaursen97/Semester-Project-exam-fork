@@ -1,15 +1,20 @@
 <template>
-  <div class="container">
-    <canvas ref="canvasElement" style="border: 1px solid black" />
-    <div class="info-box">
-      <p v-if="selectedPoint">Selected Point:</p>
-      <ul v-if="selectedPoint">
-        <li>X: {{ selectedPoint.x }}</li>
-        <li>Y: {{ selectedPoint.y }}</li>
-        <li>Color: {{ selectedPoint.color }}</li>
-        <li>Circled: {{ selectedPoint.circled }}</li>
-        <li v-if="selectedPoint.circled">Radius: {{ selectedPoint.radius }}</li>
-      </ul>
+  <div>
+    <div class="container">
+      <canvas ref="canvasElement" style="border: 1px solid black" />
+      <div class="info-box">
+        <p v-if="selected">Selected Point:</p>
+        <div v-if="selected" class="json-box">
+          <pre>{{ selected }}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <button @click="moveUp">Up</button>
+      <button @click="moveDown">Down</button>
+      <button @click="moveLeft">Left</button>
+      <button @click="moveRight">Right</button>
     </div>
   </div>
 </template>
@@ -28,11 +33,11 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
-  placePositions: {
+  places: {
     type: Array,
     default: () => [],
   },
-  playerPosition: {
+  player: {
     type: Object,
     default: () => {},
   },
@@ -45,10 +50,10 @@ const scale = props.scale;
 const canvasElement = ref();
 const context = ref();
 
-const selectedPoint = ref(null);
+const selected = ref(null);
 
-var placePositionsArray = props.placePositions;
-var playerPosition = props.playerPosition;
+var placesArray = props.places;
+var player = props.player;
 
 onMounted(() => {
   context.value = canvasElement.value?.getContext("2d") || undefined;
@@ -63,38 +68,48 @@ onMounted(() => {
   render();
 });
 
-function insertPoint(x, y, color, circled = false, radius = 0) {
-  placePositionsArray.push({
-    x: x,
-    y: y,
-    color: color,
-    circled: circled,
-    radius: radius,
-  });
-}
+// emits: ["moveUp", "moveDown", "moveLeft", "moveRight"],
 
 function render() {
   context.value.clearRect(0, 0, width, height);
+  renderPlaces();
+  renderPlayer();
+}
 
+function renderPlayer() {
+  const characterLocation = player.character_location;
   const offsetX = (width - scale) / 2;
   const offsetY = (height - scale) / 2;
 
-  placePositionsArray.forEach((point) => {
-    context.value.fillStyle = point.color;
-    context.value?.fillRect(point.x + offsetX, point.y + offsetY, scale, scale);
+  drawPoint(
+    characterLocation.x + offsetX,
+    characterLocation.y + offsetY,
+    "red"
+  );
+}
 
-    if (point.circled) {
-      const circleOffsetX = width / 2;
-      const circleOffsetY = height / 2;
+function renderPlaces() {
+  const offsetX = (width - scale) / 2;
+  const offsetY = (height - scale) / 2;
 
-      drawCircleAroundPoint(
-        point.x + circleOffsetX,
-        point.y + circleOffsetY,
-        point.radius,
-        point.color
-      );
-    }
+  placesArray.forEach((point) => {
+    drawPoint(point.x + offsetX, point.y + offsetY, "blue");
+
+    const circleOffsetX = width / 2;
+    const circleOffsetY = height / 2;
+
+    drawCircleAroundPoint(
+      point.x + circleOffsetX,
+      point.y + circleOffsetY,
+      point.radius,
+      "red"
+    );
   });
+}
+
+function drawPoint(x, y, color) {
+  context.value.fillStyle = color;
+  context.value?.fillRect(x, y, scale, scale);
 }
 
 function drawCircleAroundPoint(x, y, radius, color) {
@@ -104,14 +119,27 @@ function drawCircleAroundPoint(x, y, radius, color) {
 }
 
 function selectPointAt(x, y) {
-  placePositionsArray.forEach((point) => {
+  const playerX = player.character_location.x;
+  const playerY = player.character_location.y;
+
+  const minX = playerX - scale / 2;
+  const maxX = playerX + scale / 2;
+  const minY = playerY - scale / 2;
+  const maxY = playerY + scale / 2;
+
+  if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
+    selected.value = { ...player };
+    return;
+  }
+
+  placesArray.forEach((point) => {
     const minX = point.x - scale / 2;
     const maxX = point.x + scale / 2;
     const minY = point.y - scale / 2;
     const maxY = point.y + scale / 2;
 
     if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
-      selectedPoint.value = { ...point };
+      selected.value = { ...point };
     }
   });
 }
@@ -125,6 +153,32 @@ function coordinateSystemClickEventListener(event) {
   const y = Math.round(event.clientY - rect.top - offsetY);
 
   selectPointAt(x, y);
+}
+
+const emit = defineEmits(["moveUp", "moveDown", "moveLeft", "moveRight"]);
+
+function moveUp() {
+  player.character_location.y -= scale;
+  render();
+  emit("moveUp");
+}
+
+function moveDown() {
+  player.character_location.y += scale;
+  render();
+  emit("moveDown");
+}
+
+function moveLeft() {
+  player.character_location.x -= scale;
+  render();
+  emit("moveLeft");
+}
+
+function moveRight() {
+  player.character_location.x += scale;
+  render();
+  emit("moveRight");
 }
 </script>
 

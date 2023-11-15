@@ -1,13 +1,10 @@
 from fastapi import FastAPI
-from rpg_api.enums import Gender
+from rpg_api.web.api.auth import auth_utils
 
 from rpg_api.web.daos.base_class_dao import BaseClassDAO
-from rpg_api.web.daos.character_location_dao import CharacterLocationDAO
 from rpg_api.web.daos.place_dao import PlaceDAO
 from rpg_api.web.daos.base_user_dao import BaseUserDAO
-from rpg_api.web.daos.base_character_dao import BaseCharacterDAO
 from rpg_api.utils import dtos
-import random
 
 
 async def create_startup_data_pg(app: FastAPI) -> None:  # pragma: no cover
@@ -16,8 +13,6 @@ async def create_startup_data_pg(app: FastAPI) -> None:  # pragma: no cover
     await _create_startup_classes(app)
     await _create_startup_places(app)
     await _create_startup_users(app)
-    await _create_startup_characters(app)
-    # await _create_startup_character_locations(app)
 
 
 async def _create_startup_classes(app: FastAPI) -> None:  # pragma: no cover
@@ -66,69 +61,23 @@ async def _create_startup_users(app: FastAPI) -> None:  # pragma: no cover
     """Create 3 startup users for the postgresql database."""
     session = app.state.db_session_factory()
     user_dao = BaseUserDAO(session=session)
-    try:
-        input_users = [
-            dtos.BaseUserInputDTO(
-                email=f"user{i}@example.com",
-                password="password",
-                first_name="John",
-                last_name="Doe",
-                phone="123456789",
-            )
-            for i in range(3)
-        ]
 
-        db_users = await user_dao.filter()
-
-        for user in input_users:
-            if not any([db_user.email == user.email for db_user in db_users]):
-                await user_dao.create(input_dto=user)
-    finally:
-        await session.commit()
-        await session.close()
-
-
-async def _create_startup_characters(app: FastAPI) -> None:  # pragma: no cover
-    """Create startup characters for all users."""
-    session = app.state.db_session_factory()
-
-    character_dao = BaseCharacterDAO(session=session)
-    user_dao = BaseUserDAO(session=session)
-    class_dao = BaseClassDAO(session=session)
+    input_users = [
+        dtos.BaseUserInputDTO(
+            email=f"user{i}@example.com",
+            password=auth_utils.hash_password("password"),
+            first_name="John",
+            last_name="Doe",
+            phone="123456789",
+        )
+        for i in range(3)
+    ]
 
     db_users = await user_dao.filter()
-    db_classes = await class_dao.filter()
 
-    for user in db_users:
-        for class_ in db_classes:
-            input_character = dtos.BaseCharacterInputDTO(
-                base_class_id=class_.id,
-                user_id=user.id,
-                gender=random.choice(list(Gender)),
-                character_name=f"{class_.name} {user.first_name}",
-            )
-            await character_dao.create(input_dto=input_character)
-
-    await session.commit()
-    await session.close()
-
-
-async def _create_startup_character_locations(app: FastAPI) -> None:  # pragma: no cover
-    """Create startup character locations for all characters."""
-
-    session = app.state.db_session_factory()
-    character_location_dao = CharacterLocationDAO(session=session)
-    character_dao = BaseCharacterDAO(session=session)
-
-    db_characters = await character_dao.filter()
-
-    for character in db_characters:
-        input_character_location = dtos.CharacterLocationInputDTO(
-            base_character_id=character.id,
-            x=random.randint(-200, 200),
-            y=random.randint(-200, 200),
-        )
-        await character_location_dao.create(input_dto=input_character_location)
+    for user in input_users:
+        if not any([db_user.email == user.email for db_user in db_users]):
+            await user_dao.create(input_dto=user)
 
     await session.commit()
     await session.close()

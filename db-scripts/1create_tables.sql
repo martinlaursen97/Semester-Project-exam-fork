@@ -5,7 +5,7 @@
 -- DROP TABLE IF EXISTS attribute CASCADE;
 -- DROP TABLE IF EXISTS place CASCADE;
 -- DROP TABLE IF EXISTS relation CASCADE;
--- DROP TABLE IF EXISTS base_character CASCADE;
+-- DROP TABLE IF EXISTS character CASCADE;
 -- DROP TABLE IF EXISTS character_location CASCADE;
 -- DROP TABLE IF EXISTS gender CASCADE;
 -- DROP TABLE IF EXISTS ability CASCADE;
@@ -83,7 +83,7 @@
 
 
 
--- CREATE TABLE base_character(
+-- CREATE TABLE character(
 -- 	id INT GENERATED ALWAYS AS IDENTITY,
 -- 	class_id INT NOT NULL,
 -- 	user_id INT NOT NULL,
@@ -111,7 +111,7 @@
 -- 	y INT NOT NULL,
 -- 	created_at DATE NOT NULL,
 -- 	PRIMARY KEY(id),
--- 	CONSTRAINT fk_character_char_location FOREIGN KEY(character_id) REFERENCES base_character(id) ON
+-- 	CONSTRAINT fk_character_char_location FOREIGN KEY(character_id) REFERENCES character(id) ON
 -- 	DELETE CASCADE
 -- );
 
@@ -147,7 +147,7 @@
 -- 	value int NOT NULL,
 -- 	created_at DATE NOT NULL,
 -- 	PRIMARY KEY(id),
--- 	CONSTRAINT fk_character_attribute FOREIGN KEY(character_id) REFERENCES base_character(id) ON
+-- 	CONSTRAINT fk_character_attribute FOREIGN KEY(character_id) REFERENCES character(id) ON
 -- 	DELETE CASCADE,
 -- 	CONSTRAINT fk_attribute_attribute FOREIGN KEY(attribute_id) REFERENCES attribute(id) ON
 -- 	DELETE CASCADE
@@ -177,7 +177,7 @@ BEGIN
             cl.x,
             cl.y
         FROM character_location cl
-        JOIN base_character bc on cl.id = bc.id
+        JOIN character bc on cl.id = bc.id
         where bc.id = bc_id
     );
 END
@@ -235,6 +235,7 @@ $function$
 ;
 
 
+
 -- Triggers
 CREATE TRIGGER check_place_overlap_trigger
 BEFORE INSERT ON place
@@ -255,7 +256,7 @@ SELECT
     bc.xp,
     bc.money
 FROM
-    base_character bc
+    character bc
 JOIN
     base_class c ON bc.base_class_id = c.id;
     

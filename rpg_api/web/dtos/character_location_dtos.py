@@ -7,7 +7,13 @@ class CharacterLocationDTO(OrmBasicModel):
     """DTO for CharacterLocation."""
 
     id: UUID
-    base_character_id: UUID
+    x: int
+    y: int
+
+
+class CharacterLocationSimpleDTO(OrmBasicModel):
+    """DTO for CharacterLocation."""
+
     x: int
     y: int
 
@@ -15,7 +21,6 @@ class CharacterLocationDTO(OrmBasicModel):
 class CharacterLocationInputDTO(BaseModel):
     """Input DTO for CharacterLocation."""
 
-    base_character_id: UUID
     x: int
     y: int
 
@@ -23,6 +28,5 @@ class CharacterLocationInputDTO(BaseModel):
 class CharacterLocationUpdateDTO(BaseModel):
     """Update DTO for CharacterLocation."""
 
-    base_character_id: UUID | None = None
     x: int | None = None
     y: int | None = None

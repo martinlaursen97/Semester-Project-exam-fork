@@ -87,17 +87,17 @@ INSERT INTO relation (
 	user1_id, user2_id,created_at)
 	VALUES(2,3, NOW());
 
--- Base_character
-INSERT INTO base_character  (
+-- character
+INSERT INTO character  (
 	class_id, user_id, gender_id, character_name, alive, level, xp, money, created_at)
     VALUES(1,1,1,'Humble gaming', true, 9000, 99999, 999999, NOW());
-INSERT INTO base_character  (
+INSERT INTO character  (
 	class_id, user_id, gender_id, character_name, alive, level, xp, money, created_at)
     VALUES(2,1,1,'Gamer', true, 9000, 99999, 999999, NOW());
-INSERT INTO base_character  (
+INSERT INTO character  (
 	class_id, user_id, gender_id, character_name, alive, level, xp, money, created_at)
     VALUES(3,1,1,'sniger', true, 9000, 99999, 999999, NOW());
-INSERT INTO base_character  (
+INSERT INTO character  (
 	class_id, user_id, gender_id, character_name, alive, level, xp, money, created_at)
     VALUES(4,1,1,'Moshizzl3', true, 9000, 99999, 999999, NOW());
     

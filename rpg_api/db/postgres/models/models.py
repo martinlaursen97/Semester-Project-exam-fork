@@ -1,6 +1,5 @@
 from rpg_api.db.postgres.base import Base
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import CITEXT
 from sqlalchemy.orm import Mapped, mapped_column
 from rpg_api.enums import UserStatus, Gender
 import uuid
@@ -15,7 +14,7 @@ class BaseUser(Base):
 
     first_name: Mapped[str | None] = mapped_column(sa.String(50), default=None)
     last_name: Mapped[str | None] = mapped_column(sa.String(50), default=None)
-    email: Mapped[str] = mapped_column(CITEXT(100), unique=True)
+    email: Mapped[str] = mapped_column(sa.String(100), unique=True)
     phone: Mapped[str | None] = mapped_column(sa.String(20), default=None)
     password: Mapped[str] = mapped_column(sa.String(255))
     status: Mapped[UserStatus] = mapped_column(
@@ -23,7 +22,7 @@ class BaseUser(Base):
     )
 
     # relations: Mapped[list["Relation"]] = relationship()
-    # base_characters: Mapped[list["BaseCharacter"]] = relationship()
+    # characters: Mapped[list["Character"]] = relationship()
 
 
 class AbilityType(Base):
@@ -42,7 +41,7 @@ class BaseClass(Base):
     __tablename__ = "base_class"
 
     name: Mapped[str] = mapped_column(sa.String(50))
-    # base_characters: Mapped[list["BaseCharacter"]] = relationship()
+    # characters: Mapped[list["Character"]] = relationship()
     # class_abilities: Mapped[list["ClassAbility"]] = relationship()
 
 
@@ -77,15 +76,22 @@ class Relation(Base):
     user2_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("base_user.id"))
 
 
-class BaseCharacter(Base):
-    """Model for base character."""
+class Character(Base):
+    """Model for character."""
 
-    __tablename__ = "base_character"
+    __tablename__ = "character"
 
-    base_class_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("base_class.id"))
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("base_user.id"))
-    character_location_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("character_location.id")
+    base_class_id: Mapped[uuid.UUID | None] = mapped_column(
+        sa.UUID(as_uuid=True),
+        ForeignKey("base_class.id", ondelete="SET NULL"),
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        sa.UUID(as_uuid=True),
+        ForeignKey("base_user.id", ondelete="CASCADE"),
+    )
+    character_location_id: Mapped[uuid.UUID | None] = mapped_column(
+        sa.UUID(as_uuid=True),
+        ForeignKey("character_location.id", ondelete="SET NULL"),
     )
     gender: Mapped[Gender] = mapped_column(
         sa.Enum(Gender, name="gender"), default=Gender.other
@@ -100,8 +106,10 @@ class BaseCharacter(Base):
         "BaseClass", foreign_keys=[base_class_id]
     )
     user: Mapped["BaseUser"] = relationship("BaseUser", foreign_keys=[user_id])
-    character_location: Mapped["CharacterLocation"] = relationship(
-        "CharacterLocation", foreign_keys=[character_location_id]
+    character_location: Mapped["CharacterLocation | None"] = relationship(
+        "CharacterLocation",
+        foreign_keys=[character_location_id],
+        uselist=False,
     )
 
 
@@ -110,11 +118,8 @@ class CharacterLocation(Base):
 
     __tablename__ = "character_location"
 
-    base_character_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("base_character.id")
-    )
-    x: Mapped[int] = mapped_column(sa.Integer)
-    y: Mapped[int] = mapped_column(sa.Integer)
+    x: Mapped[int] = mapped_column(sa.Integer, default=0)
+    y: Mapped[int] = mapped_column(sa.Integer, default=0)
 
 
 class Ability(Base):
@@ -142,8 +147,6 @@ class CharacterAttribute(Base):
 
     __tablename__ = "character_attributes"
 
-    base_character_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("base_character.id")
-    )
+    character_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("character.id"))
     attribute_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("attribute.id"))
     value: Mapped[int] = mapped_column(sa.Integer)

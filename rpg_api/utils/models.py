@@ -5,7 +5,7 @@ from rpg_api.db.postgres.models.models import (
     Attribute,
     Place,
     Relation,
-    BaseCharacter,
+    Character,
     CharacterLocation,
     Ability,
     ClassAbility,

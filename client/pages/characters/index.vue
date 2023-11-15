@@ -54,7 +54,7 @@ const character_name = ref("");
 const router = useRouter();
 
 const fetchCharacters = async () => {
-  const { data } = await get("/base-characters");
+  const { data } = await get("/characters");
   characters.value = data.value.data;
 };
 
@@ -69,13 +69,13 @@ const fetchClasses = async () => {
 
 const createCharacter = async (e) => {
   e.preventDefault();
-  const { data } = await post("/base-characters", {
+  await post("/characters", {
     character_name: character_name.value,
     base_class_id: selected_class.value,
     gender: selected_gender.value,
   });
 
-  characters.value.push(data.value.data);
+  await fetchCharacters();
 };
 
 const enterWorld = async (char) => {

@@ -1,5 +1,5 @@
 from rpg_api.web.daos.base_user_dao import BaseUserDAO
-from rpg_api.web.daos.base_character_dao import BaseCharacterDAO
+from rpg_api.web.daos.character_dao import CharacterDAO
 from rpg_api.web.daos.base_class_dao import BaseClassDAO
 from rpg_api.web.daos.place_dao import PlaceDAO
 from rpg_api.web.daos.character_location_dao import CharacterLocationDAO
@@ -23,9 +23,9 @@ class AllDAOs:
         return BaseUserDAO(session=self.session)
 
     @property
-    def base_character(self) -> BaseCharacterDAO:
-        """Base character DAO."""
-        return BaseCharacterDAO(session=self.session)
+    def character(self) -> CharacterDAO:
+        """Character DAO."""
+        return CharacterDAO(session=self.session)
 
     @property
     def base_class(self) -> BaseClassDAO:

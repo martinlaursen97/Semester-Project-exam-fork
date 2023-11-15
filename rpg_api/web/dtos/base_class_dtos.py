@@ -10,6 +10,12 @@ class BaseClassDTO(OrmBasicModel):
     name: str
 
 
+class BaseClassSimpleDTO(OrmBasicModel):
+    """Base class simple DTO."""
+
+    name: str
+
+
 class BaseClassInputDTO(BaseModel):
     """Base class input DTO."""
 

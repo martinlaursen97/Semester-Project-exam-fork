@@ -18,7 +18,7 @@ async def test_health(client: AsyncClient, fastapi_app: FastAPI) -> None:
 
 
 @pytest.mark.anyio
-async def test_test_end_point_base_character(client: AsyncClient) -> None:
+async def test_test_end_point_character(client: AsyncClient) -> None:
     """
     Test the test endpoint we have.
 

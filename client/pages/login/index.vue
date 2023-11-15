@@ -11,8 +11,8 @@
 <script setup>
 import { post } from "~/requests";
 
-const email = ref("user@example.com");
-const password = ref("fagstian1");
+const email = ref("user0@example.com");
+const password = ref("password");
 
 const router = useRouter();
 
