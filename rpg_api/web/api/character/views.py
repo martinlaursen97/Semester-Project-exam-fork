@@ -4,8 +4,15 @@ from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
 from sqlalchemy import orm
 from rpg_api.utils.dependencies import GetCharacterIfUserOwns
+from pydantic import BaseModel
 
 router = APIRouter()
+
+
+class CharacterPlaceDTO(BaseModel):
+    """Character place DTO."""
+
+    name: str
 
 
 @router.get("")
@@ -25,10 +32,23 @@ async def characters_me(
 
     return dtos.DataListResponse(
         data=[
-            dtos.CharacterNestedWithClassAndLocationDTO.model_validate(c)
-            for c in characters
+            dtos.CharacterNestedWithClassAndLocationDTO.model_validate(character)
+            for character in characters
         ]
     )
+
+
+@router.get("/place/{character_id}")
+async def character_place_details(
+    daos: GetDAOs,
+    character: GetCharacterIfUserOwns,
+) -> dtos.DataResponse[CharacterPlaceDTO]:
+    """Get place of character."""
+
+    place_name = await daos.character.get_place(
+        character_id=character.id,
+    )
+    return dtos.DataResponse(data=CharacterPlaceDTO(name=place_name))
 
 
 @router.post("")

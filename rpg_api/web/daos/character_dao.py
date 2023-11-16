@@ -8,6 +8,8 @@ from rpg_api.utils.dtos import (
     CharacterUpdateDTO,
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
+from uuid import UUID
+import sqlalchemy as sa
 
 
 class CharacterDAO(
@@ -26,3 +28,17 @@ class CharacterDAO(
             model=Character,
             base_dto=CharacterDTO,
         )
+
+    async def get_place(self, character_id: UUID) -> str:
+        """Get character place."""
+
+        # Call postgresql function `get_character_place`
+        query = """
+            SELECT * FROM public.get_character_place(:character_id :: uuid) as name;
+        """
+
+        result = await self.session.execute(
+            sa.text(query), {"character_id": character_id}
+        )
+
+        return result.scalar_one()

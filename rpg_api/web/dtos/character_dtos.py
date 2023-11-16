@@ -62,6 +62,13 @@ class CharacterNestedWithClassAndLocationDTO(CharacterSimpleDTO):
     character_location: CharacterLocationSimpleDTO
 
 
+class CharacterPlaceDTO(BaseModel):
+    """Character place DTO."""
+
+    id: UUID
+    place: str
+
+
 class CharacterUpdateDTO(BaseModel):
     """Character update DTO."""
 

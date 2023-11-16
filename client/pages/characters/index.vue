@@ -80,7 +80,9 @@ const createCharacter = async (e) => {
 
 const enterWorld = async (char) => {
   const characterStore = useCharacterStore();
-  const { setCharacter, getCharacter } = characterStore;
+  const { setCharacter } = characterStore;
+  const { data } = await get(`/characters/place/${char.id}`);
+  char.place = data.value.data;
   setCharacter(char);
   router.push("/world");
 };

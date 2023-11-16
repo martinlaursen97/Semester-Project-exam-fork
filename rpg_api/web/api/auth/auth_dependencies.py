@@ -66,6 +66,4 @@ async def get_character_if_user_owns(
 
 
 GetCharacterIfUserOwns = Annotated[Character, Depends(get_character_if_user_owns)]
-
-
 GetCurrentUser = Annotated[dtos.BaseUserDTO, Depends(get_current_user)]

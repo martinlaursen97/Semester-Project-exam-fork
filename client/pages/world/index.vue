@@ -17,6 +17,7 @@
       @moveLeft="moveLeft"
       @moveRight="moveRight"
     />
+    <!-- // input form for "place", name, x, y, radius -->
   </div>
 </template>
 

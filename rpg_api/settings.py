@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     # Variables for the JWT
     secret_key: SecretStr = SecretStr("secret")
     algorithm: str = "HS256"
-    access_token_expire_minutes: int = 20
+    access_token_expire_minutes: int = 600
 
     # Variables for the mongodb
     mongo_host: str = "localhost"

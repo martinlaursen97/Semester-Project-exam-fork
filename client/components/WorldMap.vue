@@ -20,6 +20,7 @@
 </template>
 
 <script setup>
+import { get } from "~/requests";
 const props = defineProps({
   height: {
     type: Number,
@@ -55,6 +56,14 @@ const selected = ref(null);
 var placesArray = props.places;
 var player = props.player;
 
+watch(player.character_location, async () => {
+  const { data } = await get(`/characters/place/${player.id}`);
+
+  if (selected.value.id === player.id) {
+    selected.value.place = data.value.data;
+  }
+});
+
 onMounted(() => {
   context.value = canvasElement.value?.getContext("2d") || undefined;
   canvasElement.value.height = height;
@@ -67,8 +76,6 @@ onMounted(() => {
 
   render();
 });
-
-// emits: ["moveUp", "moveDown", "moveLeft", "moveRight"],
 
 function render() {
   context.value.clearRect(0, 0, width, height);
@@ -113,6 +120,7 @@ function drawPoint(x, y, color) {
 }
 
 function drawCircleAroundPoint(x, y, radius, color) {
+  context.value.fillStyle = color;
   context.value?.beginPath();
   context.value?.arc(x, y, radius, 0, 2 * Math.PI);
   context.value?.stroke();
