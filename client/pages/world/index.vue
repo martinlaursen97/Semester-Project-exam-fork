@@ -17,7 +17,28 @@
       @moveLeft="moveLeft"
       @moveRight="moveRight"
     />
-    <!-- // input form for "place", name, x, y, radius -->
+    <!-- <h2>Place form</h2>
+    <form @submit.prevent="insertPlace">
+      <label for="placeName">Name</label>
+      <input
+        type="text"
+        id="placeName"
+        v-model="placeName"
+        placeholder="Place name"
+      />
+      <label for="placeX">X</label>
+      <input type="number" id="placeX" v-model="placeX" placeholder="Place X" />
+      <label for="placeY">Y</label>
+      <input type="number" id="placeY" v-model="placeY" placeholder="Place Y" />
+      <label for="placeRadius">Radius</label>
+      <input
+        type="number"
+        id="placeRadius"
+        v-model="placeRadius"
+        placeholder="Place Radius"
+      />
+      <button type="submit">Create place</button>
+    </form> -->
   </div>
 </template>
 

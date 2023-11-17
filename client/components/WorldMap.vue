@@ -65,34 +65,40 @@ watch(player.character_location, async () => {
 });
 
 onMounted(() => {
+  initializeCanvas();
+  setupCanvasClickListener();
+  render();
+});
+
+function initializeCanvas() {
   context.value = canvasElement.value?.getContext("2d") || undefined;
   canvasElement.value.height = height;
   canvasElement.value.width = width;
+}
 
+function setupCanvasClickListener() {
   canvasElement.value.addEventListener(
     "click",
     coordinateSystemClickEventListener
   );
-
-  render();
-});
+}
 
 function render() {
-  context.value.clearRect(0, 0, width, height);
+  clearCanvas();
   renderPlaces();
   renderPlayer();
 }
 
+function clearCanvas() {
+  context.value.clearRect(0, 0, width, height);
+}
+
 function renderPlayer() {
-  const characterLocation = player.character_location;
+  const { x, y } = player.character_location;
   const offsetX = (width - scale) / 2;
   const offsetY = (height - scale) / 2;
 
-  drawPoint(
-    characterLocation.x + offsetX,
-    characterLocation.y + offsetY,
-    "red"
-  );
+  drawPoint(x + offsetX, y + offsetY, "red");
 }
 
 function renderPlaces() {
@@ -115,41 +121,46 @@ function renderPlaces() {
 }
 
 function drawPoint(x, y, color) {
-  context.value.fillStyle = color;
+  setDrawingStyle(color);
   context.value?.fillRect(x, y, scale, scale);
 }
 
 function drawCircleAroundPoint(x, y, radius, color) {
-  context.value.fillStyle = color;
+  setDrawingStyle(color);
   context.value?.beginPath();
   context.value?.arc(x, y, radius, 0, 2 * Math.PI);
   context.value?.stroke();
 }
 
+function setDrawingStyle(color) {
+  context.value.fillStyle = color;
+}
+
 function selectPointAt(x, y) {
-  const playerX = player.character_location.x;
-  const playerY = player.character_location.y;
+  const { x: playerX, y: playerY } = player.character_location;
+  const playerInRange = isPointInRange(x, y, playerX, playerY, scale / 2);
 
-  const minX = playerX - scale / 2;
-  const maxX = playerX + scale / 2;
-  const minY = playerY - scale / 2;
-  const maxY = playerY + scale / 2;
-
-  if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
+  if (playerInRange) {
     selected.value = { ...player };
     return;
   }
 
   placesArray.forEach((point) => {
-    const minX = point.x - scale / 2;
-    const maxX = point.x + scale / 2;
-    const minY = point.y - scale / 2;
-    const maxY = point.y + scale / 2;
+    const pointInRange = isPointInRange(x, y, point.x, point.y, scale / 2);
 
-    if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
+    if (pointInRange) {
       selected.value = { ...point };
     }
   });
+}
+
+function isPointInRange(x, y, targetX, targetY, range) {
+  const minX = targetX - range;
+  const maxX = targetX + range;
+  const minY = targetY - range;
+  const maxY = targetY + range;
+
+  return x >= minX && x <= maxX && y >= minY && y <= maxY;
 }
 
 function coordinateSystemClickEventListener(event) {

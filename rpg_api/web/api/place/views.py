@@ -1,6 +1,8 @@
+from loguru import logger
 from rpg_api.utils import dtos
 from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
+from rpg_api import exceptions as rpg_exc
 
 
 router = APIRouter()
@@ -16,4 +18,24 @@ async def get_places(
 
     return dtos.DataListResponse(
         data=[dtos.PlaceBaseDTO.model_validate(c) for c in places]
+    )
+
+
+@router.post("")
+async def create_place(
+    input_dto: dtos.PlaceInputDTO,
+    daos: GetDAOs,
+) -> dtos.DefaultCreatedResponse:
+    """Create place."""
+
+    try:
+        created_place_id = await daos.place.create(input_dto)
+    except Exception as e:
+        logger.exception(e)
+        return dtos.DefaultCreatedResponse(
+            message="Failed to create place.",
+        )
+
+    return dtos.DefaultCreatedResponse(
+        data=created_place_id,
     )
