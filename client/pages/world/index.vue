@@ -3,12 +3,13 @@
     <h1>World</h1>
     <h2>Character</h2>
     <p>
-      Name: {{ character.character_name }} Gender: {{ character.gender }} Alive:
+      Name: {{ characterName }} Gender: {{ character.gender }} Alive:
       {{ character.alive }} Level: {{ character.level }} XP:
       {{ character.xp }} Money: {{ character.money }} Class:
       {{ character.base_class.name }} ID: {{ character.id }}
     </p>
     <WorldMap
+      v-if="!loading && !error"
       :places="places"
       :player="character"
       :height="500"
@@ -19,33 +20,15 @@
       @moveLeft="moveLeft"
       @moveRight="moveRight"
     />
-    <!-- <h2>Place form</h2>
-    <form @submit.prevent="insertPlace">
-      <label for="placeName">Name</label>
-      <input
-        type="text"
-        id="placeName"
-        v-model="placeName"
-        placeholder="Place name"
-      />
-      <label for="placeX">X</label>
-      <input type="number" id="placeX" v-model="placeX" placeholder="Place X" />
-      <label for="placeY">Y</label>
-      <input type="number" id="placeY" v-model="placeY" placeholder="Place Y" />
-      <label for="placeRadius">Radius</label>
-      <input
-        type="number"
-        id="placeRadius"
-        v-model="placeRadius"
-        placeholder="Place Radius"
-      />
-      <button type="submit">Create place</button>
-    </form> -->
+    <div v-else>
+      <p v-if="loading">Loading world...</p>
+      <p v-if="error">Error loading world: {{ error }}</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { get, post, update } from "~/requests";
+import { get, update } from "~/requests";
 import { useCharacterStore } from "~/store/character";
 
 const characterStore = useCharacterStore();
@@ -54,10 +37,25 @@ const character = ref(getCharacter());
 
 const places = ref([]);
 const scale = 10;
+const loading = ref(true);
+const error = ref(null);
+
+const characterName = computed(() => character.value.character_name);
+
+onMounted(() => {
+  loadWorld();
+});
 
 const loadWorld = async () => {
-  const { data } = await get("/places");
-  places.value = data.value.data;
+  try {
+    const { data } = await get("/places");
+    places.value = data.value?.data;
+  } catch (err) {
+    console.error("Error loading world:", err);
+    error.value = "Failed to load world data.";
+  } finally {
+    loading.value = false;
+  }
 };
 
 const moveUp = async () => {
@@ -80,6 +78,4 @@ const moveRight = async () => {
     x: character.value.character_location.x + scale,
   });
 };
-
-await loadWorld();
 </script>

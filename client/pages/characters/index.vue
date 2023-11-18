@@ -40,53 +40,60 @@
 import { get, post } from "~/requests";
 import { useCharacterStore } from "~/store/character";
 
-// data
 const characters = ref([]);
-
-// form data
 const base_classes_dropdown = ref([]);
-
-// selected values
 const selected_class = ref("");
 const selected_gender = ref("");
 const character_name = ref("");
-
 const router = useRouter();
 
 const fetchCharacters = async () => {
-  const { data } = await get("/characters");
-  characters.value = data.value.data;
+  try {
+    const { data } = await get("/characters");
+    characters.value = data.value?.data;
+  } catch (error) {
+    console.error("Error fetching characters:", error);
+  }
 };
 
 const fetchClasses = async () => {
-  const { data } = await get("/base-classes");
-
-  if (!data.value.data.length) {
-    return;
+  try {
+    const { data } = await get("/base-classes");
+    base_classes_dropdown.value = data.value?.data;
+  } catch (error) {
+    console.error("Error fetching base classes:", error);
   }
-  base_classes_dropdown.value = data.value.data;
 };
 
-const createCharacter = async (e) => {
-  e.preventDefault();
-  await post("/characters", {
-    character_name: character_name.value,
-    base_class_id: selected_class.value,
-    gender: selected_gender.value,
-  });
+const createCharacter = async () => {
+  try {
+    await post("/characters", {
+      character_name: character_name.value,
+      base_class_id: selected_class.value,
+      gender: selected_gender.value,
+    });
 
-  await fetchCharacters();
+    await fetchCharacters();
+  } catch (error) {
+    console.error("Error creating character:", error);
+  }
 };
 
 const enterWorld = async (char) => {
-  const characterStore = useCharacterStore();
-  const { setCharacter } = characterStore;
-  const { data } = await get(`/characters/place/${char.id}`);
-  char.place = data.value.data;
-  setCharacter(char);
-  router.push("/world");
+  try {
+    const characterStore = useCharacterStore();
+    const { setCharacter } = characterStore;
+    const { data } = await get(`/characters/place/${char.id}`);
+    char.place = data.value.data;
+    setCharacter(char);
+    router.push("/world");
+  } catch (error) {
+    console.error("Error entering world:", error);
+  }
 };
 
-await fetchCharacters();
-await fetchClasses();
-</script>;
+onMounted(() => {
+  fetchCharacters();
+  fetchClasses();
+});
+</script>

@@ -7,18 +7,21 @@ from rpg_api import exceptions as rpg_exc
 
 router = APIRouter()
 
+import asyncio
+
 
 @router.get("")  # , dependencies=[Depends(get_current_user)])
 async def get_places(
     daos: GetDAOs,
-) -> dtos.DataListResponse[dtos.PlaceBaseDTO]:
+) -> dtos.DataListResponse[dtos.PlaceDTO]:
     """Get all places."""
 
     places = await daos.place.filter()
 
-    return dtos.DataListResponse(
-        data=[dtos.PlaceBaseDTO.model_validate(c) for c in places]
-    )
+    # loading example
+    await asyncio.sleep(1)
+
+    return dtos.DataListResponse(data=[dtos.PlaceDTO.model_validate(c) for c in places])
 
 
 @router.post("")

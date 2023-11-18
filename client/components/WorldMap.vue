@@ -77,12 +77,24 @@ function clearCanvas() {
 
 function renderPlayer() {
   const { x, y } = player.character_location;
-  drawPoint(x + offset.value.x, y + offset.value.y, "red");
+  drawPoint(
+    x + offset.value.x,
+    y + offset.value.y,
+    selected.value?.id === player.id ? "green" : "red"
+  );
 }
 
 function renderPlaces() {
+  if (!places) {
+    return;
+  }
+
   places.forEach((point) => {
-    drawPoint(point.x + offset.value.x, point.y + offset.value.y, "blue");
+    drawPoint(
+      point.x + offset.value.x,
+      point.y + offset.value.y,
+      selected.value?.id === point.id ? "green" : "blue"
+    );
     drawCircleAroundPoint(
       point.x + width / 2,
       point.y + height / 2,
@@ -108,12 +120,17 @@ function setDrawingStyle(color) {
   context.value.fillStyle = color;
 }
 
+function setSelected(point) {
+  selected.value = { ...point };
+  render();
+}
+
 function selectPointAt(x, y) {
   const { x: playerX, y: playerY } = player.character_location;
   const playerInRange = isPointInRange(x, y, playerX, playerY, scale / 2);
 
   if (playerInRange) {
-    selected.value = { ...player };
+    setSelected(player);
     return;
   }
 
@@ -122,7 +139,7 @@ function selectPointAt(x, y) {
   );
 
   if (selectedPlace) {
-    selected.value = { ...selectedPlace };
+    setSelected(selectedPlace);
   }
 }
 
@@ -137,9 +154,8 @@ function isPointInRange(x, y, targetX, targetY, range) {
 
 function coordinateSystemClickEventListener(event) {
   const rect = canvasElement.value.getBoundingClientRect();
-  const x = Math.round(event.clientX - rect.left - offset.value.x);
-  const y = Math.round(event.clientY - rect.top - offset.value.y);
-
+  const x = Math.round(event.clientX - rect.left - width / 2);
+  const y = Math.round(event.clientY - rect.top - height / 2);
   selectPointAt(x, y);
 }
 
