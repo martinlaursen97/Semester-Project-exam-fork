@@ -11,22 +11,25 @@
     </div>
 
     <div>
-      <button @click="move('Up')">Up</button>
-      <button @click="move('Down')">Down</button>
-      <button @click="move('Left')">Left</button>
-      <button @click="move('Right')">Right</button>
+      <button
+        v-for="direction in ['Up', 'Down', 'Left', 'Right']"
+        :key="direction"
+        @click="move(direction)"
+      >
+        {{ direction }}
+      </button>
     </div>
+    <PlaceForm @placeCreated="handleCreated" />
   </div>
 </template>
 
 <script setup>
 import { get } from "~/requests";
 
-const { height, width, scale, places, player } = defineProps([
+const { height, width, scale, player } = defineProps([
   "height",
   "width",
   "scale",
-  "places",
   "player",
 ]);
 
@@ -40,13 +43,32 @@ const offset = computed(() => ({
 }));
 
 watch(player.character_location, async () => {
+  // update player `place` property on location change
   const { data } = await get(`/characters/place/${player.id}`);
   if (selected.value && selected.value.id === player.id) {
     selected.value.place = data.value.data;
   }
 });
 
-onMounted(() => {
+const places = ref([]);
+
+const loadWorld = async () => {
+  try {
+    const { data } = await get("/places");
+    places.value = data.value?.data;
+    console.log("places", places.value);
+    render();
+  } catch (err) {
+    console.error("Error loading world:", err);
+  }
+};
+
+const handleCreated = async () => {
+  await loadWorld();
+};
+
+onMounted(async () => {
+  await loadWorld();
   initializeCanvas();
   setupCanvasClickListener();
   render();
@@ -85,11 +107,11 @@ function renderPlayer() {
 }
 
 function renderPlaces() {
-  if (!places) {
+  if (!places.value) {
     return;
   }
 
-  places.forEach((point) => {
+  places.value.forEach((point) => {
     drawPoint(
       point.x + offset.value.x,
       point.y + offset.value.y,
@@ -134,7 +156,7 @@ function selectPointAt(x, y) {
     return;
   }
 
-  const selectedPlace = places.find((point) =>
+  const selectedPlace = places.value.find((point) =>
     isPointInRange(x, y, point.x, point.y, scale / 2)
   );
 
@@ -162,6 +184,7 @@ function coordinateSystemClickEventListener(event) {
 const emit = defineEmits(["moveUp", "moveDown", "moveLeft", "moveRight"]);
 
 function move(direction) {
+  console.log("move");
   switch (direction) {
     case "Up":
       player.character_location.y -= scale;
