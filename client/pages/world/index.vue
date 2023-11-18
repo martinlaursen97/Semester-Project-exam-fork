@@ -11,6 +11,8 @@
     <WorldMap
       :places="places"
       :player="character"
+      :height="500"
+      :width="500"
       :scale="scale"
       @moveUp="moveUp"
       @moveDown="moveDown"
