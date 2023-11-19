@@ -2,7 +2,6 @@ from loguru import logger
 from rpg_api.utils import dtos
 from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
-from rpg_api import exceptions as rpg_exc
 
 
 router = APIRouter()

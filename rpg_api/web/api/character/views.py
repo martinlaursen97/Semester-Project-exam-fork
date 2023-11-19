@@ -1,3 +1,4 @@
+from loguru import logger
 from rpg_api.utils import dtos, models
 from rpg_api.utils.dependencies import GetCurrentUser
 from fastapi.routing import APIRouter
@@ -48,6 +49,7 @@ async def character_place_details(
     place_name = await daos.character.get_place(
         character_id=character.id,
     )
+    logger.info(place_name)
     return dtos.DataResponse(data=CharacterPlaceDTO(name=place_name))
 
 
@@ -69,19 +71,3 @@ async def create_character(
     )
 
     return dtos.DefaultCreatedResponse(data=created_id)
-
-
-@router.patch("/move/{character_id}")
-async def move_character(
-    update_dto: dtos.CharacterLocationUpdateDTO,
-    character: GetCharacterIfUserOwns,
-    daos: GetDAOs,
-) -> dtos.EmptyDefaultResponse:
-    """Move character."""
-
-    await daos.character_location.update(
-        id=character.character_location_id,  # type: ignore
-        update_dto=update_dto,
-    )
-
-    return dtos.EmptyDefaultResponse()

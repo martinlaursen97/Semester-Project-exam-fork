@@ -46,6 +46,7 @@ watch(player.character_location, async () => {
   // update player `place` property on location change
   const { data } = await get(`/characters/place/${player.id}`);
   if (selected.value && selected.value.id === player.id) {
+    console.log(data.value.data);
     selected.value.place = data.value.data;
   }
 });

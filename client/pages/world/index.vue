@@ -35,22 +35,22 @@ const scale = 10;
 const characterName = computed(() => character.value.character_name);
 
 const moveUp = async () => {
-  await update(`/characters/move/${character.value.id}`, {
+  await update(`/character-locations/${character.value.id}`, {
     y: character.value.character_location.y,
   });
 };
 const moveDown = async () => {
-  await update(`/characters/move/${character.value.id}`, {
+  await update(`/character-locations/${character.value.id}`, {
     y: character.value.character_location.y,
   });
 };
 const moveLeft = async () => {
-  await update(`/characters/move/${character.value.id}`, {
+  await update(`/character-locations/${character.value.id}`, {
     x: character.value.character_location.x,
   });
 };
 const moveRight = async () => {
-  await update(`/characters/move/${character.value.id}`, {
+  await update(`/character-locations/${character.value.id}`, {
     x: character.value.character_location.x,
   });
 };
