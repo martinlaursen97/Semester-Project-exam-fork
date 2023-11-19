@@ -1,4 +1,3 @@
-import sqlalchemy as sa
 from fastapi import Depends
 from rpg_api.db.postgres.models.models import BaseUser
 from rpg_api.core.daos.base_dao import BaseDAO
@@ -20,11 +19,3 @@ class BaseUserDAO(BaseDAO[BaseUser, BaseUserDTO, BaseUserInputDTO, BaseUserUpdat
             model=BaseUser,
             base_dto=BaseUserDTO,
         )
-
-    async def get_by_email(self, email: str) -> BaseUser | None:
-        """Get user by email."""
-
-        user = await self.session.execute(
-            sa.select(BaseUser).filter(BaseUser.email == email),
-        )
-        return user.scalars().first()

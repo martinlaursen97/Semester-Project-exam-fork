@@ -83,6 +83,6 @@ async def run_scripts(engine: AsyncEngine) -> None:
 
     current_path = Path(__file__).resolve().parent.parent.parent.parent
     scripts_dir = current_path / "db-scripts"
-    script1_path = scripts_dir / "1create_tables.sql"
+    script1_path = scripts_dir / "0triggers.sql"
 
     await run_sql_script(engine, str(script1_path))

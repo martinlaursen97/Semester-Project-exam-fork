@@ -8,10 +8,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from rpg_api.db.postgres.dependencies import get_db_session
 from rpg_api.web.api import monitoring
 from rpg_api.web.api import auth
+from rpg_api.web.api import character
+from rpg_api.web.api import base_class
+from rpg_api.web.api import place
+from rpg_api.web.api import character_location
 
 api_router = APIRouter()
 api_router.include_router(monitoring.router, prefix="/monitoring", tags=["monitoring"])
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(character.router, prefix="/characters", tags=["characters"])
+api_router.include_router(
+    character_location.router,
+    prefix="/character-locations",
+    tags=["character-location"],
+)
+api_router.include_router(
+    base_class.router, prefix="/base-classes", tags=["base-classes"]
+)
+api_router.include_router(place.router, prefix="/places", tags=["places"])
 
 
 # TODO: Move to a separate file
