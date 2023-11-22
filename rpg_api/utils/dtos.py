@@ -19,4 +19,9 @@ from rpg_api.core.dtos.base_schemas import (
     OrmBasicModel,
 )
 
-from rpg_api.web.dtos.neo4j_dtos import PersonModel, PersonInputDTO, PersonUpdateDTO
+from rpg_api.web.dtos.neo4j_dtos import (
+    PersonModel,
+    PersonDTO,
+    PersonUpdateDTO,
+    PersonRelationshipDTO,
+)

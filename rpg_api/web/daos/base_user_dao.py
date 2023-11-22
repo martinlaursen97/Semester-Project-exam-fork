@@ -9,9 +9,10 @@ from rpg_api.utils.dtos import (
     BaseUserDTO,
     BaseUserInputDTO,
     BaseUserUpdateDTO,
-    PersonInputDTO,
+    PersonDTO,
     PersonModel,
     PersonUpdateDTO,
+    PersonRelationshipDTO,
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 from neo4j import AsyncSession as AsyncNeoSession
@@ -36,7 +37,7 @@ class BaseUserDAO(BaseDAO[BaseUser, BaseUserDTO, BaseUserInputDTO, BaseUserUpdat
         return user.scalars().first()
 
 
-class PersonNeo4jDAO(BaseNeo4jDAO[PersonModel, PersonInputDTO, PersonUpdateDTO]):
+class PersonNeo4jDAO(BaseNeo4jDAO[PersonModel, PersonDTO, PersonUpdateDTO]):
     """Class for accessing user table."""
 
     def __init__(self, session: AsyncNeoSession = Depends(get_neo4j_session)):
@@ -44,3 +45,28 @@ class PersonNeo4jDAO(BaseNeo4jDAO[PersonModel, PersonInputDTO, PersonUpdateDTO])
             session=session,
             model=PersonModel,
         )
+
+    async def create_relationship(
+        self, rel_dto: PersonRelationshipDTO
+    ) -> PersonRelationshipDTO | None:
+        """
+        Create a relationship of a specified type between two nodes.
+        """
+        create_rel_query = f"""
+        MATCH (a:{self._label}), (b:{self._label})
+        WHERE id(a) = $node1_id AND id(b) = $node2_id
+        CREATE (a)-[r:{rel_dto.relationship_type}]->(b)
+        SET r = $relationship_props
+        RETURN r
+        """
+        result = await self.session.run(
+            create_rel_query,
+            node1_id=rel_dto.node1_id,
+            node2_id=rel_dto.node2_id,
+            relationship_props=rel_dto.relationship_props,
+        )
+        record = await result.single()
+
+        if record:
+            return record["r"]
+        return None
