@@ -45,6 +45,16 @@ def create_access_token(data: dtos.TokenData) -> str:
     )
 
 
+def create_reset_password_token(data: dtos.TokenData) -> str:
+    """Create an access token."""
+
+    return _encode_token(
+        data,
+        datetime.utcnow()
+        + timedelta(minutes=settings.reset_password_token_expire_minutes),
+    )
+
+
 def _decode_token(token: str) -> dict[str, Any]:
     """Decode a token, returning the payload."""
 

@@ -51,6 +51,7 @@ class Settings(BaseSettings):
     secret_key: SecretStr = SecretStr("secret")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 600
+    reset_password_token_expire_minutes: int = 30
 
     # Variables for the mongodb
     mongo_host: str = "localhost"
@@ -58,6 +59,13 @@ class Settings(BaseSettings):
     mongo_user: str = "rpg_api"
     mongo_pass: str = "rpg_api"
     mongo_database: str = "rpg_api"
+
+    # Sendgrid
+    sendgrid_api_key: str = "SG"
+    sendgrid_from_email: str = "martin_laursen9@hotmail.com"
+
+    # Frontend
+    frontend_url: str = "http://localhost:3000"
 
     @property
     def db_url(self) -> URL:

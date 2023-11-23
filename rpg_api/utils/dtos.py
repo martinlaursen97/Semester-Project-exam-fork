@@ -3,6 +3,8 @@ from rpg_api.web.dtos.auth_dtos import (
     LoginResponse,
     UserLoginDTO,
     UserCreateDTO,
+    ResetPasswordDTO,
+    ForgotPasswordDTO,
 )
 from rpg_api.web.dtos.base_user_dtos import (
     BaseUserDTO,
@@ -44,3 +46,4 @@ from rpg_api.web.dtos.character_location_dtos import (
     CharacterLocationUpdateDTO,
     CharacterLocationSimpleDTO,
 )
+from rpg_api.services.email_service.email_interface import EmailDTO

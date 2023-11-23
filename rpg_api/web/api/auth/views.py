@@ -1,13 +1,12 @@
+from loguru import logger
 from rpg_api import exceptions as rpg_exc
+from rpg_api.services.email_service.email_dependencies import GetEmailService
 from rpg_api.utils import dtos
-from rpg_api.utils.dependencies import GetCurrentUser
 from rpg_api.web.api.auth import auth_utils as utils
+from rpg_api.web.api.auth.token_store import token_store
 from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
-from fastapi.responses import HTMLResponse
-from fastapi import Request
-from starlette.responses import Response
-from rpg_api.services.templates import templates
+from rpg_api.settings import settings
 
 router = APIRouter()
 
@@ -61,27 +60,83 @@ async def register(
     return dtos.DefaultCreatedResponse()
 
 
-@router.get("/me")
-async def get_me(
-    current_user: GetCurrentUser,
-) -> dtos.DataResponse[dtos.BaseUserDTO]:
-    """Get current user."""
-
-    return dtos.DataResponse(data=current_user)
-
-
-@router.get(
-    "/login-html",
-    response_class=HTMLResponse,
+@router.post(
+    "/forgot-password",
 )
-async def login_html(
-    request: Request,
-) -> Response:
-    """Get current user."""
+async def forgot_password(
+    input_dto: dtos.ForgotPasswordDTO,
+    email_service: GetEmailService,
+    daos: GetDAOs,
+) -> dtos.EmptyDefaultResponse:
+    """Forgot password."""
 
-    return templates.TemplateResponse(
-        "login.html",
-        {
-            "request": request,
-        },
+    user = await daos.base_user.filter_first(email=input_dto.email)
+
+    # We don't want to reveal if the user exists or not
+    if user is None:
+        logger.info(f"User {input_dto.email} does not exist")
+        return dtos.EmptyDefaultResponse()
+
+    # Create and store token which will be used to reset the password
+    token = utils.create_reset_password_token(
+        data=dtos.TokenData(
+            user_id=str(user.id),
+        )
     )
+    token_store.set(
+        user_id=user.id,
+        token=token,
+    )
+
+    html = f"""
+    <html>
+        <head></head>
+        <body>
+            <p>Click the link below to reset your password:</p>
+            <a href="{settings.frontend_url}/reset-password?token={token}">
+                Reset password
+            </a>
+        </body>
+    </html>
+    """
+
+    email = dtos.EmailDTO(
+        email=input_dto.email,
+        subject="Forgot password",
+        body=f"Hello {user.email}!",
+        html=html,
+    )
+    await email_service.send_email(email)
+
+    return dtos.EmptyDefaultResponse()
+
+
+@router.post("/reset-password")
+async def reset_password(
+    input_dto: dtos.ResetPasswordDTO,
+    daos: GetDAOs,
+) -> dtos.EmptyDefaultResponse:
+    """Reset password."""
+
+    token_data = utils.decode_token(token=input_dto.token)
+    user = await daos.base_user.filter_first(id=token_data.user_id)
+
+    if user is None:
+        raise rpg_exc.HttpUnauthorized("Token is invalid or user does not exist")
+
+    stored_token = token_store.pop(user_id=user.id)
+    if stored_token is None:
+        raise rpg_exc.HttpUnauthorized(
+            "Reset token has already been used, or has expired"
+        )
+
+    hashed_password = utils.hash_password(input_dto.new_password.get_secret_value())
+    await daos.base_user.update(
+        id=user.id,
+        update_dto=dtos.BaseUserUpdateDTO(
+            password=hashed_password,
+        ),
+    )
+
+    logger.info(f"Password reset for user {user.email}")
+    return dtos.EmptyDefaultResponse()
