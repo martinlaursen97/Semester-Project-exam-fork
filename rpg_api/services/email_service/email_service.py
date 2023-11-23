@@ -5,7 +5,7 @@ from rpg_api.services.email_service.email_interface import (
 )
 from sendgrid import SendGridAPIClient, Mail
 from rpg_api.settings import settings
-import asyncio
+
 from fastapi import Depends
 
 
@@ -40,7 +40,7 @@ class EmailService(AsyncEmailServiceInterface):
             except Exception:
                 logger.error(f"Error sending email to {email.email}.")
 
-        await asyncio.create_task(_send())
+        await _send()
 
 
 class MockEmailService(AsyncEmailServiceInterface):
