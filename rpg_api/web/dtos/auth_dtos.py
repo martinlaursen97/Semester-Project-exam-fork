@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, SecretStr, Field
 
+from rpg_api import constants
+
 
 class TokenData(BaseModel):
     """Token data."""
@@ -24,7 +26,28 @@ class UserCreateDTO(BaseModel):
     """DTO for creating a user."""
 
     email: EmailStr
-    password: SecretStr = Field(..., min_length=8, max_length=32)
+    password: SecretStr = Field(
+        ...,
+        min_length=constants.MIN_LENGTH_PASSWORD,
+        max_length=constants.MAX_LENGTH_PASSWORD,
+    )
     first_name: str | None = None
     last_name: str | None = None
     phone: str | None = None
+
+
+class ResetPasswordDTO(BaseModel):
+    """DTO for resetting password."""
+
+    token: str
+    new_password: SecretStr = Field(
+        ...,
+        min_length=constants.MIN_LENGTH_PASSWORD,
+        max_length=constants.MAX_LENGTH_PASSWORD,
+    )
+
+
+class ForgotPasswordDTO(BaseModel):
+    """DTO for requesting a password reset."""
+
+    email: EmailStr

@@ -5,6 +5,7 @@
       <input type="password" v-model="password" />
       <button type="submit">Login</button>
     </form>
+    <router-link to="/forgot-password">Forgot Password</router-link>
   </div>
 </template>
 

@@ -2,7 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 from rpg_api.core.dtos.base_schemas import OrmBasicModel
 
 from rpg_api.enums import UserStatus
@@ -22,8 +22,8 @@ class BaseUserInputDTO(BaseModel):
 class BaseUserUpdateDTO(BaseModel):
     """DTO for updating a user."""
 
-    email: EmailStr | None
-    password: str | None = Field(None, min_length=8, max_length=32)
+    email: EmailStr | None = None
+    password: str | None = None
 
 
 class BaseUserDTO(OrmBasicModel):

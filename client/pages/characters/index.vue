@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p>Back to login page: <router-link to="/login">Login</router-link></p>
     <form>
       <input type="text" v-model="character_name" />
       <select v-model="selected_class">
