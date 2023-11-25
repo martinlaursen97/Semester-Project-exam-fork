@@ -15,6 +15,7 @@ from rpg_api.utils.dtos import (
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 from neo4j import AsyncSession as AsyncNeoSession
+import sqlalchemy as sa
 
 
 class BaseUserDAO(BaseDAO[BaseUser, BaseUserDTO, BaseUserInputDTO, BaseUserUpdateDTO]):

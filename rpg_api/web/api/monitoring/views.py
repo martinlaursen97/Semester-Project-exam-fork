@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import Any
 from rpg_api.settings import settings
 from rpg_api.db.mongodb.dependencies import MongoClient
 from rpg_api.db.neo4j.dependencies import Neo4jSession
-from rpg_api.web.dtos.bas import BaseUserInsert
 from rpg_api.web.dtos.neo4j_dtos import (
     PersonDTO,
     PersonUpdateDTO,
@@ -120,3 +119,21 @@ async def add_node(session: Neo4jSession, input_dto: PersonDTO) -> dict[str, Any
     result = await person_dao.create(input_dto=input_dto)
 
     return {"id": result}
+
+
+@router.get("/neo4j")
+async def neo4j_check(
+    session: Neo4jSession,
+) -> dict[Any, str]:
+    """
+    Checks the health of the Neo4j database.
+
+    It returns 200 if the Neo4j database is healthy.
+    """
+
+    try:
+        # Perform a simple read operation
+        await session.run("MATCH (n) RETURN n LIMIT 1")
+        return {"status": "Neo4j is operational"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
