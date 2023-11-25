@@ -10,6 +10,7 @@ from rpg_api.db.postgres.meta import meta
 from sqlalchemy.sql import text
 from rpg_api.db.mongodb.models.base_user_model import MBaseUser
 from loguru import logger
+from neo4j import AsyncGraphDatabase
 from fastapi.staticfiles import StaticFiles
 
 from rpg_api.web.startup_data_pg import create_startup_data_pg
@@ -69,6 +70,17 @@ async def _setup_mongodb_startup_data(app: FastAPI) -> None:  # pragma: no cover
     )
 
 
+async def setup_neo4j(app: FastAPI) -> None:
+    """
+    Creates a connection to the Neo4j database.
+
+    This function creates a Neo4j driver instance and stores it
+    in the application's state property.
+    """
+    uri = "neo4j://rpg_api-neo4j:7687"
+    app.state.neo4j_driver = AsyncGraphDatabase.driver(uri, auth=("neo4j", "password"))
+
+
 def register_startup_event(
     app: FastAPI,
 ) -> Callable[[], Awaitable[None]]:  # pragma: no cover
@@ -89,6 +101,7 @@ def register_startup_event(
         await create_startup_data_pg(app)
 
         _setup_mongodb(app)
+        await setup_neo4j(app)
         await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()
         app.mount(
