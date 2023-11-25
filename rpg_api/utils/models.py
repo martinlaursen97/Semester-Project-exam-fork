@@ -1,11 +1,11 @@
-from rpg_api.db.models.models import (
+from rpg_api.db.postgres.models.models import (
     BaseUser,
     AbilityType,
     BaseClass,
     Attribute,
     Place,
     Relation,
-    BaseCharacter,
+    Character,
     CharacterLocation,
     Ability,
     ClassAbility,

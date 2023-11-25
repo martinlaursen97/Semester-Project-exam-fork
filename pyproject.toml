@@ -26,6 +26,8 @@ pyjwt = "^2.8.0"
 motor = "^3.3.1"
 beanie = "^1.23.1"
 neo4j = "^5.14.1"
+jinja2 = "^3.1.2"
+sendgrid = "^6.10.0"
 
 
 [tool.poetry.dev-dependencies]
@@ -112,7 +114,7 @@ select = [
     "D400", # first line should end with a period
 ]
 target-version = "py311"
-ignore = ["A001", "A002", "A003", "B008", "B904", "B905"]
+ignore = ["A001", "A002", "A003", "B008", "B904", "B905", "UP038"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [

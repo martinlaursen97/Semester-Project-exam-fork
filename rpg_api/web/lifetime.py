@@ -4,12 +4,16 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from rpg_api.db.mongodb.utils import create_motor_client
 from beanie import init_beanie
+from rpg_api.db.postgres.utils import run_scripts
 from rpg_api.settings import settings
 from rpg_api.db.postgres.meta import meta
 from sqlalchemy.sql import text
 from rpg_api.db.mongodb.models.base_user_model import MBaseUser
 from loguru import logger
 from neo4j import AsyncGraphDatabase
+from fastapi.staticfiles import StaticFiles
+
+from rpg_api.web.startup_data_pg import create_startup_data_pg
 
 
 async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
@@ -34,7 +38,10 @@ async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
         await conn.run_sync(meta.create_all)
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
 
-    # await run_scripts(engine)
+    try:
+        await run_scripts(engine)
+    except Exception as e:
+        logger.info(e)
 
     await engine.dispose()
     logger.info("Setting up database")
@@ -91,10 +98,15 @@ def register_startup_event(
     async def _startup() -> None:  # noqa: WPS430
         app.middleware_stack = None
         await _setup_pg(app)
+        await create_startup_data_pg(app)
+
         _setup_mongodb(app)
         await setup_neo4j(app)
         await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()
+        app.mount(
+            "/static", StaticFiles(directory="rpg_api/templates/static"), name="static"
+        )
 
     return _startup
 

@@ -3,13 +3,14 @@ from typing import Any
 from rpg_api.settings import settings
 from rpg_api.db.mongodb.dependencies import MongoClient
 from rpg_api.db.neo4j.dependencies import Neo4jSession
-from rpg_api.web.dtos.base_user import BaseUserInsert
+from rpg_api.web.dtos.bas import BaseUserInsert
 from rpg_api.web.dtos.neo4j_dtos import (
     PersonDTO,
     PersonUpdateDTO,
     PersonRelationshipDTO,
 )
 from rpg_api.web.daos.base_user_dao import PersonNeo4jDAO
+from rpg_api.web.dtos.base_user_mongo import BaseUserInsert
 
 router = APIRouter()
 

@@ -1,4 +1,3 @@
-import sqlalchemy as sa
 from fastapi import Depends
 from rpg_api.db.postgres.models.models import BaseUser
 from rpg_api.core.daos.base_dao import BaseDAO
