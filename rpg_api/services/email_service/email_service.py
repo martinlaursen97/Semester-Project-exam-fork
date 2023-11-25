@@ -7,6 +7,7 @@ from sendgrid import SendGridAPIClient, Mail
 from rpg_api.settings import settings
 
 from fastapi import Depends
+from fastapi.concurrency import run_in_threadpool
 
 
 class EmailService(AsyncEmailServiceInterface):
@@ -32,7 +33,7 @@ class EmailService(AsyncEmailServiceInterface):
             html_content=email.html,
         )
 
-        async def _send() -> None:
+        def _send() -> None:
             try:
                 response = self.sg_client.send(message)
                 if response.status_code < 300:
@@ -40,7 +41,7 @@ class EmailService(AsyncEmailServiceInterface):
             except Exception:
                 logger.error(f"Error sending email to {email.email}.")
 
-        await _send()
+        await run_in_threadpool(_send)
 
 
 class MockEmailService(AsyncEmailServiceInterface):

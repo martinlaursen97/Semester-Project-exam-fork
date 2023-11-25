@@ -9,7 +9,7 @@ from rpg_api.db.postgres.session import (
     AsyncSessionWrapper as AsyncSession,
     ScalarResultWrapper,
 )
-from rpg_api import exceptions as rpg_exc
+from rpg_api import exceptions
 from sqlalchemy.orm.interfaces import LoaderOption
 from typing import Any
 import operator
@@ -130,7 +130,7 @@ class BaseDAO(Generic[Model, BaseDTO, InputDTO, UpdateDTO]):  # noqa: WPS338
         result = instance.scalars().first()
 
         if result is None:
-            raise rpg_exc.RowNotFoundError(model_name=self.model.__name__)
+            raise exceptions.RowNotFoundError(model_name=self.model.__name__)
 
         return self.base_dto.model_validate(result)
 

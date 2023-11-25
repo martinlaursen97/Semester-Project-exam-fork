@@ -1,5 +1,5 @@
 from loguru import logger
-from rpg_api import exceptions as rpg_exc
+from rpg_api import exceptions
 from rpg_api.services.email_service.email_dependencies import GetEmailService
 from rpg_api.utils import dtos
 from rpg_api.web.api.auth import auth_utils as utils
@@ -21,14 +21,14 @@ async def login(
     user = await daos.base_user.filter_first(email=input_dto.email)
 
     if user is None:
-        raise rpg_exc.HttpUnauthorized("Wrong email or password")
+        raise exceptions.HttpUnauthorized("Wrong email or password")
 
     is_valid_password = utils.verify_password(
         input_dto.password.get_secret_value(), user.password
     )
 
     if not is_valid_password:
-        raise rpg_exc.HttpUnauthorized("Wrong email or password")
+        raise exceptions.HttpUnauthorized("Wrong email or password")
 
     token = utils.create_access_token(data=dtos.TokenData(user_id=str(user.id)))
 
@@ -45,7 +45,7 @@ async def register(
     user = await daos.base_user.filter(email=input_dto.email)
 
     if user:
-        raise rpg_exc.HttpForbidden("User already exists")
+        raise exceptions.HttpForbidden("User already exists")
 
     await daos.base_user.create(
         dtos.BaseUserInputDTO(
@@ -122,11 +122,11 @@ async def reset_password(
     user = await daos.base_user.filter_first(id=token_data.user_id)
 
     if user is None:
-        raise rpg_exc.HttpUnauthorized("Token is invalid or user does not exist")
+        raise exceptions.HttpUnauthorized("Token is invalid or user does not exist")
 
     stored_token = token_store.pop(user_id=user.id)
     if stored_token is None:
-        raise rpg_exc.HttpUnauthorized(
+        raise exceptions.HttpUnauthorized(
             "Reset token has already been used, or has expired"
         )
 

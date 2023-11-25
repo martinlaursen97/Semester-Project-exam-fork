@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 
-from rpg_api import exceptions as rpg_exc
+from rpg_api import exceptions
 from rpg_api.db.postgres.models.models import Character
 from rpg_api.utils import dtos
 from rpg_api.utils.daos import AllDAOs
@@ -23,7 +23,7 @@ class RpgHTTPBearer(HTTPBearer):
             obj = await super().__call__(request)
             return obj.credentials if obj else None
         except HTTPException:
-            raise rpg_exc.HttpUnauthorized("Missing token.")
+            raise exceptions.HttpUnauthorized("Missing token.")
 
 
 auth_scheme = RpgHTTPBearer()
@@ -44,8 +44,8 @@ async def get_current_user(
         return await daos.base_user.filter_first(
             id=token_data.user_id,  # type: ignore
         )
-    except rpg_exc.RowNotFoundError:
-        raise rpg_exc.HttpNotFound("Decoded user not found.")
+    except exceptions.RowNotFoundError:
+        raise exceptions.HttpNotFound("Decoded user not found.")
 
 
 async def get_character_if_user_owns(
@@ -60,7 +60,7 @@ async def get_character_if_user_owns(
     )
 
     if not character:
-        raise rpg_exc.HttpNotFound("Character not found.")
+        raise exceptions.HttpNotFound("Character not found.")
 
     return character
 
