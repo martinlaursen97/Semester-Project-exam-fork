@@ -56,7 +56,7 @@ def setup_user(user: FastHttpUser) -> tuple[list[str], dict[str, Any]]:
             handle_error(response_test_user)
             raise Exception("Create user failed!")
 
-    # Extract phone numbers
+    # Extract id
     id = response_test_user_data
 
     # Login the user
@@ -94,7 +94,7 @@ class WebUser(FastHttpUser):
     @task
     @tag("alive")
     def test_alive(self) -> None:
-        """Test alive"""
+        """Test alive."""
         with self.client.get(
             url=f"{PREFIX}/monitoring/health",
             headers=self.token_header,
@@ -106,7 +106,7 @@ class WebUser(FastHttpUser):
     @task
     @tag("create_char")
     def create_character(self) -> None:
-        """Create character endpoint"""
+        """Create character endpoint."""
         with self.client.post(
             url=f"{PREFIX}/characters",
             headers=self.token_header,
