@@ -31,9 +31,6 @@ class UserCreateDTO(BaseModel):
         min_length=constants.MIN_LENGTH_PASSWORD,
         max_length=constants.MAX_LENGTH_PASSWORD,
     )
-    first_name: str | None = None
-    last_name: str | None = None
-    phone: str | None = None
 
 
 class ResetPasswordDTO(BaseModel):

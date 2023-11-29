@@ -12,17 +12,16 @@ class BaseUser(Base):
 
     __tablename__ = "base_user"
 
-    first_name: Mapped[str | None] = mapped_column(sa.String(50), default=None)
-    last_name: Mapped[str | None] = mapped_column(sa.String(50), default=None)
     email: Mapped[str] = mapped_column(sa.String(100), unique=True)
-    phone: Mapped[str | None] = mapped_column(sa.String(20), default=None)
     password: Mapped[str] = mapped_column(sa.String(255))
     status: Mapped[UserStatus] = mapped_column(
         sa.Enum(UserStatus, name="user_status"), default=UserStatus.active
     )
 
-    # relations: Mapped[list["Relation"]] = relationship()
-    # characters: Mapped[list["Character"]] = relationship()
+    __table_args__ = (
+        sa.Index("idx_base_user_email", email),
+        sa.Index("idx_base_user_status", status),
+    )
 
 
 class AbilityType(Base):
@@ -30,9 +29,10 @@ class AbilityType(Base):
 
     __tablename__ = "ability_type"
 
-    name: Mapped[str] = mapped_column(sa.String(50))
+    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
     description: Mapped[str] = mapped_column(sa.String(500))
-    abilities: Mapped[list["Ability"]] = relationship()
+
+    __table_args__ = (sa.Index("idx_ability_type_name", name),)
 
 
 class BaseClass(Base):
@@ -40,9 +40,9 @@ class BaseClass(Base):
 
     __tablename__ = "base_class"
 
-    name: Mapped[str] = mapped_column(sa.String(50))
-    # characters: Mapped[list["Character"]] = relationship()
-    # class_abilities: Mapped[list["ClassAbility"]] = relationship()
+    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
+
+    __table_args__ = (sa.Index("idx_base_class_name", name),)
 
 
 class Attribute(Base):
@@ -50,10 +50,13 @@ class Attribute(Base):
 
     __tablename__ = "attribute"
 
-    name: Mapped[str] = mapped_column(sa.String(50))
+    name: Mapped[str] = mapped_column(
+        sa.String(50),
+        unique=True,
+    )
     description: Mapped[str] = mapped_column(sa.String(500))
 
-    character_attributes: Mapped[list["CharacterAttribute"]] = relationship()
+    __table_args__ = (sa.Index("idx_attribute_name", name),)
 
 
 class Place(Base):
@@ -61,10 +64,12 @@ class Place(Base):
 
     __tablename__ = "place"
 
-    name: Mapped[str] = mapped_column(sa.String(50))
+    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
     radius: Mapped[int] = mapped_column(sa.Integer)
     x: Mapped[int] = mapped_column(sa.Integer)
     y: Mapped[int] = mapped_column(sa.Integer)
+
+    __table_args__ = (sa.Index("idx_place_name", name),)
 
 
 class Relation(Base):
@@ -72,8 +77,23 @@ class Relation(Base):
 
     __tablename__ = "relation"
 
-    user1_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("base_user.id"))
-    user2_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("base_user.id"))
+    user1_id: Mapped[uuid.UUID] = mapped_column(
+        sa.UUID(as_uuid=True), ForeignKey("base_user.id", ondelete="CASCADE")
+    )
+    user2_id: Mapped[uuid.UUID] = mapped_column(
+        sa.UUID(as_uuid=True), ForeignKey("base_user.id", ondelete="CASCADE")
+    )
+
+    user1: Mapped["BaseUser"] = relationship(
+        "BaseUser", foreign_keys=[user1_id], uselist=False
+    )
+    user2: Mapped["BaseUser"] = relationship(
+        "BaseUser", foreign_keys=[user2_id], uselist=False
+    )
+
+    __table_args__ = (
+        sa.UniqueConstraint("user1_id", "user2_id", name="uq_relation_user1_user2"),
+    )
 
 
 class Character(Base):
@@ -96,7 +116,7 @@ class Character(Base):
     gender: Mapped[Gender] = mapped_column(
         sa.Enum(Gender, name="gender"), default=Gender.other
     )
-    character_name: Mapped[str] = mapped_column(sa.String(50))
+    character_name: Mapped[str] = mapped_column(sa.String(50), unique=True)
     alive: Mapped[bool] = mapped_column(sa.Boolean, default=True)
     level: Mapped[int] = mapped_column(sa.Integer, default=1)
     xp: Mapped[int] = mapped_column(sa.Integer, default=1)
@@ -110,6 +130,11 @@ class Character(Base):
         "CharacterLocation",
         foreign_keys=[character_location_id],
         uselist=False,
+    )
+
+    __table_args__ = (
+        sa.Index("idx_character_name", character_name),
+        sa.Index("idx_character_level", level),
     )
 
 
@@ -127,10 +152,19 @@ class Ability(Base):
 
     __tablename__ = "ability"
 
-    name: Mapped[str] = mapped_column(sa.String(50))
-    ability_type_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("ability_type.id"))
+    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
+    ability_type_id: Mapped[uuid.UUID] = mapped_column(
+        sa.UUID(as_uuid=True), ForeignKey("ability_type.id", ondelete="CASCADE")
+    )
 
-    class_ability: Mapped[list["ClassAbility"]] = relationship()
+    ability_type: Mapped["AbilityType"] = relationship(
+        "AbilityType", foreign_keys=[ability_type_id]
+    )
+
+    __table_args__ = (
+        sa.Index("idx_ability_name", name),
+        sa.Index("idx_ability_type_id", ability_type_id),
+    )
 
 
 class ClassAbility(Base):
@@ -138,15 +172,40 @@ class ClassAbility(Base):
 
     __tablename__ = "class_ability"
 
-    base_class_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("base_class.id"))
-    ability_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("ability.id"))
+    base_class_id: Mapped[uuid.UUID] = mapped_column(
+        sa.UUID(as_uuid=True), ForeignKey("base_class.id", ondelete="CASCADE")
+    )
+    ability_id: Mapped[uuid.UUID] = mapped_column(
+        sa.UUID(as_uuid=True), ForeignKey("ability.id", ondelete="CASCADE")
+    )
+
+    base_class: Mapped["BaseClass"] = relationship(
+        "BaseClass", foreign_keys=[base_class_id]
+    )
+    ability: Mapped["Ability"] = relationship("Ability", foreign_keys=[ability_id])
+
+    __table_args__ = (
+        sa.Index("idx_class_ability_base_class_id", base_class_id),
+        sa.Index("idx_class_ability_ability_id", ability_id),
+    )
 
 
 class CharacterAttribute(Base):
-    """Model for character attributes ."""
+    """Model for character attributes."""
 
-    __tablename__ = "character_attributes"
+    __tablename__ = "character_attribute"
 
-    character_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("character.id"))
-    attribute_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("attribute.id"))
+    character_id: Mapped[uuid.UUID] = mapped_column(
+        sa.UUID(as_uuid=True), ForeignKey("character.id", ondelete="CASCADE")
+    )
+    attribute_id: Mapped[uuid.UUID] = mapped_column(
+        sa.UUID(as_uuid=True), ForeignKey("attribute.id")
+    )
     value: Mapped[int] = mapped_column(sa.Integer)
+
+    character: Mapped["Character"] = relationship(
+        "Character", foreign_keys=[character_id]
+    )
+    attribute: Mapped["Attribute"] = relationship(
+        "Attribute", foreign_keys=[attribute_id]
+    )

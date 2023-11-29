@@ -4,7 +4,7 @@ async function sendRequest(
     payload: any = null,
 ) {
     const accessToken = useCookie('access_token');
-    const url = `http://localhost:7070/api${resource}`
+    const url = `http://localhost:8080/api${resource}`
 
     const requestOptions: any = {
         method,

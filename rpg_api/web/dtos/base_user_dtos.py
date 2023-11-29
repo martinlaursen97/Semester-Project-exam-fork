@@ -14,9 +14,6 @@ class BaseUserInputDTO(BaseModel):
     email: str
     password: str
     status: UserStatus = UserStatus.active
-    first_name: str | None = None
-    last_name: str | None = None
-    phone: str | None = None
 
 
 class BaseUserUpdateDTO(BaseModel):
@@ -32,7 +29,4 @@ class BaseUserDTO(OrmBasicModel):
     id: UUID
     email: EmailStr
     status: UserStatus
-    first_name: str | None
-    last_name: str | None
-    phone: str | None
     created_at: datetime

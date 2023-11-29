@@ -51,9 +51,6 @@ async def register(
         dtos.BaseUserInputDTO(
             email=input_dto.email,
             password=utils.hash_password(input_dto.password.get_secret_value()),
-            first_name=input_dto.first_name,
-            last_name=input_dto.last_name,
-            phone=input_dto.phone,
         )
     )
 

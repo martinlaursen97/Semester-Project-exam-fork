@@ -66,9 +66,6 @@ async def _create_startup_users(app: FastAPI) -> None:  # pragma: no cover
         dtos.BaseUserInputDTO(
             email=f"user{i}@example.com",
             password=auth_utils.hash_password("password"),
-            first_name="John",
-            last_name="Doe",
-            phone="123456789",
         )
         for i in range(3)
     ]

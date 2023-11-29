@@ -1,13 +1,13 @@
 import pytest
 from httpx import AsyncClient
 from fastapi import status
-from rpg_api.conftest import UserWithHeaders
 from rpg_api.utils import dtos
 from rpg_api.utils.daos import AllDAOs
 from rpg_api.web.api.auth.token_store import token_store
 from rpg_api.web.api.auth import auth_utils as utils
 from rpg_api import constants
 from uuid import uuid4
+from rpg_api.db.postgres.factory import factories
 
 
 url = "/api/auth/reset-password"
@@ -35,13 +35,12 @@ url = "/api/auth/reset-password"
 )
 async def test_reset_password(
     new_password: str,
-    user_with_headers: UserWithHeaders,
     client: AsyncClient,
     daos: AllDAOs,
 ) -> None:
     """Test reset password: 200."""
 
-    user, _ = user_with_headers
+    user = await factories.BaseUserFactory.create()
 
     # Create a token and store it in the token store
     token = utils.create_reset_password_token(
@@ -96,12 +95,11 @@ async def test_reset_password_invalid_token(
 
 @pytest.mark.anyio
 async def test_reset_password_token_already_used(
-    user_with_headers: UserWithHeaders,
     client: AsyncClient,
 ) -> None:
     """Test reset password when token has already been used: 401."""
 
-    user, _ = user_with_headers
+    user = await factories.BaseUserFactory.create()
 
     # Create a token and store it in the token store
     token = utils.create_reset_password_token(
@@ -140,12 +138,11 @@ async def test_reset_password_token_already_used(
 )
 async def test_reset_password_invalid_input(
     new_password: str,
-    user_with_headers: UserWithHeaders,
     client: AsyncClient,
 ) -> None:
     """Test reset password when input is invalid: 422."""
 
-    user, _ = user_with_headers
+    user = await factories.BaseUserFactory.create()
 
     # Create a token and store it in the token store
     token = utils.create_reset_password_token(
