@@ -30,7 +30,7 @@ def health_check() -> Any:
 
 
 @router.get("/mongodb")
-async def mongodb_check(mongo_client: MongoClient) -> Any:
+async def mongodb_check(mongo_client: MongoClient) -> Any:  # type: ignore
     """
     Checks the health of the mongodb.
 
@@ -44,7 +44,7 @@ async def mongodb_check(mongo_client: MongoClient) -> Any:
 
 
 @router.post("/mongodb-insert")
-async def mongodb_insert(input_dto: BaseUserInsert, mongo_client: MongoClient) -> Any:
+async def mongodb_insert(input_dto: BaseUserInsert, mongo_client: MongoClient) -> Any:  # type: ignore
     """
     Checks the health of the mongodb.
 

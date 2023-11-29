@@ -1,23 +1,16 @@
-from rpg_api.db.postgres.meta import meta
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 import uuid
 
 import sqlalchemy as sa
 from rpg_api.utils import date_utils
 from datetime import datetime
-from typing import Any
-from collections.abc import Callable
-
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from rpg_api.db.postgres.meta import meta
 
 
 class Base(DeclarativeBase):
-    """Base setup for all models including UUID."""
+    """Base for all models."""
 
     metadata = meta
-
-    __tablename__: str
-    __init__: Callable[..., Any]
-    __abstract__ = True
 
     id: Mapped[uuid.UUID] = mapped_column(
         sa.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4

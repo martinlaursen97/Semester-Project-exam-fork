@@ -11,7 +11,6 @@ from sqlalchemy.sql import text
 from rpg_api.db.mongodb.models.base_user_model import MBaseUser
 from loguru import logger
 from neo4j import AsyncGraphDatabase
-from fastapi.staticfiles import StaticFiles
 
 from rpg_api.web.startup_data_pg import create_startup_data_pg
 
@@ -104,9 +103,6 @@ def register_startup_event(
         await setup_neo4j(app)
         await _setup_mongodb_startup_data(app)
         app.middleware_stack = app.build_middleware_stack()
-        app.mount(
-            "/static", StaticFiles(directory="rpg_api/templates/static"), name="static"
-        )
 
     return _startup
 
