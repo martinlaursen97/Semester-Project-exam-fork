@@ -122,7 +122,7 @@ class Character(Base):
     xp: Mapped[int] = mapped_column(sa.Integer, default=1)
     money: Mapped[int] = mapped_column(sa.Integer, default=1)
 
-    base_class: Mapped["BaseClass"] = relationship(
+    base_class: Mapped["BaseClass | None"] = relationship(
         "BaseClass", foreign_keys=[base_class_id]
     )
     user: Mapped["BaseUser"] = relationship("BaseUser", foreign_keys=[user_id])

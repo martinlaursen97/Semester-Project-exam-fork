@@ -55,7 +55,7 @@ def create_reset_password_token(data: dtos.TokenData) -> str:
     )
 
 
-def _decode_token(token: str) -> dict[str, Any]:
+def decode_token(token: str) -> dtos.TokenData:
     """Decode a token, returning the payload."""
 
     try:
@@ -64,17 +64,10 @@ def _decode_token(token: str) -> dict[str, Any]:
             settings.secret_key.get_secret_value(),
             algorithms=[settings.algorithm],
         )
-        return payload
+        return dtos.TokenData(**payload)
 
     except jwt.exceptions.PyJWTError:
         raise exceptions.HttpUnauthorized(message="Invalid token")
-
-
-def decode_token(token: str) -> dtos.TokenData:
-    """Decode a token, and insert data into TokenData."""
-
-    payload = _decode_token(token)
-    return dtos.TokenData(**payload)
 
 
 def get_headers(access_token: str) -> dict[str, Any]:

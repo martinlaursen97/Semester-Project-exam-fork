@@ -1,4 +1,3 @@
-from loguru import logger
 from rpg_api.utils import dtos
 from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
@@ -14,9 +13,6 @@ async def move_character(
     daos: GetDAOs,
 ) -> dtos.EmptyDefaultResponse:
     """Move character."""
-
-    logger.info(update_dto)
-    logger.info(await daos.character.get_place(character_id=character.id))
 
     await daos.character_location.update(
         id=character.character_location_id,  # type: ignore

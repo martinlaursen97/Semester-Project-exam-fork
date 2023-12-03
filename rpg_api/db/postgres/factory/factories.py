@@ -166,9 +166,7 @@ class CharacterFactory(AsyncFactory[models.Character]):
     class Meta:
         model = models.Character
 
-    gender = factory.LazyAttribute(
-        lambda _: fake.random_element(elements=[list(enums.Gender)])
-    )
+    gender = enums.Gender.male
     character_name = factory.LazyAttribute(lambda _: fake.name())
     base_class = CREATE
     user = CREATE

@@ -3,7 +3,7 @@ version: '3.9'
 services:
   api:
     ports:
-    - "8080:8080"
+    - "7070:7070"
     build:
       target: dev
     volumes:

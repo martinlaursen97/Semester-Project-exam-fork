@@ -1,4 +1,3 @@
-from loguru import logger
 from rpg_api import exceptions
 from rpg_api.services.email_service.email_dependencies import GetEmailService
 from rpg_api.utils import dtos
@@ -71,7 +70,6 @@ async def forgot_password(
 
     # We don't want to reveal if the user exists or not
     if user is None:
-        logger.info(f"User {input_dto.email} does not exist")
         return dtos.EmptyDefaultResponse()
 
     # Create and store token which will be used to reset the password
@@ -135,5 +133,4 @@ async def reset_password(
         ),
     )
 
-    logger.info(f"Password reset for user {user.email}")
     return dtos.EmptyDefaultResponse()
