@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from rpg_api.web.api.auth import auth_utils
+from rpg_api.web.api.postgres.auth import auth_utils
 
 from rpg_api.web.daos.base_class_dao import BaseClassDAO
 from rpg_api.web.daos.place_dao import PlaceDAO
@@ -66,9 +66,6 @@ async def _create_startup_users(app: FastAPI) -> None:  # pragma: no cover
         dtos.BaseUserInputDTO(
             email=f"user{i}@example.com",
             password=auth_utils.hash_password("password"),
-            first_name="John",
-            last_name="Doe",
-            phone="123456789",
         )
         for i in range(3)
     ]

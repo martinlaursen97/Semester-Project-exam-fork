@@ -1,12 +1,12 @@
 import pytest
 from httpx import AsyncClient
 from fastapi import status
-from rpg_api.conftest import UserWithHeaders
 from rpg_api.services.email_service.email_service import MockEmailService
-from rpg_api.web.api.auth.token_store import token_store
+from rpg_api.web.api.postgres.auth.token_store import token_store
 from rpg_api.settings import settings
+from rpg_api.db.postgres.factory import factories
 
-url = "/api/auth/forgot-password"
+url = "/api/postgres/auth/forgot-password"
 
 
 @pytest.mark.anyio
@@ -22,14 +22,12 @@ url = "/api/auth/forgot-password"
 )
 async def test_forgot_password(
     email: str,
-    user_with_headers: UserWithHeaders,
     client: AsyncClient,
     mock_email_service: MockEmailService,
 ) -> None:
     """Test post forgot password: 200."""
 
-    user, _ = user_with_headers
-    user.email = email
+    user = await factories.BaseUserFactory.create(email=email)
 
     response = await client.post(url, json={"email": user.email})
     assert response.status_code == status.HTTP_200_OK

@@ -25,7 +25,7 @@ reboot-full: reset-full run  ## Reset api and database and run the project
 	
 test: ## Run tests
 	@echo "Running tests..."
-	docker container exec $$(docker ps | grep api-1 | awk '{print $$1}') pytest ./rpg_api/tests/pytest
+	docker container exec $$(docker ps | grep api-1 | awk '{print $$1}') pytest ./rpg_api/tests/pytest -s
 
 migration-generate:  ## Generate a new migration file
 	@echo "Generation migrations..."

@@ -1,6 +1,4 @@
 from collections.abc import AsyncGenerator
-import random
-import string
 from typing import Any
 from loguru import logger
 
@@ -13,7 +11,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from rpg_api.web.api.auth import auth_utils as utils
+from rpg_api.db.postgres.factory.async_base_factory import AsyncSQLAlchemyModelFactory
 
 from rpg_api.db.postgres.dependencies import get_db_session
 from rpg_api.db.postgres.utils import (
@@ -30,7 +28,6 @@ from rpg_api.services.email_service.email_service import MockEmailService
 from rpg_api.settings import settings
 from rpg_api.web.application import get_app
 from rpg_api.utils.daos import AllDAOs
-from rpg_api.utils import dtos, models
 
 
 @pytest.fixture(scope="session")
@@ -107,33 +104,6 @@ def daos(dbsession: AsyncSessionWrapper) -> AllDAOs:
 
 
 @pytest.fixture
-async def user_with_headers(
-    daos: AllDAOs,
-) -> tuple[models.BaseUser, dict[str, Any]]:
-    """Create user with headers."""
-
-    input_dto = dtos.BaseUserInputDTO(
-        email=f"{''.join(random.choices(string.ascii_lowercase, k=10))}@example.com",
-        password=utils.hash_password("password"),
-    )
-
-    new_id = await daos.base_user.create(input_dto)
-
-    access_token = utils.get_headers(
-        utils.create_access_token(
-            data=dtos.TokenData(user_id=str(new_id)),
-        )
-    )
-
-    db_user = await daos.base_user.filter_first(id=new_id)
-
-    if db_user is None:
-        raise Exception("User not found")
-
-    return db_user, access_token
-
-
-@pytest.fixture
 async def mock_email_service() -> MockEmailService:
     """Get mock email service."""
     return MockEmailService()
@@ -170,4 +140,9 @@ async def client(
         yield ac
 
 
-UserWithHeaders = tuple[models.BaseUser, dict[str, Any]]
+@pytest.fixture(autouse=True)
+def inject_session_to_factories(
+    dbsession: AsyncSessionWrapper,
+) -> None:
+    """Inject session to factories."""
+    AsyncSQLAlchemyModelFactory.session = dbsession

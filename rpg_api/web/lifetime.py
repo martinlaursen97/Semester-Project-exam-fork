@@ -2,16 +2,22 @@ from collections.abc import Awaitable, Callable
 
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from rpg_api.db.mongodb.utils import create_motor_client
 from beanie import init_beanie
 from rpg_api.db.postgres.utils import run_scripts
 from rpg_api.settings import settings
 from rpg_api.db.postgres.meta import meta
 from sqlalchemy.sql import text
-from rpg_api.db.mongodb.models.base_user_model import MBaseUser
+from rpg_api.db.mongo.models.models import (
+    MBaseUser,
+    MCharacter,
+    MAttribute,
+    MAbility,
+    MClass,
+    MPlace,
+)
 from loguru import logger
 from neo4j import AsyncGraphDatabase
-from fastapi.staticfiles import StaticFiles
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from rpg_api.web.startup_data_pg import create_startup_data_pg
 
@@ -47,30 +53,29 @@ async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
     logger.info("Setting up database")
 
 
-def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
+async def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
     """
     Creates connection to the mongodb database.
 
     :param app: fastAPI application.
     """
 
-    app.state.mongodb_client = create_motor_client(str(settings.mongodb_url))
-
-
-async def _setup_mongodb_startup_data(app: FastAPI) -> None:  # pragma: no cover
-    """
-    Creates connection to the mongodb database.
-
-    :param app: fastAPI application.
-    """
+    app.state.mongodb_client = AsyncIOMotorClient(str(settings.mongodb_url))
 
     await init_beanie(
-        database=app.state.mongodb_client.base_user,
-        document_models=[MBaseUser],  # type: ignore
+        database=app.state.mongodb_client.db_name,
+        document_models=[
+            MBaseUser,
+            MCharacter,
+            MAttribute,
+            MAbility,
+            MClass,
+            MPlace,
+        ],  # type: ignore
     )
 
 
-async def setup_neo4j(app: FastAPI) -> None:
+def _setup_neo4j(app: FastAPI) -> None:
     """
     Creates a connection to the Neo4j database.
 
@@ -100,13 +105,9 @@ def register_startup_event(
         await _setup_pg(app)
         await create_startup_data_pg(app)
 
-        _setup_mongodb(app)
-        await setup_neo4j(app)
-        await _setup_mongodb_startup_data(app)
+        await _setup_mongodb(app)
+        _setup_neo4j(app)
         app.middleware_stack = app.build_middleware_stack()
-        app.mount(
-            "/static", StaticFiles(directory="rpg_api/templates/static"), name="static"
-        )
 
     return _startup
 
