@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from rpg_api.web.api.auth import auth_utils
+from rpg_api.web.api.postgres.auth import auth_utils
 
 from rpg_api.web.daos.base_class_dao import BaseClassDAO
 from rpg_api.web.daos.place_dao import PlaceDAO
