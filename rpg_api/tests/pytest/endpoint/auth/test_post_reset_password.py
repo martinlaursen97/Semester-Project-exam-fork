@@ -3,14 +3,14 @@ from httpx import AsyncClient
 from fastapi import status
 from rpg_api.utils import dtos
 from rpg_api.utils.daos import AllDAOs
-from rpg_api.web.api.auth.token_store import token_store
-from rpg_api.web.api.auth import auth_utils as utils
+from rpg_api.web.api.postgres.auth.token_store import token_store
+from rpg_api.web.api.postgres.auth import auth_utils as utils
 from rpg_api import constants
 from uuid import uuid4
 from rpg_api.db.postgres.factory import factories
 
 
-url = "/api/auth/reset-password"
+url = "/api/postgres/auth/reset-password"
 
 
 @pytest.mark.anyio

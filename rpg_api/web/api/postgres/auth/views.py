@@ -1,8 +1,8 @@
 from rpg_api import exceptions
 from rpg_api.services.email_service.email_dependencies import GetEmailService
 from rpg_api.utils import dtos
-from rpg_api.web.api.auth import auth_utils as utils
-from rpg_api.web.api.auth.token_store import token_store
+from rpg_api.web.api.postgres.auth import auth_utils as utils
+from rpg_api.web.api.postgres.auth.token_store import token_store
 from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
 from rpg_api.settings import settings

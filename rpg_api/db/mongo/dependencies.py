@@ -16,4 +16,4 @@ def get_mongodb_client(
     return request.app.state.mongodb_client
 
 
-MongoClient = Annotated[AgnosticClient, Depends(get_mongodb_client)]  # type: ignore
+MongoClient = Annotated[Any, Depends(get_mongodb_client)]  # type: ignore

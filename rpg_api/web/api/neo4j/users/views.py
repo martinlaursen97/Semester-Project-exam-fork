@@ -1,66 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from typing import Any
-from rpg_api.settings import settings
-from rpg_api.db.mongodb.dependencies import MongoClient
 from rpg_api.db.neo4j.dependencies import Neo4jSession
-from rpg_api.web.dtos.neo4j_dtos import (
+from rpg_api.web.dtos.neo4j.neo4j_dtos import (
     PersonDTO,
     PersonUpdateDTO,
     PersonRelationshipDTO,
 )
 from rpg_api.web.daos.base_user_dao import PersonNeo4jDAO
-from rpg_api.web.dtos.base_user_mongo import BaseUserInsert
 
 router = APIRouter()
 
 
-@router.get("/health")
-def health_check() -> Any:
-    """
-    Checks the health of a project.
-
-    It returns 200 if the project is healthy.
-    """
-
-    return (
-        str(settings.db_url),
-        str(settings.mongodb_url),
-        "mongodb://rpg_api:rpg_api@127.0.0.1:27017/?authMechanism=DEFAULT",
-    )
-
-
-@router.get("/mongodb")
-async def mongodb_check(mongo_client: MongoClient) -> Any:  # type: ignore
-    """
-    Checks the health of the mongodb.
-
-    It returns 200 if the mongodb is healthy.
-    """
-
-    db = mongo_client["test_database"]
-    db["test_collection"]
-
-    return await db.command("ping")
-
-
-@router.post("/mongodb-insert")
-async def mongodb_insert(input_dto: BaseUserInsert, mongo_client: MongoClient) -> Any:  # type: ignore
-    """
-    Checks the health of the mongodb.
-
-    It returns 200 if the mongodb is healthy.
-    """
-
-    db = mongo_client["test_database"]
-    db["test_collection"]
-
-    # insert a document
-    await db.test_collection.insert_one(input_dto.model_dump())
-
-    return await db.command("ping")
-
-
-@router.get("/get-by-proptery")
+@router.get("/get-by-property")
 async def get_by_property(
     session: Neo4jSession, input_dto: PersonDTO = Depends()
 ) -> dict[str, Any]:
@@ -86,7 +37,7 @@ async def get_by_id(session: Neo4jSession, id: int) -> dict[str, Any]:
         return {"message": "Person not found"}
 
 
-@router.patch("node/{id}")
+@router.patch("/node/{id}")
 async def update_node(
     session: Neo4jSession, id: int, update_dto: PersonUpdateDTO
 ) -> dict[str, Any]:
@@ -99,7 +50,7 @@ async def update_node(
     return {"message": "Person not found"}
 
 
-@router.post("node/relationship")
+@router.post("/node/relationship")
 async def create_relationship_person(
     session: Neo4jSession, relationship_dto: PersonRelationshipDTO
 ) -> dict[str, Any]:
@@ -119,21 +70,3 @@ async def add_node(session: Neo4jSession, input_dto: PersonDTO) -> dict[str, Any
     result = await person_dao.create(input_dto=input_dto)
 
     return {"id": result}
-
-
-@router.get("/neo4j")
-async def neo4j_check(
-    session: Neo4jSession,
-) -> dict[Any, str]:
-    """
-    Checks the health of the Neo4j database.
-
-    It returns 200 if the Neo4j database is healthy.
-    """
-
-    try:
-        # Perform a simple read operation
-        await session.run("MATCH (n) RETURN n LIMIT 1")
-        return {"status": "Neo4j is operational"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))

@@ -2,11 +2,11 @@ import pytest
 from httpx import AsyncClient
 from fastapi import status
 from rpg_api.services.email_service.email_service import MockEmailService
-from rpg_api.web.api.auth.token_store import token_store
+from rpg_api.web.api.postgres.auth.token_store import token_store
 from rpg_api.settings import settings
 from rpg_api.db.postgres.factory import factories
 
-url = "/api/auth/forgot-password"
+url = "/api/postgres/auth/forgot-password"
 
 
 @pytest.mark.anyio

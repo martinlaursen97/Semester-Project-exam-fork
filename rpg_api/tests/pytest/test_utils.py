@@ -2,7 +2,7 @@ from rpg_api.utils import dtos
 import uuid
 
 from httpx import Response
-from rpg_api.web.api.auth import auth_utils
+from rpg_api.web.api.postgres.auth import auth_utils
 from typing import Any
 
 

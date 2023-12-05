@@ -3,8 +3,9 @@ from uuid import UUID
 from rpg_api.core.dtos.base_schemas import OrmBasicModel
 
 from rpg_api.enums import Gender
-from rpg_api.web.dtos.base_class_dtos import BaseClassSimpleDTO
-from rpg_api.web.dtos.character_location_dtos import CharacterLocationSimpleDTO
+
+from rpg_api.web.dtos.postgres.base_class_dtos import BaseClassSimpleDTO
+from rpg_api.web.dtos.postgres.character_location_dtos import CharacterLocationSimpleDTO
 
 
 class CharacterDTO(OrmBasicModel):
