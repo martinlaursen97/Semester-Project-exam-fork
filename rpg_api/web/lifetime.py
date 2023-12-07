@@ -18,6 +18,7 @@ from rpg_api.db.mongo.models.models import (
 from loguru import logger
 from neo4j import AsyncGraphDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
+from rpg_api.web.startup_data_mongo import create_startup_data_mongo
 
 from rpg_api.web.startup_data_pg import create_startup_data_pg
 
@@ -60,10 +61,12 @@ async def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
     :param app: fastAPI application.
     """
 
-    app.state.mongodb_client = AsyncIOMotorClient(str(settings.mongodb_url))
+    client = AsyncIOMotorClient(str(settings.mongodb_url))  # type: ignore
+
+    app.state.mongodb_client = client
 
     await init_beanie(
-        database=app.state.mongodb_client.db_name,
+        database=client.rpg_api,
         document_models=[
             MBaseUser,
             MCharacter,
@@ -73,6 +76,8 @@ async def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
             MPlace,
         ],  # type: ignore
     )
+
+    await create_startup_data_mongo(app)
 
 
 def _setup_neo4j(app: FastAPI) -> None:
