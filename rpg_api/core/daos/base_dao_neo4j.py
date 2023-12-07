@@ -48,8 +48,6 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         result = await self.session.run(query=query, id=node_id)
         record = await result.single()
 
-        print(record)
-
         if not record:
             raise rpg_exc.RowNotFoundError()
 
