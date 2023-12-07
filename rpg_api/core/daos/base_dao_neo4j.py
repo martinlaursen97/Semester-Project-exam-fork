@@ -28,6 +28,7 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         """
         Create a node based on input DTO.
         """
+
         create_query = f"CREATE (n:{self._label} $props) RETURN n"
         result = await self.session.run(create_query, props=input_dto.model_dump())
         record = await result.single()
@@ -43,12 +44,14 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         Get node by id.
         """
 
-        query = f"MATCH (n:{self._label}) WHERE id(n) = $id return n"
+        query = "MATCH (n) WHERE id(n) = $id return n"
         result = await self.session.run(query=query, id=node_id)
         record = await result.single()
 
+        print(record)
+
         if not record:
-            raise rpg_exc.RowNotFoundError("hello")
+            raise rpg_exc.RowNotFoundError()
 
         return self.model.model_validate(record["n"])
 
@@ -56,6 +59,7 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         """
         Get a node based on properties from the input DTO.
         """
+
         query = f"MATCH (n:{self._label}) WHERE n += $props RETURN n"
         props = input_dto.model_dump()  # Convert DTO to a dictionary of properties
         result = await self.session.run(query, props=props)
@@ -70,12 +74,18 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         Update a node based on DTO.
         """
 
+        props_to_update = update_dto.model_dump()
+        props = {}
+
+        # Iterate over each attribute in the DTO if it is not none then set
+        for key, value in props_to_update.items():
+            if value is not None:
+                props[key] = value
+
         update_query = (
             f"MATCH (n:{self._label}) WHERE id(n) = $id SET n += $props return n"
         )
-        result = await self.session.run(
-            update_query, id=id, props=update_dto.model_dump()
-        )
+        result = await self.session.run(update_query, id=id, props=props)
         record = await result.single()
 
         if record:

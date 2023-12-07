@@ -1,10 +1,12 @@
+const implementation = "neo4j"
+
 async function sendRequest(
     resource: string,
     method: string = "get",
     payload: any = null,
 ) {
     const accessToken = useCookie('access_token');
-    const url = `http://localhost:7070/api${resource}`
+    const url = `http://localhost:7070/api/${implementation}${resource}`
 
     const requestOptions: any = {
         method,
