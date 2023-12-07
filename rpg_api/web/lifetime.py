@@ -10,7 +10,6 @@ from sqlalchemy.sql import text
 from rpg_api.db.mongo.models.models import (
     MBaseUser,
     MCharacter,
-    MAttribute,
     MAbility,
     MClass,
     MPlace,
@@ -70,7 +69,6 @@ async def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
         document_models=[
             MBaseUser,
             MCharacter,
-            MAttribute,
             MAbility,
             MClass,
             MPlace,
