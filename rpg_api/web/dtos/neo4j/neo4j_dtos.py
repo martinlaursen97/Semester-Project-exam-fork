@@ -14,18 +14,22 @@ class NeoBaseUserModel(Base):
 
 
 class NeoBaseUserDTO(BaseModel):
-    """DTO for person."""
+    """DTO for BaseUser."""
 
     email: str
     password: str
 
 
-class NeoBaseUserResponseDTO(BaseModel):
-    """DTO for person."""
+class NeoBaseUserResponseLoginDTO(NeoBaseUserDTO):
+    """DTO for Login response."""
 
     id: int
+
+
+class NeoBaseUserResponseDTO(NeoBaseUserResponseLoginDTO):
+    """DTO for BaseUserResponse."""
+
     email: str
-    password: str
 
 
 class NeoUserCreateDTO(BaseModel):
@@ -44,6 +48,12 @@ class NeoBaseUserUpdateDTO(BaseModel):
 
     email: str | None = None
     password: str | None = None
+
+
+class NeoBaseUserRelationshipInputDTO(BaseModel):
+    friend_id: int
+    relationship_type: str
+    relationship_props: dict[str, Any] = {}
 
 
 class NeoBaseUserRelationshipDTO(BaseRelationshipDTO):

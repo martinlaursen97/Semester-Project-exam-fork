@@ -12,7 +12,7 @@ from rpg_api.utils.dtos import (
     NeoBaseUserModel,
     NeoBaseUserUpdateDTO,
     NeoBaseUserRelationshipDTO,
-    NeoBaseUserResponseDTO,
+    NeoBaseUserResponseLoginDTO,
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 from neo4j import AsyncSession as AsyncNeoSession
@@ -49,7 +49,7 @@ class NeoBaseUserDAO(
             model=NeoBaseUserModel,
         )
 
-    async def get_by_email(self, email: str) -> NeoBaseUserResponseDTO | None:
+    async def get_by_email(self, email: str) -> NeoBaseUserResponseLoginDTO | None:
         """
         Get node by email.
         """
@@ -62,7 +62,7 @@ class NeoBaseUserDAO(
             return None
 
         # Validate and return the DTO
-        return NeoBaseUserResponseDTO(
+        return NeoBaseUserResponseLoginDTO(
             id=record["n"].id,
             email=record["n"].get("email"),
             password=record["n"].get("password"),

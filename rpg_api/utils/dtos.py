@@ -25,7 +25,9 @@ from rpg_api.web.dtos.neo4j.neo4j_dtos import (
     NeoBaseUserDTO,
     NeoBaseUserUpdateDTO,
     NeoBaseUserRelationshipDTO,
+    NeoBaseUserResponseLoginDTO,
     NeoBaseUserResponseDTO,
+    NeoBaseUserRelationshipInputDTO,
 )
 from rpg_api.web.dtos.postgres.character_dtos import (
     CharacterDTO,

@@ -35,13 +35,14 @@ def get_token(token: str = Depends(auth_scheme)) -> str:
 async def get_current_user(
     session: Neo4jSession,
     token: str = Depends(get_token),
-) -> dtos.BaseUserDTO:
+) -> dtos.NeoBaseUserResponseDTO:
     """Get current user from token data."""
     token_data = auth_utils.decode_token(token)
+    print(token_data)
     dao = NeoBaseUserDAO(session=session)
     try:
         return await dao.get_by_id(
-            id=token_data.user_id,  # type: ignore
+            node_id=int(token_data.user_id),  # type: ignore
         )
     except exceptions.RowNotFoundError:
         raise exceptions.HttpNotFound("Decoded user not found.")
