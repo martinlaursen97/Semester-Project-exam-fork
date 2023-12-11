@@ -2,6 +2,7 @@ from pydantic import BaseModel, validator, EmailStr, SecretStr, Field
 from rpg_api.db.neo4j.base import Base, BaseRelationshipDTO
 from typing import Any
 from rpg_api import constants
+from datetime import datetime
 
 
 class NeoBaseUserModel(Base):
@@ -51,9 +52,11 @@ class NeoBaseUserUpdateDTO(BaseModel):
 
 
 class NeoBaseUserRelationshipInputDTO(BaseModel):
+    """DTO for creating a relationship between two users."""
+
     friend_id: int
     relationship_type: str
-    relationship_props: dict[str, Any] = {}
+    relationship_props: dict[str, Any] = {"created_at": datetime.now()}
 
 
 class NeoBaseUserRelationshipDTO(BaseRelationshipDTO):
@@ -61,7 +64,7 @@ class NeoBaseUserRelationshipDTO(BaseRelationshipDTO):
 
     @validator("relationship_type")
     def validate_relationship_type(cls, v: Any) -> Any:
-        allowed_types = ["friend", "blocked"]
+        allowed_types = ["Friends", "Blocked"]
         if v not in allowed_types:
             raise ValueError(f"Invalid relationship type for User: {v}")
         return v

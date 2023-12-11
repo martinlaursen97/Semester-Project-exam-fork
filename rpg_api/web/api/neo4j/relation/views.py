@@ -11,13 +11,14 @@ from rpg_api import exceptions as rpg_exc
 from rpg_api.services.email_service.email_dependencies import GetEmailService
 from rpg_api.web.api.neo4j.auth.token_store import token_store
 from rpg_api.settings import settings
+from datetime import datetime
 
 
 router = APIRouter()
 
 
 @router.post(
-    "/relation",
+    "",
 )
 async def create_friend_request(
     current_user: GetCurrentUser,
@@ -26,15 +27,18 @@ async def create_friend_request(
 ) -> dtos.EmptyDefaultResponse:
     """Create friend request."""
     dao = NeoBaseUserDAO(session=session)
-    print("bqkfjebqkfbfkebfjq----------",current_user)
 
-    await dao.create_relationship(
-        rel_dto=dtos.NeoBaseUserRelationshipDTO(
-            node1_id=int(current_user.id),
-            node2_id=input_dto.friend_id,
-            relationship_type=input_dto.relationship_type,
-            relationship_props=input_dto.relationship_props,
+    try:
+        await dao.create_relationship(
+            rel_dto=dtos.NeoBaseUserRelationshipDTO(
+                node1_id=int(current_user.id),
+                node2_id=input_dto.friend_id,
+                relationship_type=input_dto.relationship_type,
+                relationship_props=input_dto.relationship_props,
+            )
         )
-    )
+    except Exception as e:
+        print(e)
+        raise rpg_exc.HttpUnprocessableEntity()
 
     return dtos.EmptyDefaultResponse()
