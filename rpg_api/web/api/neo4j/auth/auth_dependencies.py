@@ -1,5 +1,4 @@
-from fastapi import Depends, HTTPException, Request
-from fastapi.security import HTTPBearer
+from fastapi import Depends
 
 from rpg_api import exceptions
 from rpg_api.utils import dtos
@@ -7,29 +6,7 @@ from rpg_api.web.api.postgres.auth import auth_utils
 from typing import Annotated
 from rpg_api.web.daos.base_user_dao import NeoBaseUserDAO
 from rpg_api.db.neo4j.dependencies import Neo4jSession
-
-
-class RpgHTTPBearer(HTTPBearer):
-    """
-    HTTPBearer with access token.
-    Returns access token as str.
-    """
-
-    async def __call__(self, request: Request) -> str | None:  # type: ignore
-        """Return str instead of object and 401 instead of 403."""
-        try:
-            obj = await super().__call__(request)
-            return obj.credentials if obj else None
-        except HTTPException:
-            raise exceptions.HttpUnauthorized("Missing token.")
-
-
-auth_scheme = RpgHTTPBearer()
-
-
-def get_token(token: str = Depends(auth_scheme)) -> str:
-    """Return access token as str."""
-    return token
+from rpg_api.web.api.postgres.auth.auth_dependencies import get_token
 
 
 async def get_current_user(
@@ -37,8 +14,8 @@ async def get_current_user(
     token: str = Depends(get_token),
 ) -> dtos.NeoBaseUserResponseDTO:
     """Get current user from token data."""
+
     token_data = auth_utils.decode_token(token)
-    print(token_data)
     dao = NeoBaseUserDAO(session=session)
     try:
         return await dao.get_by_id(

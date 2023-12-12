@@ -2,7 +2,6 @@ from pydantic import BaseModel, validator, EmailStr, SecretStr, Field
 from rpg_api.db.neo4j.base import Base, BaseRelationshipDTO
 from typing import Any
 from rpg_api import constants
-from datetime import datetime
 
 
 class NeoBaseUserModel(Base):
