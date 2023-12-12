@@ -6,6 +6,7 @@ from rpg_api.web.api.neo4j.auth.auth_dependencies import GetCurrentUser
 from rpg_api import exceptions as rpg_exc
 
 
+
 router = APIRouter()
 
 
@@ -19,6 +20,8 @@ async def create_friend_request(
 ) -> dtos.EmptyDefaultResponse:
     """Create friend request."""
     dao = NeoBaseUserDAO(session=session)
+
+
 
     try:
         await dao.create_relationship(

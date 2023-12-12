@@ -56,7 +56,7 @@ class NeoBaseUserRelationshipInputDTO(BaseModel):
 
     friend_id: int
     relationship_type: str
-    relationship_props: dict[str, Any] = {"created_at": datetime.now()}
+    relationship_props: dict[str, Any] = {}
 
 
 class NeoBaseUserRelationshipDTO(BaseRelationshipDTO):

@@ -17,6 +17,7 @@ from rpg_api.utils.dtos import (
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 from neo4j import AsyncSession as AsyncNeoSession
 import sqlalchemy as sa
+from datetime import datetime
 
 
 class BaseUserDAO(BaseDAO[BaseUser, BaseUserDTO, BaseUserInputDTO, BaseUserUpdateDTO]):
@@ -74,6 +75,8 @@ class NeoBaseUserDAO(
         """
         Create a relationship of a specified type between two nodes.
         """
+        rel_dto.relationship_props["created_at"] = datetime.now()
+
         create_rel_query = f"""
         MATCH (a:{self._label}), (b:{self._label})
         WHERE id(a) = $node1_id AND id(b) = $node2_id
