@@ -71,7 +71,7 @@ class NeoBaseUserDAO(
 
     async def create_relationship(
         self, rel_dto: NeoBaseUserRelationshipDTO
-    ) -> NeoBaseUserRelationshipDTO | None:
+    ) -> int | None:
         """
         Create a relationship of a specified type between two nodes.
         """
@@ -93,5 +93,5 @@ class NeoBaseUserDAO(
         record = await result.single()
 
         if record:
-            return record["r"]
+            return record["r"].id
         return None
