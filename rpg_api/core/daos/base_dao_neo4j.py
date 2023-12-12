@@ -50,9 +50,9 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
 
         if not record:
             raise rpg_exc.RowNotFoundError()
-        result = self.model.model_validate(record["n"])
-        result.id = record["n"].id
-        return result
+        node = self.model.model_validate(record["n"])
+        node.id = record["n"].id
+        return node
 
     async def get_by_property(self, input_dto: InputDTO) -> NodeModel | None:
         """

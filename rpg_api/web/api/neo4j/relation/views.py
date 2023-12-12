@@ -1,17 +1,9 @@
 from fastapi import APIRouter
 from rpg_api.db.neo4j.dependencies import Neo4jSession
-from rpg_api.web.dtos.neo4j.neo4j_dtos import (
-    NeoBaseUserDTO,
-    NeoUserCreateDTO,
-)
 from rpg_api.web.daos.base_user_dao import NeoBaseUserDAO
 from rpg_api.utils import dtos
 from rpg_api.web.api.neo4j.auth.auth_dependencies import GetCurrentUser
 from rpg_api import exceptions as rpg_exc
-from rpg_api.services.email_service.email_dependencies import GetEmailService
-from rpg_api.web.api.neo4j.auth.token_store import token_store
-from rpg_api.settings import settings
-from datetime import datetime
 
 
 router = APIRouter()
