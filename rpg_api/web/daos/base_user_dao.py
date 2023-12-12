@@ -8,14 +8,16 @@ from rpg_api.utils.dtos import (
     BaseUserDTO,
     BaseUserInputDTO,
     BaseUserUpdateDTO,
-    PersonDTO,
-    PersonModel,
-    PersonUpdateDTO,
-    PersonRelationshipDTO,
+    NeoBaseUserDTO,
+    NeoBaseUserModel,
+    NeoBaseUserUpdateDTO,
+    NeoBaseUserRelationshipDTO,
+    NeoBaseUserResponseLoginDTO,
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 from neo4j import AsyncSession as AsyncNeoSession
 import sqlalchemy as sa
+from datetime import datetime
 
 
 class BaseUserDAO(BaseDAO[BaseUser, BaseUserDTO, BaseUserInputDTO, BaseUserUpdateDTO]):
@@ -37,21 +39,44 @@ class BaseUserDAO(BaseDAO[BaseUser, BaseUserDTO, BaseUserInputDTO, BaseUserUpdat
         return user.scalars().first()
 
 
-class PersonNeo4jDAO(BaseNeo4jDAO[PersonModel, PersonDTO, PersonUpdateDTO]):
+class NeoBaseUserDAO(
+    BaseNeo4jDAO[NeoBaseUserModel, NeoBaseUserDTO, NeoBaseUserUpdateDTO]
+):
     """Class for accessing user table."""
 
     def __init__(self, session: AsyncNeoSession = Depends(get_neo4j_session)):
         super().__init__(
             session=session,
-            model=PersonModel,
+            model=NeoBaseUserModel,
+        )
+
+    async def get_by_email(self, email: str) -> NeoBaseUserResponseLoginDTO | None:
+        """
+        Get node by email.
+        """
+
+        query = f"MATCH (n:{self._label}) WHERE n.email = $email RETURN n"
+        result = await self.session.run(query=query, email=email)
+        record = await result.single()
+
+        if not record:
+            return None
+
+        # Validate and return the DTO
+        return NeoBaseUserResponseLoginDTO(
+            id=record["n"].id,
+            email=record["n"].get("email"),
+            password=record["n"].get("password"),
         )
 
     async def create_relationship(
-        self, rel_dto: PersonRelationshipDTO
-    ) -> PersonRelationshipDTO | None:
+        self, rel_dto: NeoBaseUserRelationshipDTO
+    ) -> NeoBaseUserRelationshipDTO | None:
         """
         Create a relationship of a specified type between two nodes.
         """
+        rel_dto.relationship_props["created_at"] = datetime.now()
+
         create_rel_query = f"""
         MATCH (a:{self._label}), (b:{self._label})
         WHERE id(a) = $node1_id AND id(b) = $node2_id
