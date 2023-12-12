@@ -87,9 +87,12 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         result = await self.session.run(update_query, id=id, props=props)
         record = await result.single()
 
-        if record:
-            return self.model.model_validate(record["n"])
-        return None
+        if not record:
+            raise rpg_exc.RowNotFoundError
+
+        node = self.model.model_validate(record["n"])
+        node.id = id
+        return node
 
     async def delete(self, node_id: int) -> None:
         """

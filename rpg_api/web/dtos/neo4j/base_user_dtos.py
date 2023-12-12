@@ -44,7 +44,7 @@ class NeoUserCreateDTO(BaseModel):
 
 
 class NeoBaseUserUpdateDTO(BaseModel):
-    """Update DTO for person."""
+    """Update DTO for base user."""
 
     email: str | None = None
     password: str | None = None

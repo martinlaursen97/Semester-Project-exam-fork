@@ -22,7 +22,6 @@ def get_data(response: ResponseContextManager | FastResponse) -> Any:
 
 def handle_error(response: ResponseContextManager) -> None:
     """Adds custom error message to be displayed in the web ui and log."""
-    print(response.__dict__)
     error_msg = f"Got unexpected status code {response.status_code}: {response.text}"
     response.failure(error_msg)
     logging.error(error_msg)

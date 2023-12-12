@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import Any
 from rpg_api.db.neo4j.dependencies import Neo4jSession
-from rpg_api.web.dtos.neo4j.neo4j_dtos import (
+from rpg_api.web.dtos.neo4j.base_user_dtos import (
     NeoBaseUserDTO,
     NeoBaseUserUpdateDTO,
     NeoBaseUserRelationshipDTO,
@@ -57,7 +57,7 @@ async def create_relationship_person(
     """Test view to create relationship between two person nodes."""
     person_dao = NeoBaseUserDAO(session=session)
     person = await person_dao.create_relationship(rel_dto=relationship_dto)
-    print(person)
+
     if person:
         return {"person": person}
     return {"message": "Person not found"}

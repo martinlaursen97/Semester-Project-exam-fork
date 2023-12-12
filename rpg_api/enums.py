@@ -25,3 +25,17 @@ class Gender(StrEnum):
     male = "male"
     female = "female"
     other = "other"
+
+
+class CharacterClass(StrEnum):
+    """
+    Gender Enum.
+
+    `mage`: Character is a mage
+    `warrior`: Character is a Warrior
+    `shaman`: Character is a Shaman
+    """
+
+    mage = "mage"
+    warrior = "warrior"
+    shaman = "shaman"
