@@ -93,6 +93,8 @@ class NeoCharacterDAO(
         return None
 
     async def get_user_characters(self, user_id: int) -> list[NeoCharacterModel]:
+        """Get all character belonging to a user."""
+
         query = """
         MATCH (u:BaseUser)-[:HasA]->(c:Character)
         WHERE id(u) = $id
