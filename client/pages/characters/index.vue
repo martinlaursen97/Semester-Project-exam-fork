@@ -4,7 +4,11 @@
     <form>
       <input type="text" v-model="character_name" />
       <select v-model="selected_class">
-        <option v-for="base_class in base_classes_dropdown" :key="base_class.id" :value="base_class.id">
+        <option
+          v-for="base_class in base_classes_dropdown"
+          :key="base_class.id"
+          :value="base_class.id"
+        >
           {{ base_class.name }}
         </option>
       </select>
@@ -20,11 +24,15 @@
     <br />
     <br />
 
-    <button @click="enterWorld(character)" v-for="character in characters" :key="character.id">
+    <button
+      @click="enterWorld(character)"
+      v-for="character in characters"
+      :key="character.id"
+    >
       Name: {{ character.character_name }} Gender: {{ character.gender }} Alive:
       {{ character.alive }} Level: {{ character.level }} XP:
       {{ character.xp }} Money: {{ character.money }} Class:
-      {{ character.character_class }} ID: {{ character.id }}
+      {{ character.base_class.name }} ID: {{ character.id }}
     </button>
   </div>
 </template>
