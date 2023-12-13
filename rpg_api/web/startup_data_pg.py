@@ -43,9 +43,19 @@ async def _create_startup_places(app: FastAPI) -> None:  # pragma: no cover
     place_dao = PlaceDAO(session=session)
 
     input_places = [
-        dtos.PlaceInputDTO(name="Goldshire", radius=40, x=25, y=-100),
-        dtos.PlaceInputDTO(name="Stormwind City", radius=100, x=-150, y=50),
-        dtos.PlaceInputDTO(name="Ironforge", radius=70, x=100, y=100),
+        dtos.PlaceInputDTO(
+            name="Goldshire", description="goldshire", radius=40, x=25, y=-100
+        ),
+        dtos.PlaceInputDTO(
+            name="Stormwind City",
+            description="stormwind city",
+            radius=100,
+            x=-150,
+            y=50,
+        ),
+        dtos.PlaceInputDTO(
+            name="Ironforge", description="ironforge", radius=70, x=100, y=100
+        ),
     ]
     db_places = await place_dao.filter()
 
