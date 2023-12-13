@@ -11,6 +11,7 @@ from rpg_api.utils.dtos import (
     NeoCharacterInputDTO,
     NeoCharacterUpdateDTO,
     NeoCharacterUserRelationshipDTO,
+    NeoCharacterDTO,
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 from uuid import UUID
@@ -19,6 +20,7 @@ from neo4j import AsyncSession as AsyncNeoSession
 
 from rpg_api.db.neo4j.dependencies import get_neo4j_session
 from datetime import datetime
+from rpg_api import exceptions as rpg_exc
 
 
 class CharacterDAO(
@@ -95,14 +97,42 @@ class NeoCharacterDAO(
     async def get_user_characters(self, user_id: int) -> list[NeoCharacterModel]:
         """Get all character belonging to a user."""
 
+        characters = []
+
         query = """
         MATCH (u:BaseUser)-[:HasA]->(c:Character)
         WHERE id(u) = $id
-        RETURN c
+        RETURN c, id(c) as id
         """
 
         result = await self.session.run(query=query, id=user_id)
 
-        return [
-            self.model.model_validate(record["c"]) for record in await result.data()
-        ]
+        for node in await result.data():
+            character = self.model.model_validate(node["c"])
+            character.id = node["id"]
+            characters.append(character)
+
+        return characters
+
+    async def get_character(self, character_id: int, user_id: int) -> NeoCharacterDTO:
+        """Get character by id, belonging to a user."""
+
+        query = """
+        MATCH (u:BaseUser)-[:HasA]->(c:Character)
+        WHERE id(u) = $user_id
+        AND id(c) = $character_id
+        RETURN c
+        """
+
+        result = await self.session.run(
+            query=query, user_id=user_id, character_id=character_id
+        )
+        record = await result.single()
+
+        if not record:
+            raise rpg_exc.RowNotFoundError()
+
+        character = NeoCharacterDTO.model_validate(record["c"])
+        character.id = record["c"].id
+
+        return character

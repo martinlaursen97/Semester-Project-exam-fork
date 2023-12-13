@@ -1,6 +1,9 @@
 from fastapi import APIRouter
 from rpg_api.utils import dtos
-from rpg_api.web.api.neo4j.auth.auth_dependencies import GetCurrentUser
+from rpg_api.web.api.neo4j.auth.auth_dependencies import (
+    GetCurrentUser,
+    GetCharacterIfUserOwns,
+)
 from rpg_api.db.neo4j.dependencies import Neo4jSession
 from rpg_api.web.daos.character_dao import NeoCharacterDAO
 from rpg_api import exceptions as rpg_exceptions
@@ -48,17 +51,16 @@ async def create_character(
 
 @router.patch("/{character_id}")
 async def update_character(
-    current_user: GetCurrentUser,
+    character: GetCharacterIfUserOwns,
     input_dto: dtos.NeoCharacterUpdateDTO,
     session: Neo4jSession,
-    character_id: int,
 ) -> dtos.EmptyDefaultResponse:
     """Update character."""
 
     dao = NeoCharacterDAO(session=session)
 
     try:
-        await dao.update(id=int(character_id), update_dto=input_dto)
+        await dao.update(id=character.id, update_dto=input_dto)
     except rpg_exceptions.RowNotFoundError:
         raise rpg_exceptions.HttpNotFound("Character not found.")
 
@@ -67,16 +69,15 @@ async def update_character(
 
 @router.delete("/{character_id}")
 async def delete_character(
-    current_user: GetCurrentUser,
+    character: GetCharacterIfUserOwns,
     session: Neo4jSession,
-    character_id: int,
 ) -> dtos.EmptyDefaultResponse:
-    """Delete character."""
+    """Delete character if user owns."""
 
     dao = NeoCharacterDAO(session=session)
 
     try:
-        await dao.delete_node_and_relationship(int(character_id))
+        await dao.delete_node_and_relationship(node_id=character.id)
         return dtos.EmptyDefaultResponse()
     except rpg_exceptions.RowNotFoundError:
         raise rpg_exceptions.HttpNotFound("Character not found.")

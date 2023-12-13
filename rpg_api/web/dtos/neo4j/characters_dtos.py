@@ -20,7 +20,7 @@ class NeoCharacterModel(Base):
 class NeoCharacterDTO(Base):
     """Character DTO."""
 
-    id: int
+    id: int | None = None
     character_class: CharacterClass
     gender: Gender
     character_name: str
