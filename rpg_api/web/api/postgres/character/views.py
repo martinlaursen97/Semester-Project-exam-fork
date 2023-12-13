@@ -61,7 +61,7 @@ async def create_character(
 ) -> dtos.DefaultCreatedResponse:
     """Create character."""
 
-    input_dto = dtos.NeoCharacterInputDTO(
+    input_dto = dtos.CharacterInputDTO(
         user_id=current_user.id,
         **endpoint_input_dto.model_dump(),
     )

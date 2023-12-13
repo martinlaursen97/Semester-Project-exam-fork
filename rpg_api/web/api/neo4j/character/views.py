@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from rpg_api.utils import dtos
 from rpg_api.web.api.neo4j.auth.auth_dependencies import GetCurrentUser
 from rpg_api.db.neo4j.dependencies import Neo4jSession
@@ -13,7 +13,8 @@ router = APIRouter()
 async def characters_me(
     current_user: GetCurrentUser,
     session: Neo4jSession,
-) -> dtos.DataListResponse:
+) -> dtos.DataListResponse[dtos.NeoCharacterModel]:
+    """Get characters for logged in user."""
     dao = NeoCharacterDAO(session=session)
 
     chars = await dao.get_user_characters(user_id=int(current_user.id))
@@ -52,6 +53,8 @@ async def update_character(
     session: Neo4jSession,
     character_id: int,
 ) -> dtos.EmptyDefaultResponse:
+    """Update character."""
+
     dao = NeoCharacterDAO(session=session)
 
     try:
