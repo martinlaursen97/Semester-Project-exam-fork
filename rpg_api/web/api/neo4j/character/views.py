@@ -18,7 +18,6 @@ async def characters_me(
 
     chars = await dao.get_user_characters(user_id=int(current_user.id))
 
-
     return dtos.DataListResponse(data=chars)
 
 
@@ -61,3 +60,20 @@ async def update_character(
         raise rpg_exceptions.HttpNotFound("Character not found.")
 
     return dtos.EmptyDefaultResponse()
+
+
+@router.delete("/{character_id}")
+async def delete_character(
+    current_user: GetCurrentUser,
+    session: Neo4jSession,
+    character_id: int,
+) -> dtos.EmptyDefaultResponse:
+    """Delete character."""
+
+    dao = NeoCharacterDAO(session=session)
+
+    try:
+        await dao.delete_node_and_relationship(int(character_id))
+        return dtos.EmptyDefaultResponse()
+    except rpg_exceptions.RowNotFoundError:
+        raise rpg_exceptions.HttpNotFound("Character not found.")
