@@ -24,7 +24,7 @@ jobs:
           pip install requests pandas
 
       - name: Generate API Documentation
-        run: python docs/api_docs_md.py
+        run: python scripts/api_docs_md.py
 
       - name: Commit and push if changed
         run: |
