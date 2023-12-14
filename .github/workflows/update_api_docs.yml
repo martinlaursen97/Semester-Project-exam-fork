@@ -1,37 +1,39 @@
-name: Update API Documentation
+# name: Update API Documentation
 
-on:
-  push:
-    branches:
-      - main
-      - docs_pdf_thing
+# on:
+#   push:
+#     branches:
+#       - main
+#       - docs_pdf_thing
 
-jobs:
-  update-api-doc:
-    runs-on: ubuntu-latest
+# Uncomment when we have backend deployed and url for docs in the script
 
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+# jobs:
+#   update-api-doc:
+#     runs-on: ubuntu-latest
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.12"
+#     steps:
+#       - name: Check out repository
+#         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          pip install requests pandas
+#       - name: Set up Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: "3.12"
 
-      - name: Generate API Documentation
-        run: python scripts/api_docs_md.py
+#       - name: Install dependencies
+#         run: |
+#           pip install requests pandas
 
-      - name: Commit and push if changed
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git add API_DOCUMENTATION.md
-          git diff --staged --quiet || git commit -m "Update API Documentation"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Generate API Documentation
+#         run: python scripts/api_docs_md.py
+
+#       - name: Commit and push if changed
+#         run: |
+#           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#           git config --global user.name "github-actions[bot]"
+#           git add API_DOCUMENTATION.md
+#           git diff --staged --quiet || git commit -m "Update API Documentation"
+#           git push
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

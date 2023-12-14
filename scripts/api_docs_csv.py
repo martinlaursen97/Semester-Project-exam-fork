@@ -29,4 +29,4 @@ api_df = pd.DataFrame(
 
 
 # export to csv
-api_df.to_csv("api_documentation.csv", index=False)
+api_df.to_csv("./docs/api_documentation.csv", index=False)
