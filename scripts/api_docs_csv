@@ -27,5 +27,6 @@ api_df = pd.DataFrame(
     }
 )
 
-# Exporting the DataFrame to csv
+
+# export to csv
 api_df.to_csv("api_documentation.csv", index=False)
