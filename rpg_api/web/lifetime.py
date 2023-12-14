@@ -83,7 +83,7 @@ def _setup_neo4j(app: FastAPI) -> None:
     in the application's state property.
     """
     uri = "neo4j://rpg_api-neo4j:7687"
-    app.state.neo4j_driver = AsyncGraphDatabase.driver(uri, auth=("neo4j", "password"))
+    app.state.neo4j_driver = AsyncGraphDatabase.driver(uri, auth=("neo4j", "password")) # TODO: more security
 
 
 def register_startup_event(

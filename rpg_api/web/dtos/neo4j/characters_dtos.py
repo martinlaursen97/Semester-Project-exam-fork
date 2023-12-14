@@ -1,6 +1,7 @@
 from rpg_api.db.neo4j.base import Base, BaseRelationshipDTO
 from rpg_api.enums import Gender, CharacterClass
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class NeoCharacterModel(Base):
@@ -15,6 +16,8 @@ class NeoCharacterModel(Base):
     level: int
     xp: int
     money: int
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class NeoCharacterDTO(Base):
@@ -28,6 +31,8 @@ class NeoCharacterDTO(Base):
     level: int
     xp: int
     money: int
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class NeoCharacterInputDTO(BaseModel):

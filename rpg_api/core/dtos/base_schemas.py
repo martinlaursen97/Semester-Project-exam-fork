@@ -53,7 +53,7 @@ class DefaultResponse(SuccessAndMessage, Generic[DataT]):
 class DefaultCreatedResponse(BaseModel):
     """Default response model returning data and message."""
 
-    data: UUID | None = Field(default=None)
+    data: UUID | int | None = Field(default=None)
     message: str = Field(default="Success!")
 
 

@@ -38,6 +38,13 @@ from rpg_api.web.dtos.neo4j.characters_dtos import (
     NeoCharacterUserRelationshipDTO,
 )
 
+from rpg_api.web.dtos.neo4j.item_dtos import (
+    NeoItemDTO,
+    NeoItemInputDTO,
+    NeoItemModel,
+    NeoItemUpdateDTO,
+)
+
 from rpg_api.web.dtos.postgres.character_dtos import (
     CharacterDTO,
     CharacterInputDTO,

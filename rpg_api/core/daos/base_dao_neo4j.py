@@ -3,6 +3,7 @@ from neo4j import AsyncSession
 from pydantic import BaseModel
 from rpg_api.db.neo4j.base import Base
 from rpg_api import exceptions as rpg_exc
+from datetime import datetime
 
 # Type variables for generic DAO
 NodeModel = TypeVar("NodeModel", bound=Base)
@@ -28,9 +29,13 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         """
         Create a node based on input DTO.
         """
+        now = datetime.now()
+        props = input_dto.model_dump()
+        props["created_at"] = now
+        props["updated_at"] = now
 
         create_query = f"CREATE (n:{self._label} $props) RETURN n"
-        result = await self.session.run(create_query, props=input_dto.model_dump())
+        result = await self.session.run(create_query, props=props)
         record = await result.single()
 
         if not record:
@@ -74,6 +79,7 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         """
 
         props_to_update = update_dto.model_dump()
+        props_to_update["updated_at"] = datetime.now()
         props = {}
 
         # Iterate over each attribute in the DTO if it is not none then set
