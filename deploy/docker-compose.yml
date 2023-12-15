@@ -23,11 +23,23 @@ services:
       RPG_API_DB_USER: rpg_api
       RPG_API_DB_PASS: rpg_api
       RPG_API_DB_BASE: rpg_api
+      RPG_API_DBADMIN_USER: rpg_api_admin
+      RPG_API_DBADMIN_PASS: rpg_api_admin
+      RPG_API_DB_READ_USER: rpg_api_read
+      RPG_API_DB_READ_PASS: rpg_api_read
+      RPG_API_DB_READ_RESTRICTED_USER: rpg_api_read_restricted
+      RPG_API_DB_READ_RESTRICTED_PASS: rpg_api_read_restricted
       RPG_API_MONGO_HOST: rpg_api-mongo
       RPG_API_MONGO_PORT: 27017
       RPG_API_MONGO_DATABASE: rpg_api
       RPG_API_MONGO_USER: rpg_api
       RPG_API_MONGO_PASS: rpg_api
+      RPG_API_MONGO_ADMIN_USER: rpg_api_admin
+      RPG_API_MONGO_ADMIN_PASS: rpg_api_admin
+      RPG_API_MONGO_READ_USER: rpg_api_read
+      RPG_API_MONGO_READ_PASS: rpg_api_read
+      RPG_API_MONGO_READ_RESTRICTED_USER: rpg_api_read_restricted
+      RPG_API_MONGO_READ_RESTRICTED_PASS: rpg_api_read_restricted
 
   postgres:
     image: postgres:13.8-bullseye

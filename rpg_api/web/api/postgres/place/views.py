@@ -44,7 +44,7 @@ async def create_place(
     except Exception as e:
         logger.exception(e)
         return dtos.DefaultCreatedResponse(
-            message="Failed to create place.",
+            message=str(e),
         )
 
     return dtos.DefaultCreatedResponse(

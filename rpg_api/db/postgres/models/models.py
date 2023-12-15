@@ -8,6 +8,7 @@ from rpg_api.enums import UserStatus, Gender
 import uuid
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+from typing import Any
 
 
 class BaseUser(Base):
@@ -226,4 +227,21 @@ class CharacterAttribute(Base):
     )
     attribute: Mapped["Attribute"] = relationship(
         "Attribute", foreign_keys=[attribute_id]
+    )
+
+
+class AuditLog(Base):
+    """Audit log model."""
+
+    __tablename__ = "audit_log"
+
+    db_user: Mapped[str] = mapped_column(sa.String(50))
+    table_name: Mapped[str] = mapped_column(sa.String(50))
+    action: Mapped[str] = mapped_column(sa.String(50))
+    old_values: Mapped[dict[str, Any] | None] = mapped_column(sa.JSON)
+    new_values: Mapped[dict[str, Any] | None] = mapped_column(sa.JSON)
+
+    __table_args__ = (
+        sa.Index("idx_audit_log_table_name", table_name),
+        sa.Index("idx_audit_log_db_user", db_user),
     )
