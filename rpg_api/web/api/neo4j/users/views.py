@@ -11,7 +11,7 @@ from rpg_api.web.daos.base_user_dao import NeoBaseUserDAO
 router = APIRouter()
 
 
-@router.get("/get-by-property")
+@router.get("/get-by-property", status_code=200)
 async def get_by_property(
     session: Neo4jSession, input_dto: NeoBaseUserDTO = Depends()
 ) -> dict[str, Any]:
@@ -25,7 +25,7 @@ async def get_by_property(
     return {"message": "Person not found"}
 
 
-@router.get("/node/{id}")
+@router.get("/node/{id}", status_code=200)
 async def get_by_id(session: Neo4jSession, id: int) -> dict[str, Any]:
     """Test view to get a node by id."""
 
@@ -37,7 +37,7 @@ async def get_by_id(session: Neo4jSession, id: int) -> dict[str, Any]:
         return {"message": "Person not found"}
 
 
-@router.patch("/node/{id}")
+@router.patch("/node/{id}", status_code=200)
 async def update_node(
     session: Neo4jSession, id: int, update_dto: NeoBaseUserUpdateDTO
 ) -> dict[str, Any]:
@@ -50,7 +50,7 @@ async def update_node(
     return {"message": "Person not found"}
 
 
-@router.post("/node/relationship")
+@router.post("/node/relationship", status_code=201)
 async def create_relationship_person(
     session: Neo4jSession, relationship_dto: NeoBaseUserRelationshipDTO
 ) -> dict[str, Any]:
@@ -63,7 +63,7 @@ async def create_relationship_person(
     return {"message": "Person not found"}
 
 
-@router.post("/add-node")
+@router.post("/add-node", status_code=201)
 async def add_node(session: Neo4jSession, input_dto: NeoBaseUserDTO) -> dict[str, Any]:
     """Test view to add a node."""
     person_dao = NeoBaseUserDAO(session=session)

@@ -10,7 +10,7 @@ from rpg_api.settings import settings
 router = APIRouter()
 
 
-@router.post("/login-email")
+@router.post("/login-email", status_code=200)
 async def login(
     input_dto: dtos.UserLoginDTO,
     daos: GetDAOs,
@@ -34,7 +34,7 @@ async def login(
     return dtos.DataResponse(data=dtos.LoginResponse(access_token=token))
 
 
-@router.post("/register")
+@router.post("/register", status_code=201)
 async def register(
     input_dto: dtos.UserCreateDTO,
     daos: GetDAOs,
@@ -56,9 +56,7 @@ async def register(
     return dtos.DefaultCreatedResponse()
 
 
-@router.post(
-    "/forgot-password",
-)
+@router.post("/forgot-password", status_code=200)
 async def forgot_password(
     input_dto: dtos.ForgotPasswordDTO,
     email_service: GetEmailService,
@@ -106,7 +104,7 @@ async def forgot_password(
     return dtos.EmptyDefaultResponse()
 
 
-@router.post("/reset-password")
+@router.post("/reset-password", status_code=200)
 async def reset_password(
     input_dto: dtos.ResetPasswordDTO,
     daos: GetDAOs,

@@ -9,9 +9,7 @@ from rpg_api import exceptions as rpg_exc
 router = APIRouter()
 
 
-@router.post(
-    "",
-)
+@router.post("", status_code=201)
 async def create_friend_request(
     current_user: GetCurrentUser,
     session: Neo4jSession,

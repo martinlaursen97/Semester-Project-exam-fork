@@ -40,7 +40,7 @@ INITIAL_ATTRIBUTES = [
 ]
 
 
-@router.post("")
+@router.post("", status_code=201)
 async def create_character(
     input_dto: CharacterCreateRequest,
     user: MBaseUser = Depends(get_current_user_mongo),

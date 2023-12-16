@@ -18,7 +18,7 @@ class PlaceFilterDTO(BaseModel):
     )
 
 
-@router.get("")  # , dependencies=[Depends(get_current_user)])
+@router.get("", status_code=200)  # , dependencies=[Depends(get_current_user)])
 async def get_places(
     daos: GetDAOs,
     filter_dto: PlaceFilterDTO = Depends(),
@@ -32,7 +32,7 @@ async def get_places(
     )
 
 
-@router.post("")
+@router.post("", status_code=201)
 async def create_place(
     input_dto: dtos.PlaceInputDTO,
     daos: GetDAOs,
