@@ -16,7 +16,7 @@ class CharacterPlaceDTO(BaseModel):
     name: str
 
 
-@router.get("")
+@router.get("", status_code=200)
 async def characters_me(
     daos: GetDAOs,
     current_user: GetCurrentUser,
@@ -39,7 +39,7 @@ async def characters_me(
     )
 
 
-@router.get("/place/{character_id}")
+@router.get("/place/{character_id}", status_code=200)
 async def character_place_details(
     daos: GetDAOs,
     character: GetCharacterIfUserOwns,
@@ -53,7 +53,7 @@ async def character_place_details(
     return dtos.DataResponse(data=CharacterPlaceDTO(name=place_name))
 
 
-@router.post("")
+@router.post("", status_code=201)
 async def create_character(
     endpoint_input_dto: dtos.CharacterPartialInputDTO,
     current_user: GetCurrentUser,

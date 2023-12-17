@@ -11,3 +11,14 @@ from rpg_api.db.postgres.models.models import (
     ClassAbility,
     CharacterAttribute,
 )
+from rpg_api.db.mongo.models.models import (
+    MBaseUser,
+    MCharacter,
+    MAbility,
+    MAttributeType,
+    MClass,
+    MPlace,
+    EmbedAttribute,
+    EmbedCharacterDetails,
+    EmbedLocation,
+)

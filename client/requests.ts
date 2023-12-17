@@ -1,12 +1,14 @@
-const implementation = "neo4j"
+const implementation = "postgres"
 
 async function sendRequest(
     resource: string,
     method: string = "get",
     payload: any = null,
 ) {
+    const config = useRuntimeConfig();
+
     const accessToken = useCookie('access_token');
-    const url = `http://localhost:7070/api/${implementation}${resource}`
+    const url = `${config.public.base_url}/${implementation}${resource}`
 
     const requestOptions: any = {
         method,

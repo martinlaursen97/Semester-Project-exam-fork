@@ -8,7 +8,7 @@ from rpg_api.web.api.mongo.auth.auth_dependencies_mongo import get_current_user_
 router = APIRouter()
 
 
-@router.post("/add-friend")
+@router.post("/add-friend", status_code=200)
 async def add_friend(
     friend_id: PydanticObjectId,
     current_user: MBaseUser = Depends(get_current_user_mongo),
@@ -22,7 +22,7 @@ async def add_friend(
     return dtos.DefaultCreatedResponse()
 
 
-@router.delete("/remove-friend")
+@router.delete("/remove-friend", status_code=200)
 async def remove_friend(
     friend_id: PydanticObjectId,
     current_user: MBaseUser = Depends(get_current_user_mongo),

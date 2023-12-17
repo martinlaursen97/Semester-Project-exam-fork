@@ -8,7 +8,7 @@ from rpg_api.web.api.postgres.auth import auth_utils as utils
 router = APIRouter()
 
 
-@router.post("/login-email")
+@router.post("/login-email", status_code=200)
 async def login(input_dto: dtos.UserLoginDTO) -> dtos.DataResponse[dtos.LoginResponse]:
     """Login by email and password."""
 
@@ -29,7 +29,7 @@ async def login(input_dto: dtos.UserLoginDTO) -> dtos.DataResponse[dtos.LoginRes
     return dtos.DataResponse(data=dtos.LoginResponse(access_token=token))
 
 
-@router.post("/register")
+@router.post("/register", status_code=201)
 async def register(user: MBaseUser) -> dtos.DefaultCreatedResponse:
     """Create a new user."""
 
@@ -42,7 +42,7 @@ async def register(user: MBaseUser) -> dtos.DefaultCreatedResponse:
     return dtos.DefaultCreatedResponse()
 
 
-@router.get("/me")
+@router.get("/me", status_code=200)
 async def get_me(
     current_user: MBaseUser = Depends(get_current_user_mongo),
 ) -> dtos.DataResponse[MBaseUser]:

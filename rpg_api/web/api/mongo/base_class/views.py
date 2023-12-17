@@ -26,7 +26,7 @@ class ClassCreateRequest(BaseModel):
     abilities: list[AbilityDTO]
 
 
-@router.post("")
+@router.post("", status_code=201)
 async def create_class(
     input_dto: ClassCreateRequest,
 ) -> dtos.DefaultCreatedResponse:
@@ -55,7 +55,7 @@ async def create_class(
     return dtos.DefaultCreatedResponse()
 
 
-@router.patch("/{class_id}/add-ability")
+@router.patch("/{class_id}/add-ability", status_code=200)
 async def add_ability(
     class_id: PydanticObjectId,
     ability_id: PydanticObjectId,

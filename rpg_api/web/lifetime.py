@@ -130,8 +130,6 @@ def register_shutdown_event(
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
         await app.state.db_engine.dispose()
-        await app.state.mongodb_client.close()
-
-        pass  # noqa: WPS420
+        app.state.mongodb_client.close()
 
     return _shutdown
