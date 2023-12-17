@@ -1,6 +1,6 @@
 from rpg_api.db.postgres.base import (
     Base,
-    AbstractNameDescriptionMixin,
+    AbstractSearchableModel,
 )
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
@@ -28,7 +28,7 @@ class BaseUser(Base):
     )
 
 
-class AbilityType(AbstractNameDescriptionMixin):
+class AbilityType(AbstractSearchableModel):
     """Ability type model."""
 
     __tablename__ = "ability_type"
@@ -42,7 +42,7 @@ class AbilityType(AbstractNameDescriptionMixin):
     )
 
 
-class BaseClass(AbstractNameDescriptionMixin):
+class BaseClass(AbstractSearchableModel):
     """Model for base class."""
 
     __tablename__ = "base_class"
@@ -56,7 +56,7 @@ class BaseClass(AbstractNameDescriptionMixin):
     )
 
 
-class Attribute(AbstractNameDescriptionMixin):
+class Attribute(AbstractSearchableModel):
     """Model for Attribute."""
 
     __tablename__ = "attribute"
@@ -70,7 +70,7 @@ class Attribute(AbstractNameDescriptionMixin):
     )
 
 
-class Place(AbstractNameDescriptionMixin):
+class Place(AbstractSearchableModel):
     """Model for place."""
 
     __tablename__ = "place"
@@ -163,7 +163,7 @@ class CharacterLocation(Base):
     y: Mapped[int] = mapped_column(sa.Integer, default=0)
 
 
-class Ability(AbstractNameDescriptionMixin):
+class Ability(AbstractSearchableModel):
     """Model for ability."""
 
     __tablename__ = "ability"

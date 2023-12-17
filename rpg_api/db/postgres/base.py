@@ -28,7 +28,7 @@ class TSVector(sa.types.TypeDecorator):  # type: ignore
     cache_ok = True
 
 
-class AbstractNameDescriptionMixin(Base):
+class AbstractSearchableModel(Base):
     """Abstract name mixin."""
 
     __abstract__ = True
