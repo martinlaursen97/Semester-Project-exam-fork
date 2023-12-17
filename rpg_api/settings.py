@@ -116,7 +116,6 @@ class Settings(BaseSettings):
             user=self.db_user,
             password=self.db_pass,
             path=f"/{self.db_base}",
-            query={"sslmode": "require"},
         )
 
     @property
