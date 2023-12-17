@@ -23,11 +23,23 @@ services:
       RPG_API_DB_USER: rpg_api
       RPG_API_DB_PASS: rpg_api
       RPG_API_DB_BASE: rpg_api
+      RPG_API_DBADMIN_USER: rpg_api_admin
+      RPG_API_DBADMIN_PASS: rpg_api_admin
+      RPG_API_DB_READ_USER: rpg_api_read
+      RPG_API_DB_READ_PASS: rpg_api_read
+      RPG_API_DB_READ_RESTRICTED_USER: rpg_api_read_restricted
+      RPG_API_DB_READ_RESTRICTED_PASS: rpg_api_read_restricted
       RPG_API_MONGO_HOST: rpg_api-mongo
       RPG_API_MONGO_PORT: 27017
       RPG_API_MONGO_DATABASE: rpg_api
       RPG_API_MONGO_USER: rpg_api
       RPG_API_MONGO_PASS: rpg_api
+      RPG_API_MONGO_ADMIN_USER: rpg_api_admin
+      RPG_API_MONGO_ADMIN_PASS: rpg_api_admin
+      RPG_API_MONGO_READ_USER: rpg_api_read
+      RPG_API_MONGO_READ_PASS: rpg_api_read
+      RPG_API_MONGO_READ_RESTRICTED_USER: rpg_api_read_restricted
+      RPG_API_MONGO_READ_RESTRICTED_PASS: rpg_api_read_restricted
 
   postgres:
     image: postgres:13.8-bullseye
@@ -40,7 +52,6 @@ services:
       POSTGRES_DB: "rpg_api"
     volumes:
     - pg-data:/var/lib/postgresql/data
-    # - ./db-scripts:/docker-entrypoint-initdb.d
     restart: always
     healthcheck:
       test: pg_isready -U rpg_api
@@ -67,7 +78,7 @@ services:
     hostname: rpg_api-mongo
     container_name: mongo
     ports:
-      - "27017:27017"
+      - "27000:27017"
     environment:
       MONGO_INITDB_DATABASE: rpg_api
       MONGO_INITDB_ROOT_USERNAME: rpg_api
@@ -75,13 +86,14 @@ services:
     volumes:
       - mongo-data:/data/db
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test
       interval: 2s
       timeout: 3s
       retries: 40
     command: 
       - '--logpath'
       - '/var/log/mongodb/mongod.log'
+      
     restart: always
 
   neo4j:

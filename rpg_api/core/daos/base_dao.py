@@ -50,7 +50,7 @@ class BaseDAO(Generic[Model, BaseDTO, InputDTO, UpdateDTO]):  # noqa: WPS338
         query = (
             sa.update(self.model)
             .where(self.model.id == id)
-            .values(**update_dto.model_dump(exclude_none=True))  # type: ignore
+            .values(**update_dto.model_dump(exclude_none=True))
         )
         await self.session.execute(query)
         await self.session.commit()

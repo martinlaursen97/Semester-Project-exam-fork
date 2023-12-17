@@ -7,6 +7,7 @@ class PlaceBaseDTO(dtos.OrmBasicModel):
     """Base DTO for Place."""
 
     name: str
+    description: str | None = None
     radius: int
     x: int
     y: int
@@ -26,6 +27,7 @@ class PlaceUpdateDTO(BaseModel):
     """Update DTO for Place."""
 
     name: str | None = None
+    description: str | None = None
     radius: int | None = None
     x: int | None = None
     y: int | None = None

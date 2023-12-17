@@ -10,7 +10,6 @@ from sqlalchemy.sql import text
 from rpg_api.db.mongo.models.models import (
     MBaseUser,
     MCharacter,
-    MAttribute,
     MAbility,
     MClass,
     MPlace,
@@ -18,6 +17,7 @@ from rpg_api.db.mongo.models.models import (
 from loguru import logger
 from neo4j import AsyncGraphDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
+from rpg_api.web.startup_data_mongo import create_startup_data_mongo
 
 from rpg_api.web.startup_data_pg import create_startup_data_pg
 
@@ -60,19 +60,22 @@ async def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
     :param app: fastAPI application.
     """
 
-    app.state.mongodb_client = AsyncIOMotorClient(str(settings.mongodb_url))
+    client = AsyncIOMotorClient(str(settings.mongodb_url))  # type: ignore
+
+    app.state.mongodb_client = client
 
     await init_beanie(
-        database=app.state.mongodb_client.db_name,
+        database=client.rpg_api,
         document_models=[
             MBaseUser,
             MCharacter,
-            MAttribute,
             MAbility,
             MClass,
             MPlace,
         ],  # type: ignore
     )
+
+    await create_startup_data_mongo(app)
 
 
 def _setup_neo4j(app: FastAPI) -> None:
@@ -82,8 +85,10 @@ def _setup_neo4j(app: FastAPI) -> None:
     This function creates a Neo4j driver instance and stores it
     in the application's state property.
     """
-    uri = "neo4j://rpg_api-neo4j:7687"
-    app.state.neo4j_driver = AsyncGraphDatabase.driver(uri, auth=("neo4j", "password")) # TODO: more security
+    uri = settings.neo_host
+    app.state.neo4j_driver = AsyncGraphDatabase.driver(
+        uri, auth=(settings.neo_user, settings.neo_pass)
+    )
 
 
 def register_startup_event(
@@ -125,8 +130,6 @@ def register_shutdown_event(
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
         await app.state.db_engine.dispose()
-        await app.state.mongodb_client.close()
-
-        pass  # noqa: WPS420
+        app.state.mongodb_client.close()
 
     return _shutdown

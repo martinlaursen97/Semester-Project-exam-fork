@@ -57,3 +57,23 @@ class ItemType(StrEnum):
     legs = "legs"
     boots = "boots"
     weapon = "weapon"
+
+
+class MAttributeType(StrEnum):
+    """
+    Attribute Enum.
+
+    `strength`: strength attribute
+    `dexterity`: dexterity attribute
+    `constitution`: constitution attribute
+    `intelligence`: intelligence attribute
+    `wisdom`: wisdom attribute
+    `charisma`: charisma attribute
+    """
+
+    strength = "strength"
+    dexterity = "dexterity"
+    constitution = "constitution"
+    intelligence = "intelligence"
+    wisdom = "wisdom"
+    charisma = "charisma"
