@@ -43,6 +43,8 @@ from rpg_api.web.dtos.neo4j.item_dtos import (
     NeoItemInputDTO,
     NeoItemModel,
     NeoItemUpdateDTO,
+    NeoItemCharacterRelationshipDTO,
+    NeoItemCharacterEquipRelationshipDTO,
 )
 
 from rpg_api.web.dtos.postgres.character_dtos import (

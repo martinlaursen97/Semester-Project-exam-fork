@@ -1,7 +1,8 @@
 from rpg_api.db.neo4j.base import Base, BaseRelationshipDTO
 from rpg_api import enums
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
+from typing import Any
 
 
 class NeoItemModel(Base):
@@ -11,6 +12,7 @@ class NeoItemModel(Base):
 
     id: int | None = None
     name: str
+    description: str
     item_type: enums.ItemType
     stamina: int
     agility: int
@@ -25,6 +27,7 @@ class NeoItemDTO(Base):
 
     id: int | None = None
     name: str
+    description: str
     item_type: enums.ItemType
     stamina: int
     agility: int
@@ -38,6 +41,7 @@ class NeoItemInputDTO(BaseModel):
     """DTO for items."""
 
     name: str
+    description: str
     item_type: enums.ItemType
     stamina: int
     agility: int
@@ -49,8 +53,32 @@ class NeoItemUpdateDTO(BaseModel):
     """DTO for items."""
 
     name: str | None
+    description: str
     item_type: enums.ItemType | None
     stamina: int | None
     agility: int | None
     intelligence: int | None
     crit: int | None
+
+
+class NeoItemCharacterRelationshipDTO(BaseRelationshipDTO):
+    """User relation with a character, that validates the type of relationship given."""
+
+    @validator("relationship_type")
+    def validate_relationship_type(cls, v: Any) -> Any:
+        allowed_types = ["HasItem"]
+        if v not in allowed_types:
+            raise ValueError(f"Invalid relationship type for item: {v}")
+        return v
+
+
+class NeoItemCharacterEquipRelationshipDTO(BaseRelationshipDTO):
+    """User relation with a character, that validates the type of relationship given."""
+
+    @validator("relationship_type")
+    def validate_relationship_type(cls, v: Any) -> Any:
+        allowed_types = ["EquippedAsHead"]
+
+        if v not in allowed_types:
+            raise ValueError(f"Invalid relationship type for item equip: {v}")
+        return v

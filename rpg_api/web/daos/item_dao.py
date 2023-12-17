@@ -8,6 +8,8 @@ from rpg_api.utils.dtos import (
     NeoItemDTO,
     NeoItemModel,
     NeoItemUpdateDTO,
+    NeoItemCharacterEquipRelationshipDTO,
+    NeoItemCharacterRelationshipDTO,
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 from uuid import UUID
@@ -28,33 +30,63 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
             model=NeoItemModel,
         )
 
-    # async def create_relationship(
-    #     self, rel_dto: NeoCharacterUserRelationshipDTO
-    # ) -> int | None:
-    #     """
-    #     Create a relationship of a specified type between two nodes.
-    #     """
+    async def add_item_to_character(
+        self, rel_dto: NeoItemCharacterRelationshipDTO
+    ) -> int | None:
+        """
+        Create a relationship of a specified type between two nodes.
+        """
 
-    #     rel_dto.relationship_props["created_at"] = datetime.now()
+        rel_dto.relationship_props["created_at"] = datetime.now()
 
-    #     create_rel_query = f"""
-    #     MATCH (a:BaseUser), (b:{self._label})
-    #     WHERE id(a) = $node1_id AND id(b) = $node2_id
-    #     CREATE (a)-[r:{rel_dto.relationship_type}]->(b)
-    #     SET r = $relationship_props
-    #     RETURN r
-    #     """
-    #     result = await self.session.run(
-    #         create_rel_query,
-    #         node1_id=rel_dto.node1_id,
-    #         node2_id=rel_dto.node2_id,
-    #         relationship_props=rel_dto.relationship_props,
-    #     )
-    #     record = await result.single()
+        create_rel_query = f"""
+        MATCH (a:Character), (b:{self._label})
+        WHERE id(a) = $node1_id AND id(b) = $node2_id
+        CREATE (a)-[r:{rel_dto.relationship_type}]->(b)
+        SET r = $relationship_props
+        RETURN r
+        """
 
-    #     if record:
-    #         return record["r"].id
-    #     return None
+        result = await self.session.run(
+            create_rel_query,
+            node1_id=rel_dto.node1_id,
+            node2_id=rel_dto.node2_id,
+            relationship_props=rel_dto.relationship_props,
+        )
+        record = await result.single()
+
+        if record:
+            return record["r"].id
+        return None
+
+    async def equip_item_to_character(
+        self, rel_dto: NeoItemCharacterEquipRelationshipDTO
+    ) -> int | None:
+        """
+        Create a relationship of a specified type between two nodes.
+        """
+
+        rel_dto.relationship_props["created_at"] = datetime.now()
+
+        create_rel_query = f"""
+        MATCH (a:Character), (b:{self._label})
+        WHERE id(a) = $node1_id AND id(b) = $node2_id
+        CREATE (a)-[r:{rel_dto.relationship_type}]->(b)
+        SET r = $relationship_props
+        RETURN r
+        """
+
+        result = await self.session.run(
+            create_rel_query,
+            node1_id=rel_dto.node1_id,
+            node2_id=rel_dto.node2_id,
+            relationship_props=rel_dto.relationship_props,
+        )
+        record = await result.single()
+
+        if record:
+            return record["r"].id
+        return None
 
     async def get_user_items(self, user_id: int) -> list[NeoItemDTO]:
         """Get all character belonging to a user."""

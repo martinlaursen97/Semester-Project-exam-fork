@@ -4,6 +4,8 @@ from rpg_api.db.neo4j.dependencies import Neo4jSession
 from rpg_api.web.daos.item_dao import NeoItemDAO
 
 from datetime import datetime
+from pydantic import BaseModel
+
 router = APIRouter()
 
 
@@ -18,5 +20,22 @@ async def add_item(
 
 
 @router.post("/character")
-async def add_item_to_character() -> str:
+async def add_item_to_character(
+    input_dto: dtos.NeoItemCharacterRelationshipDTO, session: Neo4jSession
+) -> str:
+    dao = NeoItemDAO(session=session)
+
+    await dao.add_item_to_character(input_dto)
+
+    return "hello"
+
+
+@router.post("/equip")
+async def add_item_to_character(
+    input_dto: dtos.NeoItemCharacterRelationshipDTO, session: Neo4jSession
+) -> str:
+    dao = NeoItemDAO(session=session)
+
+    await dao.equip_item_to_character(input_dto)
+
     return "hello"
