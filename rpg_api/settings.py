@@ -28,43 +28,71 @@ class Settings(BaseSettings):
     with environment variables.
     """
 
-    host: str = "0.0.0.0"
-    port: int = 80
+    host: str = "127.0.0.1"
+    port: int = 8080
     # quantity of workers for uvicorn
     workers_count: int = 1
     # Enable uvicorn reloading
     reload: bool = False
 
     # Current environment
-    environment: str = "prod"
+    environment: str = "dev"
 
     log_level: LogLevel = LogLevel.INFO
-    # Variables for the database
-    db_host: str = "rpg-db.postgres.database.azure.com"
-    db_port: int = 5432
-    db_user: str = "adminrpg"
-    db_pass: str = "Rpgpassword!"
-    db_base: str = "rpg_api"
+
+    ### Variables for the postgres database
+    db_host: str = "localhost"
+    db_port: int = 5435
     db_echo: bool = False
+    db_base: str = "rpg_api"
 
-    # Variables for the JWT
-    secret_key: SecretStr = SecretStr("secret")
-    algorithm: str = "HS256"
-    access_token_expire_minutes: int = 600
-    reset_password_token_expire_minutes: int = 30
+    # Application database user
+    db_user: str = "rpg_api"
+    db_pass: str = "rpg_api"
 
-    # Variables for the mongodb
+    # Admin database user
+    db_admin_user: str = "rpg_api_admin"
+    db_admin_pass: str = "rpg_api_admin"
 
-    mongo_host: str = "cluster0.i2v02mz.mongodb.net"
-    mongo_port: int = 27017  # Standard MongoDB port. Adjust if different.
-    mongo_user: str = "mohamedibr"
-    mongo_pass: str = "jvnaq5ISR5CsAdBA"
+    # Read only database user
+    db_read_user: str = "rpg_api_read"
+    db_read_pass: str = "rpg_api_read"
+
+    # Restricted read only database user
+    db_read_restricted_user: str = "rpg_api_read_restricted"
+    db_read_restricted_pass: str = "rpg_api_read_restricted"
+
+    ### Variables for the mongodb
+    mongo_host: str = "localhost"
+    mongo_port: int = 27017
     mongo_database: str = "rpg_api"
+
+    # Application database user
+    mongo_user: str = "rpg_api"
+    mongo_pass: str = "rpg_api"
+
+    # Admin database user
+    mongo_admin_user: str = "rpg_api_admin"
+    mongo_admin_pass: str = "rpg_api_admin"
+
+    # Read only database user
+    mongo_read_user: str = "rpg_api_read"
+    mongo_read_pass: str = "rpg_api_read"
+
+    # Restricted read only database user
+    mongo_read_restricted_user: str = "rpg_api_read_restricted"
+    mongo_read_restricted_pass: str = "rpg_api_read_restricted"
 
     # Variables for Neo4j
     neo_host: str = "neo4j://20.107.241.169:7687"
     neo_user: str = "neo4j"
     neo_password: str = "cKgT3KTS/7Vs"
+
+    ### Variables for the JWT
+    secret_key: SecretStr = SecretStr("secret")
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 600
+    reset_password_token_expire_minutes: int = 30
 
     # Sendgrid
     sendgrid_api_key: str = "SG"
@@ -97,7 +125,35 @@ class Settings(BaseSettings):
 
         :return: database URL.
         """
-        return "mongodb+srv://mohamedibr:jvnaq5ISR5CsAdBA@cluster0.i2v02mz.mongodb.net/?retryWrites=true&w=majority"
+        return URL.build(
+            scheme="mongodb",
+            host=self.mongo_host,
+            port=self.mongo_port,
+            user=self.mongo_user,
+            password=self.mongo_pass,
+            path=f"/{self.mongo_database}",
+            query={"authSource": "admin"},
+        )
+
+    @property
+    def mongodb_url_prod(self) -> str:
+        """
+        Assemble database URL for MongoDB Atlas in the 'mongodb+srv' format.
+
+        :return: MongoDB connection string.
+        """
+        # Construct the base URL
+        url = URL.build(
+            scheme="mongodb+srv",
+            user=self.mongo_user,
+            password=self.mongo_pass,
+            host=self.mongo_host,
+        )
+
+        # Convert URL object to string and append database name and options
+        url_str = str(url) + f"/{self.mongo_database}?retryWrites=true&w=majority"
+
+        return url_str
 
     model_config = SettingsConfigDict(
         env_file=".env",
