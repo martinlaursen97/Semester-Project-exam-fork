@@ -7,7 +7,6 @@ name: Build and deploy Python app to Azure Web App - rpg-project
 on:
   push:
     branches:
-      - main
       - deploy-test
   workflow_dispatch:
 
