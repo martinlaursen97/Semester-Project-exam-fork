@@ -62,9 +62,9 @@ class Settings(BaseSettings):
     mongo_database: str = "rpg_api"
 
     # Variables for Neo4j
-    neo_host: str = "neo4j://rpg_api-neo4j:7687"
+    neo_host: str = "neo4j://20.107.241.169:7687"
     neo_user: str = "neo4j"
-    neo_password: str = "password"
+    neo_password: str = "cKgT3KTS/7Vs"
 
     # Sendgrid
     sendgrid_api_key: str = "SG"
