@@ -24,7 +24,7 @@ RUN apt-get purge -y \
 COPY . /app/src/
 RUN poetry install --only main
 
-CMD ["uvicorn", "rpg_api.web.application:get_app", "--host", "0.0.0.0", "--port", "7070", "--workers", "1"]
+CMD ["/usr/local/bin/python", "-m", "rpg_api"]
 
 FROM prod as dev
 

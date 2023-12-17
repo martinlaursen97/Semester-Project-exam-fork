@@ -119,30 +119,23 @@ class Settings(BaseSettings):
         )
 
     @property
-    def mongodb_url(self) -> URL:
+    def mongodb_url(self) -> URL | str:
         """
         Assemble database URL from settings.
 
         :return: database URL.
         """
-        return URL.build(
-            scheme="mongodb",
-            host=self.mongo_host,
-            port=self.mongo_port,
-            user=self.mongo_user,
-            password=self.mongo_pass,
-            path=f"/{self.mongo_database}",
-            query={"authSource": "admin"},
-        )
+        if self.environment == "dev":
+            return URL.build(
+                scheme="mongodb",
+                host=self.mongo_host,
+                port=self.mongo_port,
+                user=self.mongo_user,
+                password=self.mongo_pass,
+                path=f"/{self.mongo_database}",
+                query={"authSource": "admin"},
+            )
 
-    @property
-    def mongodb_url_prod(self) -> str:
-        """
-        Assemble database URL for MongoDB Atlas in the 'mongodb+srv' format.
-
-        :return: MongoDB connection string.
-        """
-        # Construct the base URL
         url = URL.build(
             scheme="mongodb+srv",
             user=self.mongo_user,
