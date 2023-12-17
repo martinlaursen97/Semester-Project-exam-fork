@@ -17,8 +17,8 @@ async def create_startup_data_pg(app: FastAPI) -> None:  # pragma: no cover
     await _create_db_roles(app)
 
     # DB data
-    # await _create_classes(app)
-    # await _create_places(app)
+    await _create_classes(app)
+    await _create_places(app)
     await _create_users(app)
 
 

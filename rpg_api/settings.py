@@ -83,6 +83,11 @@ class Settings(BaseSettings):
     mongo_read_restricted_user: str = "rpg_api_read_restricted"
     mongo_read_restricted_pass: str = "rpg_api_read_restricted"
 
+    # Variables for Neo4j
+    neo_host: str = "neo4j://rpg_api-neo4j:7687"
+    neo_user: str = "neo4j"
+    neo_pass: str = "password"
+
     ### Variables for the JWT
     secret_key: SecretStr = SecretStr("secret")
     algorithm: str = "HS256"
@@ -114,21 +119,34 @@ class Settings(BaseSettings):
         )
 
     @property
-    def mongodb_url(self) -> URL:
+    def mongodb_url(self) -> URL | str:
         """
         Assemble database URL from settings.
 
         :return: database URL.
         """
-        return URL.build(
-            scheme="mongodb",
-            host=self.mongo_host,
-            port=self.mongo_port,
+        if self.environment == "dev":
+            return URL.build(
+                scheme="mongodb",
+                host=self.mongo_host,
+                port=self.mongo_port,
+                user=self.mongo_user,
+                password=self.mongo_pass,
+                path=f"/{self.mongo_database}",
+                query={"authSource": "admin"},
+            )
+
+        url = URL.build(
+            scheme="mongodb+srv",
             user=self.mongo_user,
             password=self.mongo_pass,
-            path=f"/{self.mongo_database}",
-            query={"authSource": "admin"},
+            host=self.mongo_host,
         )
+
+        # Convert URL object to string and append database name and options
+        url_str = str(url) + f"/{self.mongo_database}?retryWrites=true&w=majority"
+
+        return url_str
 
     model_config = SettingsConfigDict(
         env_file=".env",
