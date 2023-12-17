@@ -66,6 +66,8 @@ const fetchClasses = async () => {
   }
 };
 
+// ..
+
 const createCharacter = async () => {
   try {
     await post("/characters", {
