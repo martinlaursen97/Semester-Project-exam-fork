@@ -16,6 +16,13 @@ reboot:
 	@echo "Removing volumes"
 	docker volume rm $$(docker volume ls -q)
 	
+reset:  ## Reset api
+	docker rm -vf $$(docker ps -a -q)
+	docker rmi rpg_api
+
+reset-db:  ## Remove database
+	docker volume rm semester-project_pg-data
+
 test: ## Run tests
 	@echo "Running tests..."
 	docker container exec $$(docker ps | grep api-1 | awk '{print $$1}') pytest ./rpg_api/tests/pytest -s

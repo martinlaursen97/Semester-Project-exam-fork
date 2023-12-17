@@ -1,3 +1,4 @@
+from loguru import logger
 from sqlalchemy import text
 from sqlalchemy.engine import make_url
 
@@ -79,6 +80,22 @@ async def run_sql_script(engine: AsyncEngine, script_path: str) -> None:
 
 async def run_scripts(engine: AsyncEngine) -> None:
     """Run all scripts."""
+
+    # Temporary fix for the issue with the first run of the tests
+    query = """
+        SELECT EXISTS (
+            SELECT 1 FROM base_user WHERE email = '1'
+        )
+    """
+
+    async with engine.begin() as conn:
+        result = await conn.execute(text(query))
+        should_run = not result.scalar_one_or_none()
+        logger.info(f"SQL Scripts Should run: {should_run}")
+
+    if not should_run:
+        return
+
     from pathlib import Path
 
     current_path = Path(__file__).resolve().parent.parent.parent.parent
@@ -86,3 +103,7 @@ async def run_scripts(engine: AsyncEngine) -> None:
     script1_path = scripts_dir / "0triggers.sql"
 
     await run_sql_script(engine, str(script1_path))
+
+    if settings.environment == "dev":
+        script2_path = scripts_dir / "test_data_insert.sql"
+        await run_sql_script(engine, str(script2_path))

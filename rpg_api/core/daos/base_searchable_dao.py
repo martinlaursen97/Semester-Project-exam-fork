@@ -1,11 +1,11 @@
 from typing import TypeVar
 from rpg_api.core.daos.base_dao import BaseDAO, BaseDTO, InputDTO, UpdateDTO
-from rpg_api.db.postgres.base import AbstractNameDescriptionMixin
+from rpg_api.db.postgres.base import AbstractSearchableModel
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 import sqlalchemy as sa
 
 
-Model = TypeVar("Model", bound=AbstractNameDescriptionMixin)
+Model = TypeVar("Model", bound=AbstractSearchableModel)
 
 
 class BaseSearchableDAO(BaseDAO[Model, BaseDTO, InputDTO, UpdateDTO]):

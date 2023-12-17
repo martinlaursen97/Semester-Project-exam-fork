@@ -6,7 +6,7 @@ from rpg_api.utils.daos import GetDAOs
 router = APIRouter()
 
 
-@router.get("")  # , dependencies=[Depends(get_current_user)])
+@router.get("", status_code=200)  # , dependencies=[Depends(get_current_user)])
 async def get_classes(
     daos: GetDAOs,
 ) -> dtos.DataListResponse[dtos.BaseClassDTO]:

@@ -63,10 +63,8 @@ class EmbedAttribute(BaseModel):
 class MCharacter(MBase):
     """Character model for mongodb."""
 
-    user: Link["MBaseUser"]
     class_: Link["MClass"]
     character_attributes: list[EmbedAttribute]
-
     details: EmbedCharacterDetails
     location: EmbedLocation
 
