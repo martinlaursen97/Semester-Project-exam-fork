@@ -25,7 +25,9 @@ def upgrade() -> None:
             RETURNS TRIGGER AS $$
             BEGIN
                 INSERT INTO audit_log(id, db_user, table_name, action, old_values, new_values, created_at)
-                VALUES (gen_random_uuid(), current_user, TG_TABLE_NAME, TG_OP, row_to_json(OLD), row_to_json(NEW), NOW());
+                VALUES (gen_random_uuid(), current_user, TG_TABLE_NAME, 
+                    TG_OP, row_to_json(OLD), row_to_json(NEW), NOW()
+                );
                 RETURN NEW;
             END;
             $$ LANGUAGE plpgsql;

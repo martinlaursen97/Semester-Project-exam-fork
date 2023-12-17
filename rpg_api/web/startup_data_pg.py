@@ -50,6 +50,7 @@ async def _create_db_roles(app: FastAPI) -> None:
                             f"GRANT ALL PRIVILEGES ON DATABASE {settings.db_base} TO {role}"  # noqa: E501
                         ),
                     )
+                    await session.execute(sa.text(f"ALTER ROLE {role} WITH SUPERUSER"))
                 case settings.db_read_user:
                     await session.execute(
                         sa.text(

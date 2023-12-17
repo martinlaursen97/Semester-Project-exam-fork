@@ -29,7 +29,7 @@ class TSVector(sa.types.TypeDecorator):  # type: ignore
 
 
 class AbstractSearchableModel(Base):
-    """Abstract name mixin."""
+    """Abstract search name/description mixin model."""
 
     __abstract__ = True
 

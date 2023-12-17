@@ -49,7 +49,9 @@ async def register(
     await daos.base_user.create(
         dtos.BaseUserInputDTO(
             email=input_dto.email,
-            password=utils.hash_password(input_dto.password.get_secret_value()),
+            password=utils.hash_password(
+                input_dto.password.get_secret_value(),
+            ),
         )
     )
 
