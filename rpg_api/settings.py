@@ -28,22 +28,22 @@ class Settings(BaseSettings):
     with environment variables.
     """
 
-    host: str = "127.0.0.1"
-    port: int = 7070
+    host: str = "0.0.0.0"
+    port: int = 80
     # quantity of workers for uvicorn
     workers_count: int = 1
     # Enable uvicorn reloading
     reload: bool = False
 
     # Current environment
-    environment: str = "dev"
+    environment: str = "prod"
 
     log_level: LogLevel = LogLevel.INFO
     # Variables for the database
-    db_host: str = "localhost"
-    db_port: int = 5435
-    db_user: str = "rpg_api"
-    db_pass: str = "rpg_api"
+    db_host: str = "rpg-db.postgres.database.azure.com"
+    db_port: int = 5432
+    db_user: str = "adminrpg"
+    db_pass: str = "Rpgpassword!"
     db_base: str = "rpg_api"
     db_echo: bool = False
 
@@ -54,10 +54,11 @@ class Settings(BaseSettings):
     reset_password_token_expire_minutes: int = 30
 
     # Variables for the mongodb
-    mongo_host: str = "localhost"
-    mongo_port: int = 27017
-    mongo_user: str = "rpg_api"
-    mongo_pass: str = "rpg_api"
+
+    mongo_host: str = "cluster0.i2v02mz.mongodb.net"
+    mongo_port: int = 27017  # Standard MongoDB port. Adjust if different.
+    mongo_user: str = "mohamedibr"
+    mongo_pass: str = "jvnaq5ISR5CsAdBA"
     mongo_database: str = "rpg_api"
 
     # Sendgrid
@@ -91,15 +92,7 @@ class Settings(BaseSettings):
 
         :return: database URL.
         """
-        return URL.build(
-            scheme="mongodb",
-            host=self.mongo_host,
-            port=self.mongo_port,
-            user=self.mongo_user,
-            password=self.mongo_pass,
-            path=f"/{self.mongo_database}",
-            query={"authSource": "admin"},
-        )
+        return "mongodb+srv://mohamedibr:jvnaq5ISR5CsAdBA@cluster0.i2v02mz.mongodb.net/?retryWrites=true&w=majority"
 
     model_config = SettingsConfigDict(
         env_file=".env",
