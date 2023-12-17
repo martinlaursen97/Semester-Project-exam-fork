@@ -60,7 +60,7 @@ async def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
     :param app: fastAPI application.
     """
 
-    client = AsyncIOMotorClient(str(settings.mongodb_url))  # type: ignore
+    client = AsyncIOMotorClient(str(settings.mongodb_url_prod))  # type: ignore
 
     app.state.mongodb_client = client
 
