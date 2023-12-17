@@ -85,8 +85,10 @@ def _setup_neo4j(app: FastAPI) -> None:
     This function creates a Neo4j driver instance and stores it
     in the application's state property.
     """
-    uri = "neo4j://rpg_api-neo4j:7687"
-    app.state.neo4j_driver = AsyncGraphDatabase.driver(uri, auth=("neo4j", "password"))
+    uri = settings.neo_host
+    app.state.neo4j_driver = AsyncGraphDatabase.driver(
+        uri, auth=(settings.neo_user, settings.neo_password)
+    )
 
 
 def register_startup_event(

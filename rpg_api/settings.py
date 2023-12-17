@@ -61,6 +61,11 @@ class Settings(BaseSettings):
     mongo_pass: str = "jvnaq5ISR5CsAdBA"
     mongo_database: str = "rpg_api"
 
+    # Variables for Neo4j
+    neo_host: str = "neo4j://rpg_api-neo4j:7687"
+    neo_user: str = "neo4j"
+    neo_password: str = "password"
+
     # Sendgrid
     sendgrid_api_key: str = "SG"
     sendgrid_from_email: str = "martin_laursen9@hotmail.com"
