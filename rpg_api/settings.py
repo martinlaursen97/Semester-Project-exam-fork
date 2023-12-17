@@ -84,9 +84,9 @@ class Settings(BaseSettings):
     mongo_read_restricted_pass: str = "rpg_api_read_restricted"
 
     # Variables for Neo4j
-    neo_host: str = "neo4j://20.107.241.169:7687"
+    neo_host: str = "neo4j://rpg_api-neo4j:7687"
     neo_user: str = "neo4j"
-    neo_password: str = "cKgT3KTS/7Vs"
+    neo_pass: str = "password"
 
     ### Variables for the JWT
     secret_key: SecretStr = SecretStr("secret")

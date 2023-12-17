@@ -87,7 +87,7 @@ def _setup_neo4j(app: FastAPI) -> None:
     """
     uri = settings.neo_host
     app.state.neo4j_driver = AsyncGraphDatabase.driver(
-        uri, auth=(settings.neo_user, settings.neo_password)
+        uri, auth=(settings.neo_user, settings.neo_pass)
     )
 
 
