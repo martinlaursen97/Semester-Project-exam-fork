@@ -58,7 +58,8 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
         self, rel_dto: NeoItemCharacterEquipRelationshipDTO
     ) -> int | None:
         """
-        Equip an item to a character, ensuring the item exists and has a 'HasItem' relationship.
+        Equip an item to a character,
+        ensuring the item exists and has a 'HasItem' relationship.
         Also ensures only one 'EquippedAs...' relationship is active at a time.
         """
         rel_dto.relationship_props["created_at"] = datetime.now()
@@ -74,18 +75,6 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
             SET new_r = $relationship_props
             RETURN new_r
             """
-
-        result = await self.session.run(
-            equip_item_query,
-            node1_id=rel_dto.node1_id,
-            node2_id=rel_dto.node2_id,
-            relationship_props=rel_dto.relationship_props,
-        )
-        record = await result.single()
-
-        if record:
-            return record["new_r"].id
-        return None
 
         result = await self.session.run(
             equip_item_query,

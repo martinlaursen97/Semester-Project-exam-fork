@@ -144,9 +144,8 @@ class NeoCharacterDAO(
 
         if not record:
             raise rpg_exc.RowNotFoundError()
-        
-        node_data = dict(record["c"])
 
+        node_data = dict(record["c"])
 
         # Convert Neo4j DateTime objects to Python datetime objects
         for key, value in node_data.items():
