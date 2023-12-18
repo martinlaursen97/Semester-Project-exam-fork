@@ -12,7 +12,7 @@ from neo4j import AsyncSession as AsyncNeoSession
 
 from rpg_api.db.neo4j.dependencies import get_neo4j_session
 from datetime import datetime
-import neo4j.time
+from rpg_api.utils.date_utils import convert_to_valid_time
 
 
 class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
@@ -113,20 +113,7 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
         result = await self.session.run(query, character_id=character_id)
 
         for node in await result.data():
-            node_data = dict(node["i"])
-
-            # Convert Neo4j DateTime objects to Python datetime objects
-            for key, value in node_data.items():
-                if isinstance(value, neo4j.time.DateTime):
-                    node_data[key] = datetime(
-                        value.year,
-                        value.month,
-                        value.day,
-                        value.hour,
-                        value.minute,
-                        value.second,
-                        value.nanosecond // 1000,
-                    )
+            node_data = convert_to_valid_time(dict(node["i"]))
             item = NeoItemDTO.model_validate(node_data)
             item.id = node["id"]
             items.append(item)
