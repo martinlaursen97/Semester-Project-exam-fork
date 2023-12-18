@@ -21,7 +21,6 @@ from neo4j import AsyncSession as AsyncNeoSession
 from rpg_api.db.neo4j.dependencies import get_neo4j_session
 from datetime import datetime
 from rpg_api import exceptions as rpg_exc
-import neo4j.time
 from rpg_api.utils.date_utils import convert_to_valid_time
 
 

@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from rpg_api.db.neo4j.base import Base
 from rpg_api import exceptions as rpg_exc
 from datetime import datetime
-import neo4j.time
 from rpg_api.utils.date_utils import convert_to_valid_time
 
 # Type variables for generic DAO

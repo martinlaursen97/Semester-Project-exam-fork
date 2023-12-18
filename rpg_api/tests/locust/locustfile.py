@@ -95,7 +95,7 @@ class WebUser(FastHttpUser):
     def test_alive(self) -> None:
         """Test alive."""
         with self.client.get(
-            url=f"/api/monitoring/health",
+            url="/api/monitoring/health",
             headers=self.token_header,
             catch_response=True,
         ) as response:
