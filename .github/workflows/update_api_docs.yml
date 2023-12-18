@@ -3,7 +3,8 @@ name: Update API Documentation
 on:
   push:
     branches:
-      - neo4j-implementations
+      - main
+  workflow_dispatch:
 
 jobs:
   update-api-doc:
