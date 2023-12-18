@@ -22,28 +22,21 @@ async def add_item(
 
 @router.post("/character")
 async def add_item_to_character(
-    input_dto: dtos.NeoItemCharacterRelationshipInputDTO,
+    input_dto: dtos.NeoItemCharacterRelationshipDTO,
     session: Neo4jSession,
     current_user: GetCurrentUser,
 ) -> str:
     """Add item to character."""
     dao = NeoItemDAO(session=session)
 
-    await dao.add_item_to_character(
-        dtos.NeoItemCharacterRelationshipDTO(
-            node1_id=int(current_user.id),
-            node2_id=input_dto.node2_id,
-            relationship_type=input_dto.relationship_type,
-            relationship_props=input_dto.relationship_props,
-        )
-    )
+    await dao.add_item_to_character(input_dto)
 
     return "hello"
 
 
 @router.post("/equip")
 async def equip_item_to_character(
-    input_dto: dtos.NeoItemCharacterRelationshipDTO, session: Neo4jSession
+    input_dto: dtos.NeoItemCharacterEquipRelationshipDTO, session: Neo4jSession
 ) -> str:
     """Equip item to character."""
 

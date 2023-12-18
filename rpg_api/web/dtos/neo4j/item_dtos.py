@@ -85,8 +85,9 @@ class NeoItemCharacterEquipRelationshipDTO(BaseRelationshipDTO):
 
     @validator("relationship_type")
     def validate_relationship_type(cls, v: Any) -> Any:
-        allowed_types = ["EquippedAsHead"]
-
+        allowed_types = [
+            f"EquippedAs{item.name.capitalize()}" for item in enums.ItemType
+        ]
         if v not in allowed_types:
             raise ValueError(f"Invalid relationship type for item equip: {v}")
         return v

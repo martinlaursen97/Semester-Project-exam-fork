@@ -48,8 +48,9 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
             relationship_props=rel_dto.relationship_props,
         )
         record = await result.single()
-
+        print("wefwgw", record)
         if record:
+            print(record)
             return record["r"].id
         return None
 
@@ -57,21 +58,25 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
         self, rel_dto: NeoItemCharacterEquipRelationshipDTO
     ) -> int | None:
         """
-        Create a relationship of a specified type between two nodes.
+        Equip an item to a character, ensuring the item exists and has a 'HasItem' relationship.
+        Also ensures only one 'EquippedAs...' relationship is active at a time.
         """
-
         rel_dto.relationship_props["created_at"] = datetime.now()
 
-        create_rel_query = f"""
-        MATCH (a:Character), (b:{self._label})
-        WHERE id(a) = $node1_id AND id(b) = $node2_id
-        CREATE (a)-[r:{rel_dto.relationship_type}]->(b)
-        SET r = $relationship_props
-        RETURN r
-        """
+        equip_item_query = f"""
+            MATCH (a:Character)-[:HasItem]->(b:{self._label})
+            WHERE id(a) = $node1_id AND id(b) = $node2_id
+            WITH a, b
+            OPTIONAL MATCH (a)-[r]->()
+            WHERE TYPE(r) STARTS WITH 'EquippedAs'
+            DELETE r
+            CREATE (a)-[new_r:{rel_dto.relationship_type}]->(b)
+            SET new_r = $relationship_props
+            RETURN new_r
+            """
 
         result = await self.session.run(
-            create_rel_query,
+            equip_item_query,
             node1_id=rel_dto.node1_id,
             node2_id=rel_dto.node2_id,
             relationship_props=rel_dto.relationship_props,
@@ -79,7 +84,19 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
         record = await result.single()
 
         if record:
-            return record["r"].id
+            return record["new_r"].id
+        return None
+
+        result = await self.session.run(
+            equip_item_query,
+            node1_id=rel_dto.node1_id,
+            node2_id=rel_dto.node2_id,
+            relationship_props=rel_dto.relationship_props,
+        )
+        record = await result.single()
+
+        if record:
+            return record["new_r"].id
         return None
 
     async def get_user_items(self, user_id: int) -> list[NeoItemDTO]:
