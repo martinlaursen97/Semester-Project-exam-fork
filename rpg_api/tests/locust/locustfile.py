@@ -7,7 +7,7 @@ from locust.contrib.fasthttp import FastResponse, ResponseContextManager
 
 from uuid import uuid4
 
-PREFIX = "/api"
+PREFIX = "/api/postgres"
 
 
 def get_user_header(token: str) -> dict[str, Any]:
@@ -49,7 +49,7 @@ def setup_user(user: FastHttpUser) -> tuple[list[str], dict[str, Any]]:
         },
         catch_response=True,
     ) as response_test_user:
-        if response_test_user.status_code == 200:
+        if response_test_user.status_code == 201:
             response_test_user_data = get_data(response_test_user)
         else:
             handle_error(response_test_user)
@@ -95,7 +95,7 @@ class WebUser(FastHttpUser):
     def test_alive(self) -> None:
         """Test alive."""
         with self.client.get(
-            url=f"{PREFIX}/monitoring/health",
+            url=f"/api/monitoring/health",
             headers=self.token_header,
             catch_response=True,
         ) as response:
@@ -110,11 +110,11 @@ class WebUser(FastHttpUser):
             url=f"{PREFIX}/characters",
             headers=self.token_header,
             json={
-                "base_class_id": "457df8f6-498c-4c6d-8c7f-7cc843ef028b",
+                "base_class_id": "92a85efe-2f9e-4493-8638-5a4396a0f72a",
                 "gender": "male",
-                "character_name": "string",
+                "character_name": f"string{uuid4()}",
             },
             catch_response=True,
         ) as response:
-            if response.status_code != 200:
+            if response.status_code != 201:
                 handle_error(response)
