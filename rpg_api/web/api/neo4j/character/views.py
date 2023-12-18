@@ -60,7 +60,7 @@ async def update_character(
     dao = NeoCharacterDAO(session=session)
 
     try:
-        await dao.update(id=character.id, update_dto=input_dto)
+        await dao.update(id=int(character.id), update_dto=input_dto)
     except rpg_exceptions.RowNotFoundError:
         raise rpg_exceptions.HttpNotFound("Character not found.")
 

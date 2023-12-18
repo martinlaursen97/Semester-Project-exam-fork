@@ -61,6 +61,14 @@ class NeoItemUpdateDTO(BaseModel):
     crit: int | None
 
 
+class NeoItemCharacterRelationshipInputDTO(BaseModel):
+    """Input DTO for User relation with a character."""
+
+    node2_id: int
+    relationship_type: str
+    relationship_props: dict[str, Any] = {}
+
+
 class NeoItemCharacterRelationshipDTO(BaseRelationshipDTO):
     """User relation with a character, that validates the type of relationship given."""
 

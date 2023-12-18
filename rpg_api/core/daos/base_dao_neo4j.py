@@ -115,7 +115,22 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         if not record:
             raise rpg_exc.RowNotFoundError
 
-        node = self.model.model_validate(record["n"])
+        node_data = dict(record["n"])
+
+        # Convert Neo4j DateTime objects to Python datetime objects
+        for key, value in node_data.items():
+            if isinstance(value, neo4j.time.DateTime):
+                node_data[key] = datetime(
+                    value.year,
+                    value.month,
+                    value.day,
+                    value.hour,
+                    value.minute,
+                    value.second,
+                    value.nanosecond // 1000,
+                )
+
+        node = self.model.model_validate(node_data)
         node.id = id
         return node
 

@@ -1,8 +1,5 @@
 from fastapi import Depends
-from rpg_api.db.postgres.models.models import Character
-from rpg_api.core.daos.base_dao import BaseDAO
 from rpg_api.core.daos.base_dao_neo4j import BaseNeo4jDAO
-from rpg_api.db.postgres.dependencies import get_db_session
 from rpg_api.utils.dtos import (
     NeoItemInputDTO,
     NeoItemDTO,
@@ -11,9 +8,6 @@ from rpg_api.utils.dtos import (
     NeoItemCharacterEquipRelationshipDTO,
     NeoItemCharacterRelationshipDTO,
 )
-from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
-from uuid import UUID
-import sqlalchemy as sa
 from neo4j import AsyncSession as AsyncNeoSession
 
 from rpg_api.db.neo4j.dependencies import get_neo4j_session

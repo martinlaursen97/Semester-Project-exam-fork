@@ -44,6 +44,7 @@ from rpg_api.web.dtos.neo4j.item_dtos import (
     NeoItemModel,
     NeoItemUpdateDTO,
     NeoItemCharacterRelationshipDTO,
+    NeoItemCharacterRelationshipInputDTO,
     NeoItemCharacterEquipRelationshipDTO,
 )
 
