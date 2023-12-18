@@ -29,7 +29,8 @@ jobs:
 
       - name: Create a new branch for the changes
         run: |
-          git checkout -b update-api-doc-$(date +%s)
+          new_branch="update-api-doc-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b $new_branch
 
       - name: Commit and push if changed
         run: |
@@ -40,7 +41,7 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "Update API Documentation"
-            git push origin HEAD
+            git push origin $new_branch
           fi
 
       - name: Install GitHub CLI
@@ -50,12 +51,12 @@ jobs:
           sudo apt update
           sudo apt install gh
 
-      - name: Create a pull request
+      - name: Create a pull request to main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -n "$(git log origin/main..HEAD)" ]; then
-            gh pr create --title "Update API Documentation" --body "Automated API documentation update" --base neo4j-implementations
+            gh pr create --title "Update API Documentation" --body "Automated API documentation update" --base main
           else
             echo "No new commits to submit as a PR."
           fi
