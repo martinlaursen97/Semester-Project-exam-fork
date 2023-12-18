@@ -37,7 +37,9 @@ async def add_item_to_character(
 
 @router.post("/equip")
 async def equip_item_to_character(
-    input_dto: dtos.NeoItemCharacterEquipRelationshipDTO, session: Neo4jSession
+    input_dto: dtos.NeoItemCharacterEquipRelationshipDTO,
+    session: Neo4jSession,
+    current_user: GetCurrentUser,
 ) -> dtos.DefaultCreatedResponse:
     """Equip item to character."""
 
