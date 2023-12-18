@@ -48,9 +48,8 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
             relationship_props=rel_dto.relationship_props,
         )
         record = await result.single()
-        print("wefwgw", record)
+
         if record:
-            print(record)
             return record["r"].id
         return None
 

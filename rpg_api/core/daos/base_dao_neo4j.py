@@ -32,7 +32,6 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         """
         now = datetime.now()
         props = input_dto.model_dump()
-        print(now)
         props["created_at"] = now
         props["updated_at"] = now
 
