@@ -62,6 +62,6 @@ async def get_character_items(
 
     dao = NeoItemDAO(session=session)
     items = await dao.get_character_items(
-        character_id=int(character.id), equipped_only=equipped_only  # type: ignore
+        character_id=character.id, equipped_only=equipped_only  # type: ignore
     )
     return dtos.DataListResponse(data=items)

@@ -96,8 +96,10 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
         """
 
         if equipped_only:
-            match_clause = "MATCH (c:Character)-[r]->(i:Item) WHERE TYPE(r) "
-            "STARTS WITH 'EquippedAs' AND id(c) = $character_id"
+            match_clause = (
+                "MATCH (c:Character)-[r]->(i:Item) WHERE TYPE(r) "
+                "STARTS WITH 'EquippedAs' AND id(c) = $character_id"
+            )
         else:
             match_clause = (
                 "MATCH (c:Character)-[:HasItem]->(i:Item) WHERE id(c) = $character_id"
