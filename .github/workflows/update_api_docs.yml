@@ -55,4 +55,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create --title "Update API Documentation" --body "Automated API documentation update" --base main || echo "No new commits to submit as a PR.
+          gh pr create --title "Update API Documentation" --body "Automated API documentation update" --base main || echo "No new commits to submit as a PR."
