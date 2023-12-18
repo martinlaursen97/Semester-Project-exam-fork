@@ -25,23 +25,23 @@ async def add_item_to_character(
     input_dto: dtos.NeoItemCharacterRelationshipDTO,
     session: Neo4jSession,
     current_user: GetCurrentUser,
-) -> str:
+) -> dtos.DefaultCreatedResponse:
     """Add item to character."""
     dao = NeoItemDAO(session=session)
 
-    await dao.add_item_to_character(input_dto)
+    id = await dao.add_item_to_character(input_dto)
 
-    return "hello"
+    return dtos.DefaultCreatedResponse(data=id)
 
 
 @router.post("/equip")
 async def equip_item_to_character(
     input_dto: dtos.NeoItemCharacterEquipRelationshipDTO, session: Neo4jSession
-) -> str:
+) -> dtos.DefaultCreatedResponse:
     """Equip item to character."""
 
     dao = NeoItemDAO(session=session)
 
-    await dao.equip_item_to_character(input_dto)
+    id = await dao.equip_item_to_character(input_dto)
 
-    return "hello"
+    return dtos.DefaultCreatedResponse(data=id)
