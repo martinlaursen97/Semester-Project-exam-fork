@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests pandas
+          pip install requests pandas tabulate
 
       - name: Generate API Documentation
         run: python scripts/api_docs_md.py
