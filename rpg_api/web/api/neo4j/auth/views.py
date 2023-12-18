@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from rpg_api.db.neo4j.dependencies import Neo4jSession
-from rpg_api.web.dtos.neo4j.neo4j_dtos import (
+from rpg_api.web.dtos.neo4j.base_user_dtos import (
     NeoBaseUserDTO,
     NeoUserCreateDTO,
 )
@@ -45,7 +45,7 @@ async def login(
 
     dao = NeoBaseUserDAO(session=session)
     user = await dao.get_by_email(email=input_dto.email)
-    print(user)
+
     if user is None:
         raise rpg_exc.HttpUnauthorized("Wrong email or password")
 
@@ -86,8 +86,6 @@ async def forgot_password(
         user_id=user.id,
         token=token,
     )
-
-    print(token_store.tokens)
     html = f"""
     <html>
         <head></head>
@@ -124,7 +122,7 @@ async def reset_password(
 
     if user is None:
         raise rpg_exc.HttpUnauthorized("Token is invalid or user does not exist")
-    print(token_store.tokens)
+
     stored_token = token_store.pop(user_id=int(token_data.user_id))
     if stored_token is None:
         raise rpg_exc.HttpUnauthorized(

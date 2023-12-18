@@ -2,6 +2,7 @@ from pydantic import BaseModel, validator, EmailStr, SecretStr, Field
 from rpg_api.db.neo4j.base import Base, BaseRelationshipDTO
 from typing import Any
 from rpg_api import constants
+from datetime import datetime
 
 
 class NeoBaseUserModel(Base):
@@ -11,6 +12,8 @@ class NeoBaseUserModel(Base):
     id: int | None = None
     email: str
     password: str
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class NeoBaseUserDTO(BaseModel):
@@ -18,6 +21,8 @@ class NeoBaseUserDTO(BaseModel):
 
     email: str
     password: str
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class NeoBaseUserResponseLoginDTO(NeoBaseUserDTO):
@@ -44,7 +49,7 @@ class NeoUserCreateDTO(BaseModel):
 
 
 class NeoBaseUserUpdateDTO(BaseModel):
-    """Update DTO for person."""
+    """Update DTO for base user."""
 
     email: str | None = None
     password: str | None = None

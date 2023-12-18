@@ -27,8 +27,6 @@ async def create_friend_request(
                 relationship_props=input_dto.relationship_props,
             )
         )
-    except Exception as e:
-        print(e)
+        return dtos.EmptyDefaultResponse()
+    except ValueError:
         raise rpg_exc.HttpUnprocessableEntity()
-
-    return dtos.EmptyDefaultResponse()

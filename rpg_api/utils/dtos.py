@@ -20,7 +20,7 @@ from rpg_api.core.dtos.base_schemas import (
     DefaultCreatedResponse,
     OrmBasicModel,
 )
-from rpg_api.web.dtos.neo4j.neo4j_dtos import (
+from rpg_api.web.dtos.neo4j.base_user_dtos import (
     NeoBaseUserModel,
     NeoBaseUserDTO,
     NeoBaseUserUpdateDTO,
@@ -29,6 +29,25 @@ from rpg_api.web.dtos.neo4j.neo4j_dtos import (
     NeoBaseUserResponseDTO,
     NeoBaseUserRelationshipInputDTO,
 )
+
+from rpg_api.web.dtos.neo4j.characters_dtos import (
+    NeoCharacterModel,
+    NeoCharacterDTO,
+    NeoCharacterInputDTO,
+    NeoCharacterUpdateDTO,
+    NeoCharacterUserRelationshipDTO,
+)
+
+from rpg_api.web.dtos.neo4j.item_dtos import (
+    NeoItemDTO,
+    NeoItemInputDTO,
+    NeoItemModel,
+    NeoItemUpdateDTO,
+    NeoItemCharacterRelationshipDTO,
+    NeoItemCharacterRelationshipInputDTO,
+    NeoItemCharacterEquipRelationshipDTO,
+)
+
 from rpg_api.web.dtos.postgres.character_dtos import (
     CharacterDTO,
     CharacterInputDTO,

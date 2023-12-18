@@ -27,6 +27,38 @@ class Gender(StrEnum):
     other = "other"
 
 
+class CharacterClass(StrEnum):
+    """
+    Character class Enum.
+
+    `mage`: Character is a mage
+    `warrior`: Character is a Warrior
+    `shaman`: Character is a Shaman
+    """
+
+    mage = "mage"
+    warrior = "warrior"
+    shaman = "shaman"
+
+
+class ItemType(StrEnum):
+    """
+    Item type Enum.
+
+    `head`: Item that can be equipped to head
+    `chest`: Item that can be equipped to neck
+    `legs`: Item that can be equipped to legs
+    `boots`: Item that can be equipped to boots
+    `weapon`: Item that can be used as weapon
+    """
+
+    head = "head"
+    chest = "chest"
+    legs = "legs"
+    boots = "boots"
+    weapon = "weapon"
+
+
 class MAttributeType(StrEnum):
     """
     Attribute Enum.
