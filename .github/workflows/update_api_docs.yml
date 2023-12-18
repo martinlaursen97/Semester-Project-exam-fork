@@ -13,7 +13,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Ensures all history is checked out
+          fetch-depth: 0 # Ensures all history is checked out
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -55,8 +55,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -n "$(git log origin/main..HEAD)" ]; then
-            gh pr create --title "Update API Documentation" --body "Automated API documentation update" --base main
-          else
-            echo "No new commits to submit as a PR."
-          fi
+          gh pr create --title "Update API Documentation" --body "Automated API documentation update" --base main || echo "No new commits to submit as a PR.
