@@ -12,7 +12,7 @@ from neo4j import AsyncSession as AsyncNeoSession
 
 from rpg_api.db.neo4j.dependencies import get_neo4j_session
 from datetime import datetime
-from rpg_api import exceptions as rpg_exc
+import neo4j.time
 
 
 class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
@@ -87,43 +87,46 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
             return record["new_r"].id
         return None
 
-    async def get_user_items(self, user_id: int) -> list[NeoItemDTO]:
-        """Get all character belonging to a user."""
-
-        characters = []
-
-        query = """
-        MATCH (u:BaseUser)-[:HasA]->(c:Item)
-        WHERE id(u) = $id
-        RETURN c, id(c) as id
+    async def get_character_items(
+        self, character_id: int, equipped_only: bool
+    ) -> list[NeoItemDTO]:
+        """
+        Get items on character, if equipped_only is true,
+        only equipped items are returned.
         """
 
-        result = await self.session.run(query=query, id=user_id)
+        if equipped_only:
+            match_clause = "MATCH (c:Character)-[r]->(i:Item) WHERE TYPE(r) "
+            "STARTS WITH 'EquippedAs' AND id(c) = $character_id"
+        else:
+            match_clause = (
+                "MATCH (c:Character)-[:HasItem]->(i:Item) WHERE id(c) = $character_id"
+            )
+
+        query = f"""
+        {match_clause}
+        RETURN i, id(i) as id
+        """
+        items = []
+        result = await self.session.run(query, character_id=character_id)
 
         for node in await result.data():
-            character = NeoItemDTO.model_validate(node["c"])
-            character.id = node["id"]
-            characters.append(character)
+            node_data = dict(node["i"])
 
-        return characters
+            # Convert Neo4j DateTime objects to Python datetime objects
+            for key, value in node_data.items():
+                if isinstance(value, neo4j.time.DateTime):
+                    node_data[key] = datetime(
+                        value.year,
+                        value.month,
+                        value.day,
+                        value.hour,
+                        value.minute,
+                        value.second,
+                        value.nanosecond // 1000,
+                    )
+            item = NeoItemDTO.model_validate(node_data)
+            item.id = node["id"]
+            items.append(item)
 
-    async def get_item(self, item_id: int, user_id: int) -> NeoItemDTO:
-        """Get character by id, belonging to a user."""
-
-        query = """
-        MATCH (u:BaseUser)-[:HasA]->(i:Item)
-        WHERE id(u) = $user_id
-        AND id(i) = $item_id
-        RETURN i
-        """
-
-        result = await self.session.run(query=query, user_id=user_id, item_id=item_id)
-        record = await result.single()
-
-        if not record:
-            raise rpg_exc.RowNotFoundError()
-
-        character = NeoItemDTO.model_validate(record["i"])
-        character.id = record["i"].id
-
-        return character
+        return items

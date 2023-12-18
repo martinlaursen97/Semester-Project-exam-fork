@@ -1,9 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from rpg_api.utils import dtos
 from rpg_api.db.neo4j.dependencies import Neo4jSession
 from rpg_api.web.daos.item_dao import NeoItemDAO
 from rpg_api.web.api.neo4j.auth.auth_dependencies import (
     GetCurrentUser,
+    GetCharacterIfUserOwns,
 )
 
 router = APIRouter()
@@ -45,3 +46,22 @@ async def equip_item_to_character(
     id = await dao.equip_item_to_character(input_dto)
 
     return dtos.DefaultCreatedResponse(data=id)
+
+
+@router.get("/{character_id}/items")
+async def get_character_items(
+    character: GetCharacterIfUserOwns,
+    session: Neo4jSession,
+    equipped_only: bool = Query(
+        default=False,
+        description="Set to true to retrieve only equipped items,"
+        " false to retrieve all items",
+    ),
+) -> dtos.DataListResponse[dtos.NeoItemDTO]:
+    """Return items on character."""
+
+    dao = NeoItemDAO(session=session)
+    items = await dao.get_character_items(
+        character_id=int(character.id), equipped_only=equipped_only  # type: ignore
+    )
+    return dtos.DataListResponse(data=items)
