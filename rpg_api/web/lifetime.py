@@ -21,7 +21,6 @@ from rpg_api.web.startup_data_mongo import create_startup_data_mongo
 
 from rpg_api.web.startup_data_pg import create_startup_data_pg
 from rpg_api.web.startup_data_neo4j import create_startup_data_Neo4j
-from rpg_api.db.neo4j.dependencies import Neo4jSession
 
 
 async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
