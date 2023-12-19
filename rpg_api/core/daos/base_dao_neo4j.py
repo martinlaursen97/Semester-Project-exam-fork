@@ -40,7 +40,7 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         record = await result.single()
 
         if not record:
-            raise rpg_exc.DatabaseError("hello")
+            raise rpg_exc.DatabaseError("Node not created")
 
         node = record["n"]
         return node.id

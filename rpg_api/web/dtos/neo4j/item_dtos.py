@@ -70,7 +70,7 @@ class NeoItemCharacterRelationshipInputDTO(BaseModel):
 
 
 class NeoItemCharacterRelationshipDTO(BaseRelationshipDTO):
-    """User relation with a character, that validates the type of relationship given."""
+    """Item relation with a character, that validates the type of relationship given."""
 
     @validator("relationship_type")
     def validate_relationship_type(cls, v: Any) -> Any:
@@ -81,7 +81,10 @@ class NeoItemCharacterRelationshipDTO(BaseRelationshipDTO):
 
 
 class NeoItemCharacterEquipRelationshipDTO(BaseRelationshipDTO):
-    """User relation with a character, that validates the type of relationship given."""
+    """
+    Item relation with a character when equipping item,
+    that validates the type of relationship given.
+    """
 
     @validator("relationship_type")
     def validate_relationship_type(cls, v: Any) -> Any:
