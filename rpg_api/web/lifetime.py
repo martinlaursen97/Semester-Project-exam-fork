@@ -20,6 +20,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from rpg_api.web.startup_data_mongo import create_startup_data_mongo
 
 from rpg_api.web.startup_data_pg import create_startup_data_pg
+from rpg_api.web.startup_data_neo4j import create_startup_data_Neo4j
+from rpg_api.db.neo4j.dependencies import Neo4jSession
 
 
 async def _setup_pg(app: FastAPI) -> None:  # pragma: no cover
@@ -78,7 +80,7 @@ async def _setup_mongodb(app: FastAPI) -> None:  # pragma: no cover
     await create_startup_data_mongo(app)
 
 
-def _setup_neo4j(app: FastAPI) -> None:
+async def _setup_neo4j(app: FastAPI) -> None:
     """
     Creates a connection to the Neo4j database.
 
@@ -89,6 +91,8 @@ def _setup_neo4j(app: FastAPI) -> None:
     app.state.neo4j_driver = AsyncGraphDatabase.driver(
         uri, auth=(settings.neo_user, settings.neo_pass)
     )
+    async with app.state.neo4j_driver.session() as session:
+        await create_startup_data_Neo4j(session)
 
 
 def register_startup_event(
@@ -111,7 +115,8 @@ def register_startup_event(
         await create_startup_data_pg(app)
 
         await _setup_mongodb(app)
-        _setup_neo4j(app)
+        await _setup_neo4j(app)
+
         app.middleware_stack = app.build_middleware_stack()
 
     return _startup
