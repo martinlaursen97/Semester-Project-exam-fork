@@ -6,6 +6,7 @@ Access the complete source code of the project on GitHub: [Semester Project Repo
 - **API Documentation**: Auto-updated via Github actions, visible [here](https://github.com/kea-semester-1/Semester-Project/blob/main/docs/API_DOCUMENTATION.md)
 - **DB Dumps**: Database dumps for MongoDB and Neo4j, here [here](https://github.com/kea-semester-1/Semester-Project/tree/main/db-dumps)
 
+
 # Project Setup Instructions
 
 ## Using AWK
@@ -57,6 +58,7 @@ docker container exec $(docker ps | grep api-1 | awk '{print $1}') pytest ./rpg_
 Access the relational database scripts on GitHub:
 - [Main DB Scripts](https://github.com/kea-semester-1/Semester-Project/tree/main/db-scripts)
 - [Startup Data Script](https://github.com/kea-semester-1/Semester-Project/blob/main/rpg_api/web/startup_data_pg.py)
+- **Audit Log**: Trigger/function in migration file [here](https://github.com/kea-semester-1/Semester-Project/blob/main/rpg_api/db/postgres/migrations/versions/2023-12-14-17-28_f24e163963f2.py)
 
 ## Document and Graph Database Scripts
 
