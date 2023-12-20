@@ -3,6 +3,9 @@
 
 Access the complete source code of the project on GitHub: [Semester Project Repository](https://github.com/kea-semester-1/Semester-Project).
 
+- **API Documentation**: Auto-updated via Github actions, visible [here](https://github.com/kea-semester-1/Semester-Project/blob/main/docs/API_DOCUMENTATION.md)
+- **DB Dumps**: Database dumps for MongoDB and Neo4j, here [here](https://github.com/kea-semester-1/Semester-Project/tree/main/db-dumps)
+
 # Project Setup Instructions
 
 ## Using AWK
@@ -30,7 +33,6 @@ Look inside the `Makefile`, to see every command available.
 
 - **Backend**: Deployed on Azure, accessible [here](https://rpg-project.azurewebsites.net/api/docs).
 - **Frontend**: Hosted on Vercel, available [here](https://semester-project-rd6f6hfc2-m-n-ms.vercel.app/login).
-- **API Documentation**: Auto-updated via Github actions, visible [here](https://github.com/kea-semester-1/Semester-Project/blob/main/docs/API_DOCUMENTATION.md)
 
 ## Running Tests
 
