@@ -63,4 +63,3 @@ Access the relational database scripts on GitHub:
 For Document and Graph databases, test data is managed by the backend application upon startup:
 - [MongoDB Startup Data Script](https://github.com/kea-semester-1/Semester-Project/blob/main/rpg_api/web/startup_data_mongo.py)
 - [Neo4j Startup Data Script](https://github.com/kea-semester-1/Semester-Project/blob/main/rpg_api/web/startup_data_neo4j.py)
-```
