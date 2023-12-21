@@ -89,7 +89,6 @@ jobs:
         env:
           RPG_API_HOST: "0.0.0.0"
           RPG_API_DB_HOST: localhost
-          RPG_API_NEO_HOST: localhost
-          RPG_API_NEO_PORT: 7687
+          RPG_API_NEO_HOST: neo4j://local:7687
           RPG_API_NEO_USER: neo4j
           RPG_API_NEO_PASS: password
