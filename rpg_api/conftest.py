@@ -41,19 +41,20 @@ def anyio_backend() -> str:
     """
     return "asyncio"
 
-
 @pytest.fixture(scope="session")
 async def neo4j_session() -> AsyncGenerator[Neo4jAsyncSession, None]:
     uri = settings.neo_host
     driver = AsyncGraphDatabase.driver(uri, auth=(settings.neo_user, settings.neo_pass))
-    async with driver.session() as session:
-        tx = await session.begin_transaction()
-        try:
-            yield session
-            await tx.rollback()
-        except Exception as e:
-            await tx.rollback()
-            raise e
+
+    try:
+        async with driver.session() as session:
+            tx = await session.begin_transaction()
+            try:
+                yield session
+            finally:
+                await tx.rollback()
+    finally:
+        await driver.close()
 
 
 @pytest.fixture(scope="session")
