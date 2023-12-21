@@ -28,6 +28,7 @@ from rpg_api.web.dtos.neo4j.base_user_dtos import (
     NeoBaseUserResponseLoginDTO,
     NeoBaseUserResponseDTO,
     NeoBaseUserRelationshipInputDTO,
+    NeoUserCreateDTO
 )
 
 from rpg_api.web.dtos.neo4j.characters_dtos import (

@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import (
 from rpg_api.db.postgres.factory.async_base_factory import AsyncSQLAlchemyModelFactory
 
 from rpg_api.db.postgres.dependencies import get_db_session
+from rpg_api.db.neo4j.dependencies import get_neo4j_session
 from rpg_api.db.postgres.utils import (
     create_database,
     drop_database,
@@ -28,6 +29,7 @@ from rpg_api.services.email_service.email_service import MockEmailService
 from rpg_api.settings import settings
 from rpg_api.web.application import get_app
 from rpg_api.utils.daos import AllDAOs
+from neo4j import AsyncGraphDatabase, AsyncSession as Neo4jAsyncSession
 
 
 @pytest.fixture(scope="session")
@@ -38,6 +40,20 @@ def anyio_backend() -> str:
     :return: backend name.
     """
     return "asyncio"
+
+
+@pytest.fixture(scope="session")
+async def neo4j_session() -> AsyncGenerator[Neo4jAsyncSession, None]:
+    uri = settings.neo_host
+    driver = AsyncGraphDatabase.driver(uri, auth=(settings.neo_user, settings.neo_pass))
+    async with driver.session() as session:
+        tx = await session.begin_transaction()
+        try:
+            yield session
+            await tx.rollback()
+        except Exception as e:
+            await tx.rollback()
+            raise e
 
 
 @pytest.fixture(scope="session")
@@ -113,6 +129,7 @@ async def mock_email_service() -> MockEmailService:
 def fastapi_app(
     dbsession: AsyncSession,
     mock_email_service: MockEmailService,
+    neo4j_session: Neo4jAsyncSession,
 ) -> FastAPI:
     """
     Fixture for creating FastAPI app.
@@ -122,6 +139,7 @@ def fastapi_app(
     application = get_app()
     application.dependency_overrides[get_db_session] = lambda: dbsession
     application.dependency_overrides[get_email_service] = lambda: mock_email_service
+    application.dependency_overrides[get_neo4j_session] = lambda: neo4j_session
     return application  # noqa: WPS331
 
 
