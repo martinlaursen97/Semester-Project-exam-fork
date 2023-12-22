@@ -9,6 +9,7 @@
       {{ character.base_class.name }} ID: {{ character.id }}
     </p>
     <WorldMap
+    data-test="enterWorld"
       :player="character"
       :height="500"
       :width="500"

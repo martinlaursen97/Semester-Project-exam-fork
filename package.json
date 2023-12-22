@@ -1,1 +1,8 @@
-{}
+{
+  "dependencies": {
+    "nuxt": "^3.8.2"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.1"
+  }
+}

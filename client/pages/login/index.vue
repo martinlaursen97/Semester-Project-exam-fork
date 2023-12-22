@@ -1,9 +1,9 @@
 <template>
   <div>
     <form @submit="login">
-      <input type="email" v-model="email" />
-      <input type="password" v-model="password" />
-      <button type="submit">Login</button>
+      <input data-test="e-mail" type="email" v-model="email" />
+      <input data-test="password" type="password" v-model="password" />
+      <button data-test="loginButton" type="submit">Login</button>
     </form>
     <router-link to="/forgot-password">Forgot Password</router-link>
   </div>

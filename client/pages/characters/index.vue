@@ -2,8 +2,8 @@
   <div>
     <p>Back to login page: <router-link to="/login">Login</router-link></p>
     <form>
-      <input type="text" v-model="character_name" />
-      <select v-model="selected_class">
+      <input data-test="nameCharacter" type="text" v-model="character_name" />
+      <select data-test="selectClass" v-model="selected_class">
         <option
           v-for="base_class in base_classes_dropdown"
           :key="base_class.id"
@@ -13,18 +13,19 @@
         </option>
       </select>
 
-      <select v-model="selected_gender">
+      <select data-test="selectGender" v-model="selected_gender">
         <option value="male">male</option>
         <option value="female">female</option>
         <option value="other">other</option>
       </select>
     </form>
 
-    <button @click="createCharacter" type="submit">Create character</button>
+    <button data-test="createCharacter" @click="createCharacter" type="submit">Create character</button>
     <br />
     <br />
 
     <button
+      data-test="enterWorld"
       @click="enterWorld(character)"
       v-for="character in characters"
       :key="character.id"
