@@ -1,10 +1,14 @@
-from rpg_api.db.postgres.base import Base
+from rpg_api.db.postgres.base import (
+    Base,
+    AbstractSearchableModel,
+)
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column
 from rpg_api.enums import UserStatus, Gender
 import uuid
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+from typing import Any
 
 
 class BaseUser(Base):
@@ -24,52 +28,64 @@ class BaseUser(Base):
     )
 
 
-class AbilityType(Base):
+class AbilityType(AbstractSearchableModel):
     """Ability type model."""
 
     __tablename__ = "ability_type"
 
-    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
-    description: Mapped[str] = mapped_column(sa.String(500))
+    __table_args__ = (
+        sa.Index(
+            "idx_ability_type_name_description_ts_vector",
+            "ts_vector",
+            postgresql_using="gin",
+        ),
+    )
 
-    __table_args__ = (sa.Index("idx_ability_type_name", name),)
 
-
-class BaseClass(Base):
+class BaseClass(AbstractSearchableModel):
     """Model for base class."""
 
     __tablename__ = "base_class"
 
-    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
+    __table_args__ = (
+        sa.Index(
+            "idx_base_class_name_description_ts_vector",
+            "ts_vector",
+            postgresql_using="gin",
+        ),
+    )
 
-    __table_args__ = (sa.Index("idx_base_class_name", name),)
 
-
-class Attribute(Base):
+class Attribute(AbstractSearchableModel):
     """Model for Attribute."""
 
     __tablename__ = "attribute"
 
-    name: Mapped[str] = mapped_column(
-        sa.String(50),
-        unique=True,
+    __table_args__ = (
+        sa.Index(
+            "idx_attribute_name_name_description_ts_vector",
+            "ts_vector",
+            postgresql_using="gin",
+        ),
     )
-    description: Mapped[str] = mapped_column(sa.String(500))
-
-    __table_args__ = (sa.Index("idx_attribute_name", name),)
 
 
-class Place(Base):
+class Place(AbstractSearchableModel):
     """Model for place."""
 
     __tablename__ = "place"
 
-    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
     radius: Mapped[int] = mapped_column(sa.Integer)
     x: Mapped[int] = mapped_column(sa.Integer)
     y: Mapped[int] = mapped_column(sa.Integer)
 
-    __table_args__ = (sa.Index("idx_place_name", name),)
+    __table_args__ = (
+        sa.Index(
+            "idx_place_name_description_ts_vector",
+            "ts_vector",
+            postgresql_using="gin",
+        ),
+    )
 
 
 class Relation(Base):
@@ -147,12 +163,11 @@ class CharacterLocation(Base):
     y: Mapped[int] = mapped_column(sa.Integer, default=0)
 
 
-class Ability(Base):
+class Ability(AbstractSearchableModel):
     """Model for ability."""
 
     __tablename__ = "ability"
 
-    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
     ability_type_id: Mapped[uuid.UUID] = mapped_column(
         sa.UUID(as_uuid=True), ForeignKey("ability_type.id", ondelete="CASCADE")
     )
@@ -162,7 +177,11 @@ class Ability(Base):
     )
 
     __table_args__ = (
-        sa.Index("idx_ability_name", name),
+        sa.Index(
+            "idx_ability_name_description_ts_vector",
+            "ts_vector",
+            postgresql_using="gin",
+        ),
         sa.Index("idx_ability_type_id", ability_type_id),
     )
 
@@ -208,4 +227,21 @@ class CharacterAttribute(Base):
     )
     attribute: Mapped["Attribute"] = relationship(
         "Attribute", foreign_keys=[attribute_id]
+    )
+
+
+class AuditLog(Base):
+    """Audit log model."""
+
+    __tablename__ = "audit_log"
+
+    db_user: Mapped[str] = mapped_column(sa.String(50))
+    table_name: Mapped[str] = mapped_column(sa.String(50))
+    action: Mapped[str] = mapped_column(sa.String(50))
+    old_values: Mapped[dict[str, Any] | None] = mapped_column(sa.JSON)
+    new_values: Mapped[dict[str, Any] | None] = mapped_column(sa.JSON)
+
+    __table_args__ = (
+        sa.Index("idx_audit_log_table_name", table_name),
+        sa.Index("idx_audit_log_db_user", db_user),
     )

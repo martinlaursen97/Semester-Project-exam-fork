@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     """
 
     host: str = "127.0.0.1"
-    port: int = 7070
+    port: int = 8080
     # quantity of workers for uvicorn
     workers_count: int = 1
     # Enable uvicorn reloading
@@ -39,26 +39,60 @@ class Settings(BaseSettings):
     environment: str = "dev"
 
     log_level: LogLevel = LogLevel.INFO
-    # Variables for the database
+
+    ### Variables for the postgres database
     db_host: str = "localhost"
     db_port: int = 5435
+    db_echo: bool = False
+    db_base: str = "rpg_api"
+
+    # Application database user
     db_user: str = "rpg_api"
     db_pass: str = "rpg_api"
-    db_base: str = "rpg_api"
-    db_echo: bool = False
 
-    # Variables for the JWT
+    # Admin database user
+    db_admin_user: str = "rpg_api_admin"
+    db_admin_pass: str = "rpg_api_admin"
+
+    # Read only database user
+    db_read_user: str = "rpg_api_read"
+    db_read_pass: str = "rpg_api_read"
+
+    # Restricted read only database user
+    db_read_restricted_user: str = "rpg_api_read_restricted"
+    db_read_restricted_pass: str = "rpg_api_read_restricted"
+
+    ### Variables for the mongodb
+    mongo_host: str = "localhost"
+    mongo_port: int = 27017
+    mongo_database: str = "rpg_api"
+
+    # Application database user
+    mongo_user: str = "rpg_api"
+    mongo_pass: str = "rpg_api"
+
+    # Admin database user
+    mongo_admin_user: str = "rpg_api_admin"
+    mongo_admin_pass: str = "rpg_api_admin"
+
+    # Read only database user
+    mongo_read_user: str = "rpg_api_read"
+    mongo_read_pass: str = "rpg_api_read"
+
+    # Restricted read only database user
+    mongo_read_restricted_user: str = "rpg_api_read_restricted"
+    mongo_read_restricted_pass: str = "rpg_api_read_restricted"
+
+    # Variables for Neo4j
+    neo_host: str = "neo4j://rpg_api-neo4j:7687"
+    neo_user: str = "neo4j"
+    neo_pass: str = "password"
+
+    ### Variables for the JWT
     secret_key: SecretStr = SecretStr("secret")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 600
     reset_password_token_expire_minutes: int = 30
-
-    # Variables for the mongodb
-    mongo_host: str = "localhost"
-    mongo_port: int = 27017
-    mongo_user: str = "rpg_api"
-    mongo_pass: str = "rpg_api"
-    mongo_database: str = "rpg_api"
 
     # Sendgrid
     sendgrid_api_key: str = "SG"
@@ -85,21 +119,34 @@ class Settings(BaseSettings):
         )
 
     @property
-    def mongodb_url(self) -> URL:
+    def mongodb_url(self) -> URL | str:
         """
         Assemble database URL from settings.
 
         :return: database URL.
         """
-        return URL.build(
-            scheme="mongodb",
-            host=self.mongo_host,
-            port=self.mongo_port,
+        if self.environment == "dev":
+            return URL.build(
+                scheme="mongodb",
+                host=self.mongo_host,
+                port=self.mongo_port,
+                user=self.mongo_user,
+                password=self.mongo_pass,
+                path=f"/{self.mongo_database}",
+                query={"authSource": "admin"},
+            )
+
+        url = URL.build(
+            scheme="mongodb+srv",
             user=self.mongo_user,
             password=self.mongo_pass,
-            path=f"/{self.mongo_database}",
-            query={"authSource": "admin"},
+            host=self.mongo_host,
         )
+
+        # Convert URL object to string and append database name and options
+        url_str = str(url) + f"/{self.mongo_database}?retryWrites=true&w=majority"
+
+        return url_str
 
     model_config = SettingsConfigDict(
         env_file=".env",

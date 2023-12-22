@@ -28,4 +28,4 @@ CMD ["/usr/local/bin/python", "-m", "rpg_api"]
 
 FROM prod as dev
 
-RUN poetry install
+RUN poetry install 
