@@ -85,7 +85,7 @@ jobs:
           poetry install
       - name: Run pytest check what
         run: |
-          poetry run pytest -vv --cov="rpg_api" .
+          poetry run pytest -vv --cov="." --cov-report=xml
         env:
           RPG_API_HOST: "0.0.0.0"
           RPG_API_DB_HOST: localhost
