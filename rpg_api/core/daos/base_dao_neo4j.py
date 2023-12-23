@@ -49,7 +49,7 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         node = record["n"]
         return node.id
 
-    async def get_by_id(self, node_id: int) -> NodeModel:
+    async def get_by_id(self, node_id: int) -> NodeModel | None:
         """
         Get node by id.
         """
@@ -61,7 +61,7 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         record = await result.single()
 
         if not record:
-            raise rpg_exc.RowNotFoundError()
+            return None
         node_data = convert_to_valid_time(dict(record["n"]))
 
         # Validate and create the Pydantic model
@@ -167,7 +167,7 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
 
         if self.session._transaction:
             result = await self.session._transaction.run(delete_query, id=node_id)
-            
+
         delete_record = await result.single()
 
         if delete_record and delete_record["deleted_count"] == 0:

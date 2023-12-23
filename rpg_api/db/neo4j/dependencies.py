@@ -16,8 +16,10 @@ async def get_neo4j_session(
 ) -> AsyncGenerator[AsyncSession, None]:
     """
     Get Neo4j async session.
+    Every sessions starts a transaction, that commits if everything is fine,
+    if something fails, the transaction gets rolled back.
     """
-    
+
     async with driver.session() as session:
         tx = await session.begin_transaction()
         try:

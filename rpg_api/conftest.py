@@ -44,6 +44,12 @@ def anyio_backend() -> str:
 
 @pytest.fixture()
 async def neo4j_session() -> AsyncGenerator[Neo4jAsyncSession, None]:
+    """
+    Get session to database.
+
+    Fixture that returns a neo4j session with a SAVEPOINT, and the rollback to it
+    after the test completes.
+    """
     uri = settings.neo_host
     driver = AsyncGraphDatabase.driver(uri, auth=(settings.neo_user, settings.neo_pass))
 

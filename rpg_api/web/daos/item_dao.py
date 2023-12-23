@@ -93,8 +93,8 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
         self, character_id: int, equipped_only: bool
     ) -> list[NeoItemDTO]:
         """
-        Get items on character, if equipped_only is true,
-        only equipped items are returned.
+        Get items on character,
+        if equipped_only is true, only equipped items are returned.
         """
 
         if equipped_only:

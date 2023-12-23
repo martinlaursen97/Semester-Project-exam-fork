@@ -95,7 +95,7 @@ class NeoBaseUserDAO(
                 node2_id=rel_dto.node2_id,
                 relationship_props=rel_dto.relationship_props,
             )
-            
+
         record = await result.single()
 
         if record:
