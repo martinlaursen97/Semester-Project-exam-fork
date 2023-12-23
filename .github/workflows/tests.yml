@@ -72,6 +72,19 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+      rpg_api-mongo:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_DATABASE: rpg_api
+          MONGO_INITDB_ROOT_USERNAME: rpg_api
+          MONGO_INITDB_ROOT_PASSWORD: rpg_api
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="echo 'db.runCommand({ping: 1})' | mongosh --quiet localhost/test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -92,6 +105,7 @@ jobs:
           RPG_API_NEO_HOST: neo4j://localhost:7687
           RPG_API_NEO_USER: neo4j
           RPG_API_NEO_PASS: password
+          RPG_API_MONGO_URI: mongodb://rpg_api:rpg_api@localhost:27000/rpg_api?authSource=admin
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
