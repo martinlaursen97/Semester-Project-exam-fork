@@ -92,3 +92,8 @@ jobs:
           RPG_API_NEO_HOST: neo4j://localhost:7687
           RPG_API_NEO_USER: neo4j
           RPG_API_NEO_PASS: password
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
