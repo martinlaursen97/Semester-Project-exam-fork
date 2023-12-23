@@ -11,7 +11,7 @@ async def test_register_success(
     client: AsyncClient,
     mongodb_test_db: AsyncSession,
 ) -> None:
-    """Test reset password: 200."""
+    """Test reset password: 200. """
 
     new_user_json = {"email": "test@mail.com", "password": "password"}
 
