@@ -17,11 +17,15 @@ async def get_neo4j_session(
     """
     Get Neo4j async session.
     """
-    session = driver.session()
-    try:
-        yield session
-    finally:
-        await session.close()
+    
+    async with driver.session() as session:
+        tx = await session.begin_transaction()
+        try:
+            yield session
+            await tx.commit()  # Commit the transaction if everything is fine
+        except Exception as e:
+            await tx.rollback()  # Rollback the transaction in case of an error
+            raise e
 
 
 Neo4jSession = Annotated[AsyncSession, Depends(get_neo4j_session)]

@@ -41,12 +41,13 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
         RETURN r
         """
 
-        result = await self.session.run(
-            create_rel_query,
-            node1_id=rel_dto.node1_id,
-            node2_id=rel_dto.node2_id,
-            relationship_props=rel_dto.relationship_props,
-        )
+        if self.session._transaction:
+            result = await self.session._transaction.run(
+                create_rel_query,
+                node1_id=rel_dto.node1_id,
+                node2_id=rel_dto.node2_id,
+                relationship_props=rel_dto.relationship_props,
+            )
         record = await result.single()
 
         if record:
@@ -75,12 +76,13 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
             RETURN new_r
             """
 
-        result = await self.session.run(
-            equip_item_query,
-            node1_id=rel_dto.node1_id,
-            node2_id=rel_dto.node2_id,
-            relationship_props=rel_dto.relationship_props,
-        )
+        if self.session._transaction:
+            result = await self.session._transaction.run(
+                equip_item_query,
+                node1_id=rel_dto.node1_id,
+                node2_id=rel_dto.node2_id,
+                relationship_props=rel_dto.relationship_props,
+            )
         record = await result.single()
 
         if record:
@@ -110,7 +112,11 @@ class NeoItemDAO(BaseNeo4jDAO[NeoItemModel, NeoItemInputDTO, NeoItemUpdateDTO]):
         RETURN i, id(i) as id
         """
         items = []
-        result = await self.session.run(query, character_id=character_id)
+
+        if self.session._transaction:
+            result = await self.session._transaction.run(
+                query, character_id=character_id
+            )
 
         for node in await result.data():
             node_data = convert_to_valid_time(dict(node["i"]))

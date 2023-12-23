@@ -36,12 +36,10 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         props["updated_at"] = now
 
         create_query = f"CREATE (n:{self._label} $props) RETURN n"
+
         # Use the transaction in the session to run the query
         if self.session._transaction:
             result = await self.session._transaction.run(create_query, props=props)
-        else:
-            # Fall back to regular session run if no transaction is active
-            result = await self.session.run(create_query, props=props)
 
         record = await result.single()
 
@@ -57,13 +55,9 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         """
 
         query = "MATCH (n) WHERE id(n) = $id return n"
-
-        # Use the transaction in the session to run the query
         if self.session._transaction:
             result = await self.session._transaction.run(query=query, id=node_id)
-        else:
-            # Fall back to regular session run if no transaction is active
-            result = await self.session.run(query=query, id=node_id)
+
         record = await result.single()
 
         if not record:
@@ -82,7 +76,10 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
 
         query = f"MATCH (n:{self._label}) WHERE n += $props RETURN n"
         props = input_dto.model_dump()  # Convert DTO to a dictionary of properties
-        result = await self.session.run(query, props=props)
+
+        if self.session._transaction:
+            result = await self.session._transaction.run(query, props=props)
+
         record = await result.single()
 
         if record:
@@ -111,9 +108,6 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
             result = await self.session._transaction.run(
                 update_query, id=id, props=props
             )
-        else:
-            # Fall back to regular session run if no transaction is active
-            result = await self.session.run(update_query, id=id, props=props)
 
         record = await result.single()
 
@@ -135,7 +129,9 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         DETACH DELETE n 
         RETURN COUNT(n) as deleted_count"""
 
-        result = await self.session.run(delete_query, id=node_id)
+        if self.session._transaction:
+            result = await self.session._transaction.run(delete_query, id=node_id)
+
         delete_record = await result.single()
 
         if delete_record and delete_record["deleted_count"] == 0:
@@ -154,7 +150,9 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         WHERE id(n) = $id 
         RETURN COUNT(r) as rel_count"""
 
-        result = await self.session.run(check_query, id=node_id)
+        if self.session._transaction:
+            result = await self.session._transaction.run(check_query, id=node_id)
+
         record = await result.single()
 
         if record and record["rel_count"] > 0:
@@ -167,7 +165,9 @@ class BaseNeo4jDAO(Generic[NodeModel, InputDTO, UpdateDTO]):
         DETACH DELETE n 
         RETURN COUNT(n) as deleted_count"""
 
-        result = await self.session.run(delete_query, id=node_id)
+        if self.session._transaction:
+            result = await self.session._transaction.run(delete_query, id=node_id)
+            
         delete_record = await result.single()
 
         if delete_record and delete_record["deleted_count"] == 0:
