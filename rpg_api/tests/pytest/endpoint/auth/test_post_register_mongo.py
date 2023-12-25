@@ -7,14 +7,14 @@ url = "/api/mongodb/auth/register"
 
 
 @pytest.mark.anyio
-async def test_register_success(
+async def test_register_user_success(
     client: AsyncClient,
     mongodb_test_db: AsyncSession,
 ) -> None:
-    """Test reset password: 200. """
+    """Test registering a user with email and password: 200."""
 
     new_user_json = {"email": "test@mail.com", "password": "password"}
 
     response = await client.post(url, json=new_user_json)
-    print(response.__dict__)
+
     assert response.status_code == status.HTTP_201_CREATED
