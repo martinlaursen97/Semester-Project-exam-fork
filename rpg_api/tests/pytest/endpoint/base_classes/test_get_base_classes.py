@@ -3,14 +3,14 @@ from httpx import AsyncClient
 from fastapi import status
 from rpg_api.db.postgres.factory import factories
 from typing import Any
-from rpg_api.web.api.postgres.auth import auth_utils as utils
-from rpg_api.utils import dtos
 
 url = "/api/postgres/base-classes"
+
 
 def get_user_header(token: str) -> dict[str, Any]:
     """Return access token for given data."""
     return {"Authorization": f"Bearer {token}"}
+
 
 @pytest.mark.anyio
 async def test_get_base_classes_empty_list(client: AsyncClient) -> None:
@@ -53,8 +53,6 @@ async def test_get_base_classes_populated_list_2(client: AsyncClient) -> None:
     assert len(response.json()["data"]) == 2
 
 
-# Writing tests to ensure that only the GET method is allowed for the base-classes endpoint
-
 @pytest.mark.anyio
 async def test_base_classes_method_not_allowed_post(client: AsyncClient) -> None:
     """Test that POST method is not allowed for the base-classes endpoint."""
@@ -71,6 +69,7 @@ async def test_base_classes_method_not_allowed_put(client: AsyncClient) -> None:
     response = await client.put(url, json={"name": "UpdatedClass"})
 
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
 
 @pytest.mark.anyio
 async def test_base_classes_method_not_allowed_delete(client: AsyncClient) -> None:

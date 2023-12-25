@@ -10,6 +10,7 @@ import uuid
 url = "/api/postgres/characters/place"
 updateUrl = "/api/postgres/character-locations"
 
+
 def get_user_header(token: str) -> dict[str, Any]:
     """Return access token for given data."""
     return {"Authorization": f"Bearer {token}"}
@@ -39,7 +40,9 @@ async def test_get_character_place_named_place(client: AsyncClient) -> None:
     token = utils.create_access_token(data=dtos.TokenData(user_id=str(user.id)))
     header = get_user_header(token)
 
-    await factories.PlaceFactory.create(name="Goldshire", description="A small town", radius=10, x=25, y=-100)
+    await factories.PlaceFactory.create(
+        name="Goldshire", description="A small town", radius=10, x=25, y=-100
+    )
     character = await factories.CharacterFactory.create(user=user)
     # Characters are always created at 0,0 so the location is updated after creation
     charLocation = {"x": 25, "y": -100}
@@ -52,14 +55,18 @@ async def test_get_character_place_named_place(client: AsyncClient) -> None:
 
 
 @pytest.mark.anyio
-async def test_get_character_place_named_place_radius_inside_boundary(client: AsyncClient) -> None:
+async def test_get_character_place_named_place_radius_inside_boundary(
+    client: AsyncClient,
+) -> None:
     """Test get character in the radius of a named place: 200."""
 
     user = await factories.BaseUserFactory.create()
     token = utils.create_access_token(data=dtos.TokenData(user_id=str(user.id)))
     header = get_user_header(token)
 
-    await factories.PlaceFactory.create(name="Goldshire", description="A small town", radius=10, x=25, y=-100)
+    await factories.PlaceFactory.create(
+        name="Goldshire", description="A small town", radius=10, x=25, y=-100
+    )
     character = await factories.CharacterFactory.create(user=user)
     # Characters are always created at 0,0 so the location is updated after creation
     charLocation = {"x": 25, "y": -90}
@@ -72,14 +79,18 @@ async def test_get_character_place_named_place_radius_inside_boundary(client: As
 
 
 @pytest.mark.anyio
-async def test_get_character_place_named_place_outside_radius_boundary(client: AsyncClient) -> None:
-    """Test get character in an invalid equivalence partitioning boundary of the radius: 200."""
+async def test_get_character_place_named_place_outside_radius_boundary(
+    client: AsyncClient,
+) -> None:
+    """Test get character in an invalid EP boundary of the radius: 200."""
 
     user = await factories.BaseUserFactory.create()
     token = utils.create_access_token(data=dtos.TokenData(user_id=str(user.id)))
     header = get_user_header(token)
 
-    await factories.PlaceFactory.create(name="Goldshire", description="A small town", radius=10, x=25, y=-100)
+    await factories.PlaceFactory.create(
+        name="Goldshire", description="A small town", radius=10, x=25, y=-100
+    )
     character = await factories.CharacterFactory.create(user=user)
     # Characters are always created at 0,0 so the location is updated after creation
     charLocation = {"x": 25, "y": -111}
@@ -104,6 +115,7 @@ async def test_get_character_place_invalid_character(client: AsyncClient) -> Non
     response = await client.get(f"{url}/{invalidId}", headers=header)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
 
 @pytest.mark.anyio
 async def test_get_character_place_invalid_token(client: AsyncClient) -> None:
@@ -171,7 +183,9 @@ async def test_character_place_method_not_allowed_patch(client: AsyncClient) -> 
 
     character_id = uuid.uuid4()
 
-    response = await client.patch(f"{url}/{character_id}", json={"name": "PatchedPlace"})
+    response = await client.patch(
+        f"{url}/{character_id}", json={"name": "PatchedPlace"}
+    )
 
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 

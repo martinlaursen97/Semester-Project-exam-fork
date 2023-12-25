@@ -8,6 +8,7 @@ from rpg_api.utils import dtos
 
 url = "/api/postgres/characters"
 
+
 def get_user_header(token: str) -> dict[str, Any]:
     """Return access token for given data."""
     return {"Authorization": f"Bearer {token}"}
@@ -37,6 +38,9 @@ async def test_get_characters_populated_list(client: AsyncClient) -> None:
     header = get_user_header(token)
 
     character = await factories.CharacterFactory.create(user=user)
+    # This ensures mypy knows that character_location is not None
+    assert character.character_location is not None
+    assert character.base_class is not None
 
     response = await client.get(url, headers=header)
 
@@ -48,9 +52,18 @@ async def test_get_characters_populated_list(client: AsyncClient) -> None:
     assert response.json()["data"][0]["level"] == character.level
     assert response.json()["data"][0]["xp"] == character.xp
     assert response.json()["data"][0]["money"] == character.money
-    assert response.json()["data"][0]["base_class"].get("name") == character.base_class.name
-    assert response.json()["data"][0]["character_location"]["x"] == character.character_location.x
-    assert response.json()["data"][0]["character_location"]["y"] == character.character_location.y
+    assert (
+        response.json()["data"][0]["base_class"].get("name")
+        == character.base_class.name
+    )
+    assert (
+        response.json()["data"][0]["character_location"]["x"]
+        == character.character_location.x
+    )
+    assert (
+        response.json()["data"][0]["character_location"]["y"]
+        == character.character_location.y
+    )
     assert len(response.json()["data"]) == 1
 
 
@@ -63,7 +76,13 @@ async def test_get_characters_populated_list_2(client: AsyncClient) -> None:
     header = get_user_header(token)
 
     character1 = await factories.CharacterFactory.create(user=user)
+    # This ensures mypy knows that character_location is not None
+    assert character1.character_location is not None
+    assert character1.base_class is not None
     character2 = await factories.CharacterFactory.create(user=user)
+    # This ensures mypy knows that character_location is not None
+    assert character2.character_location is not None
+    assert character2.base_class is not None
 
     response = await client.get(url, headers=header)
 
@@ -75,9 +94,18 @@ async def test_get_characters_populated_list_2(client: AsyncClient) -> None:
     assert response.json()["data"][0]["level"] == character1.level
     assert response.json()["data"][0]["xp"] == character1.xp
     assert response.json()["data"][0]["money"] == character1.money
-    assert response.json()["data"][0]["base_class"].get("name") == character1.base_class.name
-    assert response.json()["data"][0]["character_location"]["x"] == character1.character_location.x
-    assert response.json()["data"][0]["character_location"]["y"] == character1.character_location.y
+    assert (
+        response.json()["data"][0]["base_class"].get("name")
+        == character1.base_class.name
+    )
+    assert (
+        response.json()["data"][0]["character_location"]["x"]
+        == character1.character_location.x
+    )
+    assert (
+        response.json()["data"][0]["character_location"]["y"]
+        == character1.character_location.y
+    )
     assert response.json()["data"][1]["id"] == str(character2.id)
     assert response.json()["data"][1]["gender"] == character2.gender
     assert response.json()["data"][1]["character_name"] == character2.character_name
@@ -85,9 +113,18 @@ async def test_get_characters_populated_list_2(client: AsyncClient) -> None:
     assert response.json()["data"][1]["level"] == character2.level
     assert response.json()["data"][1]["xp"] == character2.xp
     assert response.json()["data"][1]["money"] == character2.money
-    assert response.json()["data"][1]["base_class"].get("name") == character2.base_class.name
-    assert response.json()["data"][1]["character_location"]["x"] == character2.character_location.x
-    assert response.json()["data"][1]["character_location"]["y"] == character2.character_location.y
+    assert (
+        response.json()["data"][1]["base_class"].get("name")
+        == character2.base_class.name
+    )
+    assert (
+        response.json()["data"][1]["character_location"]["x"]
+        == character2.character_location.x
+    )
+    assert (
+        response.json()["data"][1]["character_location"]["y"]
+        == character2.character_location.y
+    )
     assert len(response.json()["data"]) == 2
 
 
