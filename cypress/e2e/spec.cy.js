@@ -3,11 +3,13 @@ describe('Login and Character test', () => {
   const loginWaitTime = 3000;
   const createCharacterWaitTime = 2000;
   const enterWorldWaitTime = 2000;
+ 
+  beforeEach(() => {
+    cy.visit('http://localhost:3000/login');
+    cy.wait(pageLoadTime);
+  });
 
-  it('that we can login and create a character', () => {
-    cy.visit('http://localhost:3000/login')
-    cy.wait(pageLoadTime)
-
+  it('should login and create a character', () => {
     // Login
     cy.get('[data-test="e-mail"]').clear().type('erol-taskiran@hotmail.com')
     cy.get('[data-test="password"]').clear().type(12345678)
@@ -20,16 +22,19 @@ describe('Login and Character test', () => {
     cy.get('[data-test="selectGender"]').select('female')
     cy.get('[data-test="createCharacter"]').click()
     cy.wait(createCharacterWaitTime)
-
+    
     // Enter World
     cy.get('[data-test="enterWorld"]').click()
     cy.wait(enterWorldWaitTime)
-    cy.get('[data-test="directionButtonsRight"]').click()
-    cy.get('[data-test="directionButtonsRight"]').click()
-    cy.get('[data-test="directionButtonsRight"]').click()
-    cy.get('[data-test="directionButtonsRight"]').click()
-    cy.get('[data-test="directionButtonsRight"]').click()
-    cy.get('[data-test="directionButtonsRight"]').click()
-  })
-})
     
+    for (let i = 0; i < 10; i++) {
+      cy.get('[data-test="directionButtonsUp"]').click();
+    }
+    
+    cy.wait(10000)
+    
+    for (let i = 0; i < 10; i++) {
+      cy.get('[data-test="directionButtonsDown"]').click();
+    }
+  })
+});
