@@ -2,14 +2,9 @@ import pytest
 from httpx import AsyncClient
 from fastapi import status
 from rpg_api.db.postgres.factory import factories
-from typing import Any
+from rpg_api.tests.pytest import test_utils
 
 url = "/api/postgres/base-classes"
-
-
-def get_user_header(token: str) -> dict[str, Any]:
-    """Return access token for given data."""
-    return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.mark.anyio
@@ -17,40 +12,43 @@ async def test_get_base_classes_empty_list(client: AsyncClient) -> None:
     """Test get all base classes with 0 base classes in the database: 200."""
 
     response = await client.get(url)
-
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["data"] == []
-    assert len(response.json()["data"]) == 0
+
+    response_data = test_utils.get_data(response)
+    assert response_data == []
+    assert len(response_data) == 0
 
 
 @pytest.mark.anyio
 async def test_get_base_classes_populated_list(client: AsyncClient) -> None:
     """Test get all base classes with 1 base class in the database: 200."""
 
-    baseClass = await factories.BaseClassFactory.create()
+    base_class = await factories.BaseClassFactory.create()
 
     response = await client.get(url)
-
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["data"][0]["id"] == str(baseClass.id)
-    assert response.json()["data"][0]["name"] == baseClass.name
+
+    response_data = test_utils.get_data(response)
+    assert response_data[0]["id"] == str(base_class.id)
+    assert response_data[0]["name"] == base_class.name
 
 
 @pytest.mark.anyio
 async def test_get_base_classes_populated_list_2(client: AsyncClient) -> None:
     """Test get all base classes with 2 base classes in the database: 200."""
 
-    baseClass1 = await factories.BaseClassFactory.create()
-    baseClass2 = await factories.BaseClassFactory.create()
+    base_class1 = await factories.BaseClassFactory.create()
+    base_class2 = await factories.BaseClassFactory.create()
 
     response = await client.get(url)
-
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["data"][0]["id"] == str(baseClass1.id)
-    assert response.json()["data"][0]["name"] == baseClass1.name
-    assert response.json()["data"][1]["id"] == str(baseClass2.id)
-    assert response.json()["data"][1]["name"] == baseClass2.name
-    assert len(response.json()["data"]) == 2
+
+    response_data = test_utils.get_data(response)
+    assert response_data[0]["id"] == str(base_class1.id)
+    assert response_data[0]["name"] == base_class1.name
+    assert response_data[1]["id"] == str(base_class2.id)
+    assert response_data[1]["name"] == base_class2.name
+    assert len(response_data) == 2
 
 
 @pytest.mark.anyio
