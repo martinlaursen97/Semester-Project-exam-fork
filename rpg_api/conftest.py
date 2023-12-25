@@ -14,6 +14,8 @@ from sqlalchemy.ext.asyncio import (
 from rpg_api.db.postgres.factory.async_base_factory import AsyncSQLAlchemyModelFactory
 
 from rpg_api.db.postgres.dependencies import get_db_session
+from rpg_api.db.neo4j.dependencies import get_neo4j_session
+from rpg_api.db.mongo.dependencies import get_mongodb_client
 from rpg_api.db.postgres.utils import (
     create_database,
     drop_database,
@@ -28,6 +30,17 @@ from rpg_api.services.email_service.email_service import MockEmailService
 from rpg_api.settings import settings
 from rpg_api.web.application import get_app
 from rpg_api.utils.daos import AllDAOs
+from neo4j import AsyncGraphDatabase, AsyncSession as Neo4jAsyncSession
+from motor.motor_asyncio import AsyncIOMotorClient
+from rpg_api.db.mongo.models.models import (
+    MBaseUser,
+    MCharacter,
+    MAbility,
+    MClass,
+    MPlace,
+)
+from beanie import init_beanie
+from yarl import URL
 
 
 @pytest.fixture(scope="session")
@@ -38,6 +51,26 @@ def anyio_backend() -> str:
     :return: backend name.
     """
     return "asyncio"
+
+
+@pytest.fixture()
+async def neo4j_session() -> AsyncGenerator[Neo4jAsyncSession, None]:
+    """
+    Get session to database.
+
+    Fixture that returns a neo4j session with a SAVEPOINT, and the rollback to it
+    after the test completes.
+    """
+    uri = settings.neo_host
+    driver = AsyncGraphDatabase.driver(uri, auth=(settings.neo_user, settings.neo_pass))
+
+    async with driver.session() as session:
+        tx = await session.begin_transaction()
+        try:
+            yield session
+        finally:
+            await tx.rollback()
+            await driver.close()
 
 
 @pytest.fixture(scope="session")
@@ -65,6 +98,40 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
     finally:
         await engine.dispose()
         await drop_database()
+
+
+@pytest.fixture()
+async def mongodb_test_db() -> AsyncGenerator[Any, None]:
+    """
+    Creates a test_database that is used during the tests.
+    The database is dropped after the tests have finished running.
+    """
+
+    mongo_url = URL.build(
+        scheme="mongodb",
+        host=settings.mongo_host,
+        port=settings.mongo_port,
+        user=settings.mongo_user,
+        password=settings.mongo_pass,
+        path=f"/{settings.mongo_database}",
+        query={"authSource": "admin"},
+    )
+    client = AsyncIOMotorClient(str(mongo_url))  # type: ignore
+    # Create a test database
+    test_db = client.test_database
+
+    # Set up Beanie with the test database
+    await init_beanie(
+        database=test_db,
+        document_models=[MBaseUser, MCharacter, MAbility, MClass, MPlace],  # type: ignore
+    )
+
+    try:
+        yield test_db
+    finally:
+        # Clean up: Drop the test database after the test is done
+        await client.drop_database(test_db)
+        client.close()
 
 
 @pytest.fixture
@@ -113,6 +180,7 @@ async def mock_email_service() -> MockEmailService:
 def fastapi_app(
     dbsession: AsyncSession,
     mock_email_service: MockEmailService,
+    neo4j_session: Neo4jAsyncSession,
 ) -> FastAPI:
     """
     Fixture for creating FastAPI app.
@@ -122,6 +190,8 @@ def fastapi_app(
     application = get_app()
     application.dependency_overrides[get_db_session] = lambda: dbsession
     application.dependency_overrides[get_email_service] = lambda: mock_email_service
+    application.dependency_overrides[get_neo4j_session] = lambda: neo4j_session
+    application.dependency_overrides[get_mongodb_client] = lambda: mongodb_test_db
     return application  # noqa: WPS331
 
 
