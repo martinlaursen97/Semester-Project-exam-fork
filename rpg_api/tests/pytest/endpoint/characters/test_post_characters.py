@@ -9,6 +9,7 @@ import uuid
 
 url = "/api/postgres/characters"
 
+
 def get_user_header(token: str) -> dict[str, Any]:
     """Return access token for given data."""
     return {"Authorization": f"Bearer {token}"}
@@ -26,7 +27,7 @@ async def test_create_character_success(client: AsyncClient) -> None:
     charData = {
         "base_class_id": str(baseClass.id),
         "gender": "male",
-        "character_name": "Garrosh Hellscream"
+        "character_name": "Garrosh Hellscream",
     }
 
     response = await client.post(url, headers=header, json=charData)
@@ -62,8 +63,8 @@ async def test_create_character_invalid_data_type(client: AsyncClient) -> None:
     baseClass = await factories.BaseClassFactory.create()
     charData = {
         "base_class_id": str(baseClass.id),
-        "gender": int(1),
-        "character_name": "Arthas Menethil"
+        "gender": 1,
+        "character_name": "Arthas Menethil",
     }
 
     response = await client.post(url, headers=header, json=charData)
@@ -80,9 +81,8 @@ async def test_create_character_invalid_token(client: AsyncClient) -> None:
     charData = {
         "base_class_id": "invalid_uuid",
         "gender": "female",
-        "character_name": "Sylvanas Windrunner"
+        "character_name": "Sylvanas Windrunner",
     }
-
 
     response = await client.post(url, headers=header, json=charData)
 
@@ -97,7 +97,7 @@ async def test_create_character_no_token(client: AsyncClient) -> None:
     charData = {
         "base_class_id": str(baseClass.id),
         "gender": "male",
-        "character_name": "Vol'jin"
+        "character_name": "Vol'jin",
     }
 
     response = await client.post(url, json=charData)

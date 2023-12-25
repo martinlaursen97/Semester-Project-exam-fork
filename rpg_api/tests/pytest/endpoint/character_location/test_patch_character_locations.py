@@ -9,6 +9,7 @@ import uuid
 
 url = "/api/postgres/character-locations"
 
+
 def get_user_header(token: str) -> dict[str, Any]:
     """Return access token for given data."""
     return {"Authorization": f"Bearer {token}"}
@@ -17,54 +18,43 @@ def get_user_header(token: str) -> dict[str, Any]:
 @pytest.mark.anyio
 @pytest.mark.parametrize(
     "x, y",
-    # Int32 boundaries
-    [(-2147483648, 0), (2147483647, 0),
-    (0, -2147483648), (0, 2147483647),
-    # Other values 
-    (-2147483647, 0), (2147483646, 0),
-    (0, -2147483647), (0, 2147483646),
-    (0, 0), (100, 100), (-100, -100)])
+    [
+        # Int32 boundaries
+        (-2147483648, 0),
+        (2147483647, 0),
+        (0, -2147483648),
+        (0, 2147483647),
+        # Other values
+        (-2147483647, 0),
+        (2147483646, 0),
+        (0, -2147483647),
+        (0, 2147483646),
+        (0, 0),
+        (100, 100),
+        (-100, -100),
+    ],
+)
 async def test_patch_character_location_valid_boundaries(
-    client: AsyncClient,
-    x: int,
-    y: int) -> None:
-    """"Test updating character location with valid boundaries: 200."""
+    client: AsyncClient, x: int, y: int
+) -> None:
+    """ "Test updating character location with valid boundaries: 200."""
 
     user = await factories.BaseUserFactory.create()
     token = utils.create_access_token(data=dtos.TokenData(user_id=str(user.id)))
     header = get_user_header(token)
 
     character = await factories.CharacterFactory.create(user=user)
+    # This ensures mypy knows that character_location is not None
+    assert character.character_location is not None
     charLocation = {"x": x, "y": y}
 
-    response = await client.patch(f"{url}/{character.id}", headers=header, json=charLocation)
+    response = await client.patch(
+        f"{url}/{character.id}", headers=header, json=charLocation
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert character.character_location.x == x
     assert character.character_location.y == y
-
-# Temporarily disabled until handling is implemented
-#@pytest.mark.anyio
-#@pytest.mark.parametrize(
-#    "x, y",
-#    [(-2147483649, 0), (2147483648, 0),
-#    (0, -2147483649), (0, 2147483648)])
-#async def test_patch_character_location_invalid_boundaries(
-#    client: AsyncClient,
-#    x: int,
-#    y: int) -> None:
-#    """"Test updating character location with invalid boundaries: 422."""
-#
-#    user = await factories.BaseUserFactory.create()
-#    token = utils.create_access_token(data=dtos.TokenData(user_id=str(user.id)))
-#    header = get_user_header(token)
-#
-#    character = await factories.CharacterFactory.create(user=user)
-#    charLocation = {"x": x, "y": y}
-#
-#    response = await client.patch(f"{url}/{character.id}", headers=header, json=charLocation)
-#
-#    assert response.status_code in [status.HTTP_400_BAD_REQUEST, status.HTTP_422_UNPROCESSABLE_ENTITY]
 
 
 @pytest.mark.anyio
@@ -76,9 +66,13 @@ async def test_patch_character_location_missing_data(client: AsyncClient) -> Non
     header = get_user_header(token)
 
     character = await factories.CharacterFactory.create(user=user)
+    # This ensures mypy knows that character_location is not None
+    assert character.character_location is not None
     charLocation = {"x": 120}
 
-    response = await client.patch(f"{url}/{character.id}", headers=header, json=charLocation)
+    response = await client.patch(
+        f"{url}/{character.id}", headers=header, json=charLocation
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert character.character_location.x == 120
@@ -87,7 +81,7 @@ async def test_patch_character_location_missing_data(client: AsyncClient) -> Non
 
 @pytest.mark.anyio
 async def test_patch_character_location_invalid_data_type(client: AsyncClient) -> None:
-    """Test updating character location with invalid data type and no valid ones: 422."""
+    """Test updating character location with invalid data type and 0 valid ones: 422."""
 
     user = await factories.BaseUserFactory.create()
     token = utils.create_access_token(data=dtos.TokenData(user_id=str(user.id)))
@@ -96,7 +90,9 @@ async def test_patch_character_location_invalid_data_type(client: AsyncClient) -
     character = await factories.CharacterFactory.create(user=user)
     charLocation = {"x": "invalid"}
 
-    response = await client.patch(f"{url}/{character.id}", headers=header, json=charLocation)
+    response = await client.patch(
+        f"{url}/{character.id}", headers=header, json=charLocation
+    )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
@@ -111,7 +107,9 @@ async def test_patch_character_location_invalid_token(client: AsyncClient) -> No
     character = await factories.CharacterFactory.create(user=user)
     charLocation = {"x": 0, "y": 0}
 
-    response = await client.patch(f"{url}/{character.id}", headers=header, json=charLocation)
+    response = await client.patch(
+        f"{url}/{character.id}", headers=header, json=charLocation
+    )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -142,7 +140,9 @@ async def test_patch_character_location_invalid_character(client: AsyncClient) -
 
     charLocation = {"x": 0, "y": 0}
 
-    response = await client.patch(f"{url}/{invalidId}", headers=header, json=charLocation)
+    response = await client.patch(
+        f"{url}/{invalidId}", headers=header, json=charLocation
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -158,7 +158,9 @@ async def test_patch_character_location_invalid_float(client: AsyncClient) -> No
     character = await factories.CharacterFactory.create(user=user)
     charLocation = {"x": 9.99}
 
-    response = await client.patch(f"{url}/{character.id}", headers=header, json=charLocation)
+    response = await client.patch(
+        f"{url}/{character.id}", headers=header, json=charLocation
+    )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
@@ -188,7 +190,9 @@ async def test_character_location_method_not_allowed_post(client: AsyncClient) -
 
     character = await factories.CharacterFactory.create(user=user)
 
-    response = await client.post(f"{url}/{character.id}", headers=header, json={"x": 10, "y": 20})
+    response = await client.post(
+        f"{url}/{character.id}", headers=header, json={"x": 10, "y": 20}
+    )
 
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
@@ -202,12 +206,16 @@ async def test_character_location_method_not_allowed_put(client: AsyncClient) ->
     header = get_user_header(token)
 
     character = await factories.CharacterFactory.create(user=user)
-    response = await client.put(f"{url}/{character.id}", headers=header, json={"x": 10, "y": 20})
+    response = await client.put(
+        f"{url}/{character.id}", headers=header, json={"x": 10, "y": 20}
+    )
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
 
 @pytest.mark.anyio
-async def test_character_location_method_not_allowed_delete(client: AsyncClient) -> None:
+async def test_character_location_method_not_allowed_delete(
+    client: AsyncClient,
+) -> None:
     """Test that DELETE method is not allowed for the character location endpoint."""
 
     user = await factories.BaseUserFactory.create()
@@ -222,7 +230,9 @@ async def test_character_location_method_not_allowed_delete(client: AsyncClient)
 
 
 @pytest.mark.anyio
-async def test_character_location_method_not_allowed_options(client: AsyncClient) -> None:
+async def test_character_location_method_not_allowed_options(
+    client: AsyncClient,
+) -> None:
     """Test that OPTIONS method is not allowed for the character location endpoint."""
 
     user = await factories.BaseUserFactory.create()
