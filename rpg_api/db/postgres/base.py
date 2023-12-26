@@ -6,6 +6,7 @@ import sqlalchemy as sa
 from rpg_api.utils import date_utils
 from datetime import datetime
 from rpg_api.db.postgres.meta import meta
+from rpg_api import constants
 
 
 class Base(DeclarativeBase):
@@ -33,7 +34,7 @@ class AbstractSearchableModel(Base):
 
     __abstract__ = True
 
-    name: Mapped[str] = mapped_column(sa.String(50), unique=True)
+    name: Mapped[str] = mapped_column(sa.String(constants.MAX_LENGTH_NAME), unique=True)
     description: Mapped[str | None] = mapped_column(sa.String(500))
 
     ts_vector = sa.Column(  # type: ignore
