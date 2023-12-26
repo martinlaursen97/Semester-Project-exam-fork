@@ -132,7 +132,10 @@ async def test_get_characters_no_token(client: AsyncClient) -> None:
     ],
 )
 async def test_characters_method_not_allowed(client: AsyncClient, method: str) -> None:
-    """Test that various HTTP methods are not allowed for the characters endpoint: 405."""
+    """
+    Test that various HTTP methods are not
+    allowed for the characters endpoint: 405.
+    """
 
     http_method = getattr(client, method)
 
