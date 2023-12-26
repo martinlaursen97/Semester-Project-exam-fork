@@ -35,17 +35,27 @@ async def test_get_character_place_wilderness(client: AsyncClient) -> None:
         (-888, 10, "Darnassus"),
         (245, 100, "Thunder Bluff"),
         (0, 0, "Elwynn Forest"),
-    ]
+    ],
 )
-async def test_get_character_place_named_place(client: AsyncClient, daos: AllDAOs, x_coordinate: int, y_coordinate: int, place_name: str) -> None:
+async def test_get_character_place_named_place(
+    client: AsyncClient,
+    daos: AllDAOs,
+    x_coordinate: int,
+    y_coordinate: int,
+    place_name: str,
+) -> None:
     """Test get character in a named place: 200."""
 
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
 
-    await factories.PlaceFactory.create(name=place_name, radius=0, x=x_coordinate, y=y_coordinate)
+    await factories.PlaceFactory.create(
+        name=place_name, radius=0, x=x_coordinate, y=y_coordinate
+    )
     character = await factories.CharacterFactory.create(user=user)
-    character_location = await daos.character_location.get_by_id(character.character_location_id)
+    character_location = await daos.character_location.get_by_id(
+        character.character_location_id
+    )
     update_data = CharacterLocationUpdateDTO(x=x_coordinate, y=y_coordinate)
     await daos.character_location.update(character_location.id, update_data)
     assert character.character_location.x == x_coordinate
@@ -66,7 +76,7 @@ async def test_get_character_place_named_place(client: AsyncClient, daos: AllDAO
         (-10, -60, 10, -10, -50, "Stormwind"),
         (75, 50, 25, 75, 25, "Orgrimmar"),
         (1, -99, 100, 1, 1, "Thunder Bluff"),
-    ]
+    ],
 )
 async def test_get_character_place_named_place_radius_inside_boundary(
     client: AsyncClient,
@@ -83,9 +93,13 @@ async def test_get_character_place_named_place_radius_inside_boundary(
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
 
-    await factories.PlaceFactory.create(name=name_place, radius=radius_place, x=x_place, y=y_place)
+    await factories.PlaceFactory.create(
+        name=name_place, radius=radius_place, x=x_place, y=y_place
+    )
     character = await factories.CharacterFactory.create(user=user)
-    character_location = await daos.character_location.get_by_id(character.character_location_id)
+    character_location = await daos.character_location.get_by_id(
+        character.character_location_id
+    )
     update_data = CharacterLocationUpdateDTO(x=x_character, y=y_character)
     await daos.character_location.update(character_location.id, update_data)
     assert character.character_location.x == x_character
@@ -106,7 +120,7 @@ async def test_get_character_place_named_place_radius_inside_boundary(
         (0, 4, 3, 0, 0, "Stormwind"),
         (-4, 0, 3, 0, 0, "Orgrimmar"),
         (49, 1, 50, 100, 1, "Thunder Bluff"),
-    ]
+    ],
 )
 async def test_get_character_place_named_place_outside_radius_boundary(
     client: AsyncClient,
@@ -123,9 +137,13 @@ async def test_get_character_place_named_place_outside_radius_boundary(
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
 
-    await factories.PlaceFactory.create(name=name_place, radius=radius_place, x=x_place, y=y_place)
+    await factories.PlaceFactory.create(
+        name=name_place, radius=radius_place, x=x_place, y=y_place
+    )
     character = await factories.CharacterFactory.create(user=user)
-    character_location = await daos.character_location.get_by_id(character.character_location_id)
+    character_location = await daos.character_location.get_by_id(
+        character.character_location_id
+    )
     update_data = CharacterLocationUpdateDTO(x=x_character, y=y_character)
     await daos.character_location.update(character_location.id, update_data)
     assert character.character_location.x == x_character
@@ -212,7 +230,9 @@ async def test_character_place_method_not_allowed_patch(client: AsyncClient) -> 
 
     character_id = uuid.uuid4()
 
-    response = await client.patch(f"{url}/{character_id}", json={"name": "PatchedPlace"})
+    response = await client.patch(
+        f"{url}/{character_id}", json={"name": "PatchedPlace"}
+    )
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
 

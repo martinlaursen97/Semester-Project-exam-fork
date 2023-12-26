@@ -14,7 +14,7 @@ url = "/api/postgres/character-locations"
 @pytest.mark.anyio
 @pytest.mark.parametrize(
     "x, y",
-    [ 
+    [
         (constants.INT32_MAX, 0),
         (constants.INT32_MIN, 0),
         (0, constants.INT32_MAX),
@@ -51,7 +51,9 @@ async def test_patch_character_location_valid_boundaries(
 
 
 @pytest.mark.anyio
-async def test_patch_character_location_updating_one_coordinate(client: AsyncClient) -> None:
+async def test_patch_character_location_updating_one_coordinate(
+    client: AsyncClient,
+) -> None:
     """Test updating character location with one missing coordinate: 200."""
 
     user = await factories.BaseUserFactory.create()
@@ -75,19 +77,20 @@ async def test_patch_character_location_updating_one_coordinate(client: AsyncCli
 
 @pytest.mark.anyio
 @pytest.mark.parametrize(
-        "invalid_value",
-        [
-            "a string",
-            9.99,  # float
-            #True,  # boolean # GitHub Issue #73: https://github.com/kea-semester-1/Semester-Project/issues/73
-            #None,  # NoneType # GitHub Issue #73: https://github.com/kea-semester-1/Semester-Project/issues/73
-            [1, 2, 3],  # list
-            {"x": 1},  # dict
-            (1, 2),  # tuple
-        ],
-	)
+    "invalid_value",
+    [
+        "a string",
+        9.99,  # float
+        # True,  # boolean # GitHub Issue #73: https://github.com/kea-semester-1/Semester-Project/issues/73
+        # None,  # NoneType # GitHub Issue #73: https://github.com/kea-semester-1/Semester-Project/issues/73
+        [1, 2, 3],  # list
+        {"x": 1},  # dict
+        (1, 2),  # tuple
+    ],
+)
 async def test_patch_character_location_invalid_data_type(
-    client: AsyncClient, invalid_value: Any) -> None:
+    client: AsyncClient, invalid_value: Any
+) -> None:
     """Test updating character location with invalid data type and 0 valid ones: 422."""
 
     user = await factories.BaseUserFactory.create()
