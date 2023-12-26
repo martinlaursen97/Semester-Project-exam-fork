@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "cypress-real-events": "^1.11.0",
+    "nuxt": "^3.8.2"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.1"
+  }
+}

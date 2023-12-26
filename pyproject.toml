@@ -1,0 +1,215 @@
+[tool.poetry]
+name = "rpg_api"
+version = "0.1.0"
+description = ""
+authors = []
+maintainers = []
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.100.0"
+uvicorn = { version = "^0.22.0", extras = ["standard"] }
+pydantic = { extras = ["email"], version = "^2.4.2" }
+pydantic-settings = "^2"
+yarl = "^1.9.2"
+ujson = "^5.8.0"
+SQLAlchemy = { version = "^2.0.18", extras = ["asyncio"] }
+alembic = "^1.11.1"
+asyncpg = { version = "^0.28.0", extras = ["sa"] }
+httptools = "^0.6.0"
+loguru = "^0.7.0"
+sqlparse = "^0.4.4"
+ruff = "^0.0.292"
+passlib = "^1.7.4"
+pyjwt = "^2.8.0"
+motor = "^3.3.1"
+beanie = "^1.23.1"
+neo4j = "^5.14.1"
+jinja2 = "^3.1.2"
+sendgrid = "^6.10.0"
+locust = "^2.19.0"
+factory-boy = "^3.3.0"
+pandas = "^2.1.4"
+tabulate = "^0.9.0"
+requests = "^2.31.0"
+types-requests = "^2.31.0.10"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.1"
+flake8 = "~4.0.1"
+mypy = "^1.1.1"
+isort = "^5.11.4"
+pre-commit = "^3.0.1"
+wemake-python-styleguide = "^0.17.0"
+black = "^22.12.0"
+autoflake = "^1.6.1"
+pytest-cov = "^4.0.0"
+anyio = "^3.6.2"
+pytest-env = "^0.8.1"
+httpx = "^0.23.3"
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+src_paths = ["rpg_api"]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+allow_subclassing_any = true
+allow_untyped_calls = true
+pretty = true
+show_error_codes = true
+implicit_reexport = true
+allow_untyped_decorators = true
+warn_unused_ignores = false
+warn_return_any = false
+namespace_packages = true
+exclude = ["migrations/"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning",
+    "ignore:.*unclosed.*:ResourceWarning",
+]
+env = ["RPG_API_ENVIRONMENT=pytest", "RPG_API_DB_BASE=rpg_api_test"]
+
+[fastapi-template.options]
+project_name = "rpg_api"
+api_type = "rest"
+enable_redis = "None"
+enable_rmq = "None"
+ci_type = "github"
+enable_migrations = "True"
+enable_taskiq = "None"
+enable_kube = "None"
+kube_name = "rpg-api"
+enable_routers = "None"
+enable_kafka = "None"
+enable_loguru = "True"
+traefik_labels = "None"
+add_dummy = "None"
+orm = "sqlalchemy"
+self_hosted_swagger = "None"
+prometheus_enabled = "None"
+sentry_enabled = "None"
+otlp_enabled = "None"
+pydanticv1 = "None"
+gunicorn = "None"
+add_users = "None"
+cookie_auth = "None"
+jwt_auth = "None"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+select = [
+    "A",    # prevent using keywords that clobber python builtins
+    "B",    # bugbear: security warnings
+    "E",    # pycodestyle
+    "F",    # pyflakes
+    "ISC",  # implicit string concatenation
+    "UP",   # alert you when better syntax is available in your python version
+    "D101", # class docstring conventions
+    "D103", # function docstring conventions
+    "D400", # first line should end with a period
+]
+target-version = "py311"
+ignore = ["A001", "A002", "A003", "B008", "B904", "B905", "UP038"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "I",
+    "N",
+    "Q",
+    "S",
+    "T",
+    "W",
+    "ANN",
+    "ARG",
+    "BLE",
+    "COM",
+    "DJ",
+    "DTZ",
+    "EM",
+    "ERA",
+    "EXE",
+    "FBT",
+    "ICN",
+    "INP",
+    "ISC",
+    "NPY",
+    "PD",
+    "PGH",
+    "PIE",
+    "PL",
+    "PT",
+    "PTH",
+    "PYI",
+    "RET",
+    "RSE",
+    "RUF",
+    "SIM",
+    "SLF",
+    "TCH",
+    "TID",
+    "TRY",
+    "UP",
+    "YTT",
+]
+unfixable = []
+
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "settings.py",
+    "migrations",
+    "__init__.py",
+    "dtos.py",
+    "models.py",
+    "dependencies.py",
+
+] # Exclude a variety of commonly ignored directories.
+
+# Same as Black.
+line-length = 88
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
