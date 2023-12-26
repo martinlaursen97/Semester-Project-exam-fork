@@ -143,7 +143,15 @@ cython_debug/
 
 # Any
 .db-data/
-node_modules
+
+
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
 
 # Logs
 logs
