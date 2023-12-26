@@ -4,6 +4,7 @@ from httpx import AsyncClient
 from fastapi import status
 from rpg_api.db.postgres.factory import factories
 from rpg_api.tests.pytest import test_utils
+from typing import Dict, Any
 
 url = "/api/postgres/characters"
 
@@ -33,7 +34,7 @@ async def test_create_character_missing_data(client: AsyncClient) -> None:
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
 
-    character_data = {}
+    character_data: Dict[str, Any] = {}
 
     response = await client.post(url, headers=header, json=character_data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
