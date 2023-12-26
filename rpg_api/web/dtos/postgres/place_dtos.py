@@ -8,7 +8,7 @@ class PlaceBaseDTO(dtos.OrmBasicModel):
 
     name: str
     description: str | None = None
-    radius: int
+    radius: float
     x: int
     y: int
 
@@ -28,6 +28,6 @@ class PlaceUpdateDTO(BaseModel):
 
     name: str | None = None
     description: str | None = None
-    radius: int | None = None
+    radius: float | None = None
     x: int | None = None
     y: int | None = None

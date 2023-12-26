@@ -25,17 +25,6 @@ class BaseUserFactory(AsyncFactory[models.BaseUser]):
     password = "password"
     status = enums.UserStatus.active
 
-    @classmethod
-    async def _create_model(
-        cls,
-        model_class: type[AsyncFactory[models.BaseUser]],
-        *args: Any,
-        **kwargs: Any,
-    ) -> AsyncFactory[models.BaseUser]:
-        """Create model."""
-
-        return await super()._create_model(model_class, *args, **kwargs)
-
 
 class AbilityTypeFactory(AsyncFactory[models.AbilityType]):
     """Factory for AbilityType."""
@@ -46,17 +35,6 @@ class AbilityTypeFactory(AsyncFactory[models.AbilityType]):
     name = factory.LazyAttribute(lambda _: fake.name())
     description = factory.LazyAttribute(lambda _: fake.text())
 
-    @classmethod
-    async def _create_model(
-        cls,
-        model_class: type[AsyncFactory[models.AbilityType]],
-        *args: Any,
-        **kwargs: Any,
-    ) -> AsyncFactory[models.AbilityType]:
-        """Create model."""
-
-        return await super()._create_model(model_class, *args, **kwargs)
-
 
 class BaseClassFactory(AsyncFactory[models.BaseClass]):
     """Factory for BaseClass."""
@@ -65,17 +43,6 @@ class BaseClassFactory(AsyncFactory[models.BaseClass]):
         model = models.BaseClass
 
     name = factory.LazyAttribute(lambda _: fake.name())
-
-    @classmethod
-    async def _create_model(
-        cls,
-        model_class: type[AsyncFactory[models.BaseClass]],
-        *args: Any,
-        **kwargs: Any,
-    ) -> AsyncFactory[models.BaseClass]:
-        """Create model."""
-
-        return await super()._create_model(model_class, *args, **kwargs)
 
 
 class AttributeFactory(AsyncFactory[models.Attribute]):
@@ -86,17 +53,6 @@ class AttributeFactory(AsyncFactory[models.Attribute]):
 
     name = factory.LazyAttribute(lambda _: fake.name())
     description = factory.LazyAttribute(lambda _: fake.text())
-
-    @classmethod
-    async def _create_model(
-        cls,
-        model_class: type[AsyncFactory[models.Attribute]],
-        *args: Any,
-        **kwargs: Any,
-    ) -> AsyncFactory[models.Attribute]:
-        """Create model."""
-
-        return await super()._create_model(model_class, *args, **kwargs)
 
 
 class PlaceFactory(AsyncFactory[models.Place]):
@@ -109,17 +65,6 @@ class PlaceFactory(AsyncFactory[models.Place]):
     radius = factory.LazyAttribute(lambda _: fake.random_int(min=1, max=100))
     x = factory.LazyAttribute(lambda _: fake.random_int(min=1, max=100))
     y = factory.LazyAttribute(lambda _: fake.random_int(min=1, max=100))
-
-    @classmethod
-    async def _create_model(
-        cls,
-        model_class: type[AsyncFactory[models.Place]],
-        *args: Any,
-        **kwargs: Any,
-    ) -> AsyncFactory[models.Place]:
-        """Create model."""
-
-        return await super()._create_model(model_class, *args, **kwargs)
 
 
 class RelationFactory(AsyncFactory[models.Relation]):
@@ -154,6 +99,13 @@ class RelationFactory(AsyncFactory[models.Relation]):
         return await super()._create_model(model_class, *args, **kwargs)
 
 
+class CharacterLocationFactory(AsyncFactory[models.CharacterLocation]):
+    """Factory for CharacterLocation."""
+
+    class Meta:
+        model = models.CharacterLocation
+
+
 class CharacterFactory(AsyncFactory[models.Character]):
     """Factory for Character."""
 
@@ -166,11 +118,11 @@ class CharacterFactory(AsyncFactory[models.Character]):
     class Meta:
         model = models.Character
 
-    gender = enums.Gender.male
     character_name = factory.LazyAttribute(lambda _: fake.name())
-    base_class = CREATE
-    user = CREATE
-    character_location = CREATE
+
+    base_class = None
+    character_location = None
+    user = None
 
     @classmethod
     async def _create_model(
@@ -181,32 +133,11 @@ class CharacterFactory(AsyncFactory[models.Character]):
     ) -> AsyncFactory[models.Character]:
         """Create model."""
 
-        if kwargs["base_class"] == CREATE:
+        if kwargs["base_class"] is None:
             kwargs["base_class"] = await BaseClassFactory.create()
 
-        if kwargs["user"] == CREATE:
+        if kwargs["user"] is None:
             kwargs["user"] = await BaseUserFactory.create()
-
-        if kwargs["character_location"] == CREATE:
-            kwargs["character_location"] = await CharacterLocationFactory.create()
-
-        return await super()._create_model(model_class, *args, **kwargs)
-
-
-class CharacterLocationFactory(AsyncFactory[models.CharacterLocation]):
-    """Factory for CharacterLocation."""
-
-    class Meta:
-        model = models.CharacterLocation
-
-    @classmethod
-    async def _create_model(
-        cls,
-        model_class: type[AsyncFactory[models.CharacterLocation]],
-        *args: Any,
-        **kwargs: Any,
-    ) -> AsyncFactory[models.CharacterLocation]:
-        """Create model."""
 
         return await super()._create_model(model_class, *args, **kwargs)
 

@@ -1,9 +1,10 @@
-from loguru import logger
 from rpg_api.utils import dtos
 from fastapi import Depends
 from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
 from pydantic import BaseModel, Field
+
+from rpg_api import exceptions
 
 
 router = APIRouter()
@@ -39,14 +40,15 @@ async def create_place(
 ) -> dtos.DefaultCreatedResponse:
     """Create place."""
 
-    try:
-        created_place_id = await daos.place.create(input_dto)
-    except Exception as e:
-        logger.exception(e)
-        return dtos.DefaultCreatedResponse(
-            message=str(e),
-        )
+    place_name_taken = await daos.place.filter_first(name=input_dto.name)
 
-    return dtos.DefaultCreatedResponse(
-        data=created_place_id,
-    )
+    if place_name_taken:
+        raise exceptions.HttpBadRequest("Place name already taken")
+
+    try:
+        # Before insert trigger will check for overlaps
+        return dtos.DefaultCreatedResponse(
+            data=await daos.place.create(input_dto),
+        )
+    except Exception:
+        raise exceptions.HttpBadRequest("New place overlaps with existing place")

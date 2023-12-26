@@ -8,6 +8,7 @@ from rpg_api.utils.dtos import (
     PlaceUpdateDTO,
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
+from uuid import UUID, uuid4
 
 
 class PlaceDAO(BaseSearchableDAO[Place, PlaceDTO, PlaceInputDTO, PlaceUpdateDTO]):
@@ -19,3 +20,17 @@ class PlaceDAO(BaseSearchableDAO[Place, PlaceDTO, PlaceInputDTO, PlaceUpdateDTO]
             model=Place,
             base_dto=PlaceDTO,
         )
+
+    async def create(self, input_dto: PlaceInputDTO) -> UUID:
+        """Add single object to session and return the new object."""
+
+        id = uuid4()
+
+        try:
+            self.session.add(Place(id=id, **input_dto.model_dump()))
+            await self.session.commit()
+        except Exception as e:
+            await self.session.rollback()
+            raise e
+
+        return id

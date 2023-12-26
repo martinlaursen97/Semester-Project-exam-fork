@@ -6,6 +6,7 @@ from rpg_api.utils.daos import GetDAOs
 from sqlalchemy import orm
 from rpg_api.utils.dependencies import GetCharacterIfUserOwns
 from pydantic import BaseModel
+from rpg_api import exceptions
 
 router = APIRouter()
 
@@ -60,6 +61,16 @@ async def create_character(
     daos: GetDAOs,
 ) -> dtos.DefaultCreatedResponse:
     """Create character."""
+
+    character_name_taken = (
+        await daos.character.filter_first(
+            character_name=endpoint_input_dto.character_name,
+        )
+        is not None
+    )
+
+    if character_name_taken:
+        raise exceptions.HttpForbidden("Character name already taken")
 
     input_dto = dtos.CharacterInputDTO(
         user_id=current_user.id,

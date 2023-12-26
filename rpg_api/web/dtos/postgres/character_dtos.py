@@ -7,6 +7,8 @@ from rpg_api.enums import Gender
 from rpg_api.web.dtos.postgres.base_class_dtos import BaseClassSimpleDTO
 from rpg_api.web.dtos.postgres.character_location_dtos import CharacterLocationSimpleDTO
 
+from pydantic import Field
+
 
 class CharacterDTO(OrmBasicModel):
     """Character DTO."""
@@ -41,7 +43,7 @@ class CharacterPartialInputDTO(BaseModel):
 
     base_class_id: UUID
     gender: Gender
-    character_name: str
+    character_name: str = Field(..., min_length=1, max_length=50)
 
 
 class CharacterSimpleDTO(OrmBasicModel):
