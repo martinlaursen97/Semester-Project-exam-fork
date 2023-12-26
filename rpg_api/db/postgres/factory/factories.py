@@ -120,9 +120,9 @@ class CharacterFactory(AsyncFactory[models.Character]):
 
     character_name = factory.LazyAttribute(lambda _: fake.name())
 
-    base_class = None
-    character_location = None
-    user = None
+    base_class = CREATE
+    character_location = CREATE
+    user = CREATE
 
     @classmethod
     async def _create_model(
@@ -133,11 +133,14 @@ class CharacterFactory(AsyncFactory[models.Character]):
     ) -> AsyncFactory[models.Character]:
         """Create model."""
 
-        if kwargs["base_class"] is None:
+        if kwargs["base_class"] == CREATE:
             kwargs["base_class"] = await BaseClassFactory.create()
 
-        if kwargs["user"] is None:
+        if kwargs["user"] == CREATE:
             kwargs["user"] = await BaseUserFactory.create()
+
+        if kwargs["character_location"] == CREATE:
+            kwargs["character_location"] = await CharacterLocationFactory.create()
 
         return await super()._create_model(model_class, *args, **kwargs)
 
