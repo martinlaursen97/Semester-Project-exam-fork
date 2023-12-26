@@ -9,7 +9,7 @@ url = "/api/postgres/characters"
 
 @pytest.mark.anyio
 async def test_get_characters_empty_list(client: AsyncClient) -> None:
-    "Test get all characters with 0 characters in the database: 200."
+    """Test get all characters with 0 characters in the database: 200."""
 
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
@@ -24,7 +24,7 @@ async def test_get_characters_empty_list(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_get_characters_populated_list(client: AsyncClient) -> None:
-    "Test get all characters with 1 character in the database: 200."
+    """Test get all characters with 1 character in the database: 200."""
 
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
@@ -62,7 +62,7 @@ async def test_get_characters_populated_list(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_get_characters_populated_list_2(client: AsyncClient) -> None:
-    "Test get all characters with 2 characters in the database: 200."
+    """Test get all characters with 2 characters in the database: 200."""
 
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
@@ -123,7 +123,7 @@ async def test_get_characters_populated_list_2(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_get_characters_invalid_token(client: AsyncClient) -> None:
-    "Test get all characters with invalid token: 401."
+    """Test get all characters with invalid token: 401."""
 
     header = {"Authorization": f"Bearer invalid"}
 
@@ -133,7 +133,7 @@ async def test_get_characters_invalid_token(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_get_characters_no_token(client: AsyncClient) -> None:
-    "Test get all characters with no token: 401."
+    """Test get all characters with no token: 401."""
 
     response = await client.get(url)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -141,7 +141,7 @@ async def test_get_characters_no_token(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_characters_method_not_allowed_put(client: AsyncClient) -> None:
-    """Test that PUT method is not allowed for the base classes endpoint."""
+    """Test that PUT method is not allowed for the base classes endpoint: 405."""
 
     response = await client.put(url, json={"name": "Character"})
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
@@ -149,7 +149,7 @@ async def test_characters_method_not_allowed_put(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_characters_method_not_allowed_delete(client: AsyncClient) -> None:
-    """Test that DELETE method is not allowed for the base classes endpoint."""
+    """Test that DELETE method is not allowed for the base classes endpoint: 405."""
 
     response = await client.delete(url)
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
@@ -157,7 +157,7 @@ async def test_characters_method_not_allowed_delete(client: AsyncClient) -> None
 
 @pytest.mark.anyio
 async def test_characters_method_not_allowed_options(client: AsyncClient) -> None:
-    """Test that OPTIONS method is not allowed for the base classes endpoint."""
+    """Test that OPTIONS method is not allowed for the base classes endpoint: 405."""
 
     response = await client.options(url)
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
@@ -165,7 +165,7 @@ async def test_characters_method_not_allowed_options(client: AsyncClient) -> Non
 
 @pytest.mark.anyio
 async def test_characters_method_not_allowed_patch(client: AsyncClient) -> None:
-    """Test that PATCH method is not allowed for the base classes endpoint."""
+    """Test that PATCH method is not allowed for the base classes endpoint: 405."""
 
     response = await client.patch(url, json={"name": "PatchedClass"})
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
@@ -173,7 +173,7 @@ async def test_characters_method_not_allowed_patch(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 async def test_characters_method_not_allowed_head(client: AsyncClient) -> None:
-    """Test that HEAD method is not allowed for the base classes endpoint."""
+    """Test that HEAD method is not allowed for the base classes endpoint: 405."""
 
     response = await client.head(url)
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
