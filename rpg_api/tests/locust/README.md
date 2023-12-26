@@ -39,7 +39,11 @@ locust --host http://localhost:8000 --class-picker
 locust --headless --host http://localhost:8000 --class QuickStartUser
 ```
 
+To run the spike_test with report output:
 
+```bash
+locust -f ./rpg_api/tests/locust/locust_spiketest.py --host http://localhost:8080 --csv=./rpg_api/tests/locust/reports/spike_test/data/locust_report --headless
+```
 
 Then open <http://localhost:8089> in your browser and start a test.
 
