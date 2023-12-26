@@ -39,20 +39,25 @@ const login = async (e) => {
     return;
   }
 
-  const { data } = await post("/auth/login-email", {
-    email: email.value,
-    password: password.value,
-  });
+  try {
+    const { data, error } = await post("/auth/login-email", {
+      email: email.value,
+      password: password.value,
+    });
 
-  const { access_token } = data.value.data;
+    if (error.value) {
+      throw new Error(error.value.data.detail);
+    }
 
-  if (!access_token) {
-    throw new Error("No access token");
+    const { access_token } = data.value.data;
+
+    const accessToken = useCookie("access_token");
+    accessToken.value = access_token;
+
+    router.push("/characters");
+  } catch (error) {
+    alert(error);
+    return;
   }
-
-  const accessToken = useCookie("access_token");
-  accessToken.value = access_token;
-
-  router.push("/characters");
 };
 </script>
