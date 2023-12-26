@@ -1,4 +1,3 @@
-
 from locust import FastHttpUser, tag, task
 from rpg_api.tests.locust import utils
 
