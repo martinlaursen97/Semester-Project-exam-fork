@@ -106,7 +106,7 @@ async def test_get_characters_populated_list_2(client: AsyncClient) -> None:
 async def test_get_characters_invalid_token(client: AsyncClient) -> None:
     """Test get all characters with invalid token: 401."""
 
-    header = {"Authorization": f"Bearer invalid"}
+    header = {"Authorization": "Bearer invalid"}
 
     response = await client.get(url, headers=header)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
