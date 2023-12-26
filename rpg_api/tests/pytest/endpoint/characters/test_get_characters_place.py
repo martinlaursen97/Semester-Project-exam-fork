@@ -169,9 +169,9 @@ async def test_get_character_place_invalid_character(client: AsyncClient) -> Non
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
 
-    invalidId = uuid.uuid4()
+    invalid_id = uuid.uuid4()
 
-    response = await client.get(f"{url}/{invalidId}", headers=header)
+    response = await client.get(f"{url}/{invalid_id}", headers=header)
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -201,62 +201,22 @@ async def test_get_character_place_no_token(client: AsyncClient) -> None:
 
 
 @pytest.mark.anyio
-async def test_character_place_method_not_allowed_post(client: AsyncClient) -> None:
-    """Test that POST method is not allowed for the character place endpoint: 405."""
+@pytest.mark.parametrize(
+    "method",
+    [
+        "post",
+        "put",
+        "delete",
+        "patch",
+        "options",
+        "head",
+    ],
+)
+async def test_character_place_method_not_allowed(client: AsyncClient, method: str) -> None:
+    """Test that various HTTP methods are not allowed for the character place endpoint: 405."""
 
+    http_method = getattr(client, method)
     character_id = uuid.uuid4()
 
-    response = await client.post(f"{url}/{character_id}", json={"name": "NewPlace"})
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_place_method_not_allowed_put(client: AsyncClient) -> None:
-    """Test that PUT method is not allowed for the character place endpoint: 405."""
-
-    character_id = uuid.uuid4()
-
-    response = await client.put(f"{url}/{character_id}", json={"name": "UpdatedPlace"})
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_place_method_not_allowed_delete(client: AsyncClient) -> None:
-    """Test that DELETE method is not allowed for the character place endpoint: 405."""
-
-    character_id = uuid.uuid4()
-
-    response = await client.delete(f"{url}/{character_id}")
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_place_method_not_allowed_patch(client: AsyncClient) -> None:
-    """Test that PATCH method is not allowed for the character place endpoint: 405."""
-
-    character_id = uuid.uuid4()
-
-    response = await client.patch(
-        f"{url}/{character_id}", json={"name": "PatchedPlace"}
-    )
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_place_method_not_allowed_options(client: AsyncClient) -> None:
-    """Test that OPTIONS method is not allowed for the character place endpoint: 405."""
-
-    character_id = uuid.uuid4()
-
-    response = await client.options(f"{url}/{character_id}")
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_place_method_not_allowed_head(client: AsyncClient) -> None:
-    """Test that HEAD method is not allowed for the character place endpoint: 405."""
-
-    character_id = uuid.uuid4()
-
-    response = await client.head(f"{url}/{character_id}")
+    response = await http_method(f"{url}/{character_id}")
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
