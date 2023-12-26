@@ -51,55 +51,22 @@ async def test_get_base_classes_populated_list_2(client: AsyncClient) -> None:
     assert len(response_data) == 2
 
 
-@pytest.mark.anyio
-async def test_base_classes_method_not_allowed_post(client: AsyncClient) -> None:
-    """Test that POST method is not allowed for the base-classes endpoint: 405."""
+@pytest.mark.anyio  
+@pytest.mark.parametrize(  
+    "method, params",  
+    [  
+        ("post", {"json": {"name": "NewClass"}}),
+        ("put", {"json": {"name": "UpdatedClass"}}),  
+        ("delete", {}),  
+        ("patch", {"json": {"name": "PatchedClass"}}),  
+        ("options", {}),  
+        ("head", {})  
+    ],  
+)  
+async def test_base_classes_method_not_allowed(client: AsyncClient, method: str, params: dict) -> None:  
+    """Test that various HTTP methods are not allowed for the base-classes endpoint: 405."""  
 
-    response = await client.post(url, json={"name": "NewClass"})
+    http_method = getattr(client, method)  
 
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_base_classes_method_not_allowed_put(client: AsyncClient) -> None:
-    """Test that PUT method is not allowed for the base-classes endpoint: 405."""
-
-    response = await client.put(url, json={"name": "UpdatedClass"})
-
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_base_classes_method_not_allowed_delete(client: AsyncClient) -> None:
-    """Test that DELETE method is not allowed for the base-classes endpoint: 405."""
-
-    response = await client.delete(url)
-
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_base_classes_method_not_allowed_patch(client: AsyncClient) -> None:
-    """Test that PATCH method is not allowed for the base-classes endpoint: 405."""
-
-    response = await client.patch(url, json={"name": "PatchedClass"})
-
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_base_classes_method_not_allowed_options(client: AsyncClient) -> None:
-    """Test that OPTIONS method is not allowed for the base-classes endpoint: 405."""
-
-    response = await client.options(url)
-
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_base_classes_method_not_allowed_head(client: AsyncClient) -> None:
-    """Test that HEAD method is not allowed for the base-classes endpoint: 405."""
-
-    response = await client.head(url)
-
+    response = await http_method(url, **params)  
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
