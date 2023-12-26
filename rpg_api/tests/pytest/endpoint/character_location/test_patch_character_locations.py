@@ -197,7 +197,7 @@ async def test_character_location_method_not_allowed_put(client: AsyncClient) ->
 async def test_character_location_method_not_allowed_delete(
     client: AsyncClient,
 ) -> None:
-    """Test that DELETE method is not allowed for the character location endpoint: 405."""
+    """Test that DELETE method is not allowed for the endpoint: 405."""
 
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
@@ -213,7 +213,7 @@ async def test_character_location_method_not_allowed_delete(
 async def test_character_location_method_not_allowed_options(
     client: AsyncClient,
 ) -> None:
-    """Test that OPTIONS method is not allowed for the character location endpoint: 405."""
+    """Test that OPTIONS method is not allowed for the endpoint: 405."""
 
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)

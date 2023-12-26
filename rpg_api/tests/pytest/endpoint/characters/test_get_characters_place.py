@@ -132,7 +132,7 @@ async def test_get_character_place_named_place_outside_radius_boundary(
     y_place: int,
     name_place: str,
 ) -> None:
-    """Test get character in an invalid equivalence partitioning boundary of the radius: 200."""
+    """Test get character in an invalid EP boundary of the radius: 200."""
 
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
