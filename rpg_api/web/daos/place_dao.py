@@ -9,6 +9,8 @@ from rpg_api.utils.dtos import (
 )
 from rpg_api.db.postgres.session import AsyncSessionWrapper as AsyncSession
 
+import sqlalchemy as sa
+
 
 class PlaceDAO(BaseSearchableDAO[Place, PlaceDTO, PlaceInputDTO, PlaceUpdateDTO]):
     """Class for accessing user table."""
@@ -19,3 +21,20 @@ class PlaceDAO(BaseSearchableDAO[Place, PlaceDTO, PlaceInputDTO, PlaceUpdateDTO]
             model=Place,
             base_dto=PlaceDTO,
         )
+
+    async def check_overlaps(self, x: int, y: int, radius: float) -> bool:
+        """Check if new place overlaps with existing place."""
+
+        query = """
+            SELECT EXISTS (
+                SELECT 1
+                FROM place p
+                WHERE public.calculate_distance(p.x, p.y, :x, :y) <= p.radius + :radius
+            )
+        """
+
+        result = await self.session.execute(
+            sa.text(query), {"x": x, "y": y, "radius": radius}
+        )
+
+        return bool(result.scalar_one())

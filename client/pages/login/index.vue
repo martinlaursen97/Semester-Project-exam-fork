@@ -5,6 +5,9 @@
       <input data-test="password" type="password" v-model="password" />
       <button data-test="loginButton" type="submit">Login</button>
     </form>
+    <p>
+      Don't have an account? <router-link to="/register">Register</router-link>
+    </p>
     <router-link to="/forgot-password">Forgot Password</router-link>
   </div>
 </template>
@@ -19,6 +22,17 @@ const router = useRouter();
 
 const login = async (e) => {
   e.preventDefault();
+
+  if (!email.value || !password.value) {
+    alert("Please fill out all fields");
+    return;
+  }
+
+  if (password.value.length < 8 || password.value.length > 32) {
+    alert("Password must be between 8 and 32 characters");
+    return;
+  }
+
   const { data } = await post("/auth/login-email", {
     email: email.value,
     password: password.value,

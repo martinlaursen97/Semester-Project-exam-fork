@@ -1,5 +1,9 @@
 <template>
   <div>
+    <p>
+      Go to characters page:
+      <router-link to="/characters">Characters</router-link>
+    </p>
     <h1>World</h1>
     <h2>Character</h2>
     <p>

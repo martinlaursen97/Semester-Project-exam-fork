@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Any
 
 import jwt
 from passlib.context import CryptContext
@@ -18,7 +17,6 @@ def hash_password(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password."""
-
     return pwd_context.verify(plain_password, hashed_password)
 
 
@@ -26,7 +24,6 @@ def _encode_token(data: dtos.TokenData, expires_at: datetime) -> str:
     """Encode a token."""
 
     to_encode = data.model_dump()
-
     to_encode["exp"] = expires_at
 
     return jwt.encode(
@@ -68,9 +65,3 @@ def decode_token(token: str) -> dtos.TokenData:
 
     except jwt.exceptions.PyJWTError:
         raise exceptions.HttpUnauthorized(message="Invalid token")
-
-
-def get_headers(access_token: str) -> dict[str, Any]:
-    """Get headers."""
-
-    return {"Authorization": f"Bearer {access_token}"}
