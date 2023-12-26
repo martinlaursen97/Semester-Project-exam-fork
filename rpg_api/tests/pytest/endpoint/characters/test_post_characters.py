@@ -92,7 +92,7 @@ async def test_create_character_invalid_data_type(
 async def test_create_character_invalid_token(client: AsyncClient) -> None:
     """Test character creation with invalid token: 401."""
 
-    header = {"Authorization": f"Bearer invalid"}
+    header = {"Authorization": "Bearer invalid"}
 
     base_class = await factories.BaseClassFactory.create()
     character_data = {

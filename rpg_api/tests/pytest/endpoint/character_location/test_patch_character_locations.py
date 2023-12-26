@@ -110,7 +110,7 @@ async def test_patch_character_location_invalid_token(client: AsyncClient) -> No
     """Test updating character location with invalid token: 401."""
 
     user = await factories.BaseUserFactory.create()
-    header = {"Authorization": f"Bearer invalid"}
+    header = {"Authorization": "Bearer invalid"}
 
     character = await factories.CharacterFactory.create(user=user)
     character_location = {"x": 0, "y": 0}

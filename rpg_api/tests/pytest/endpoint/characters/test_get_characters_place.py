@@ -174,7 +174,7 @@ async def test_get_character_place_invalid_token(client: AsyncClient) -> None:
     """Test get character in a place with invalid token: 401."""
 
     user = await factories.BaseUserFactory.create()
-    header = {"Authorization": f"Bearer invalid"}
+    header = {"Authorization": "Bearer invalid"}
 
     character = await factories.CharacterFactory.create(user=user)
 
