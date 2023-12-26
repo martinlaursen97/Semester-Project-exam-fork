@@ -19,10 +19,10 @@ url = "/api/postgres/character-locations"
         (constants.INT32_MIN, 0),
         (0, constants.INT32_MAX),
         (0, constants.INT32_MIN),
-        (-2147483647, 0),
-        (2147483646, 0),
-        (0, -2147483647),
-        (0, 2147483646),
+        (constants.INT32_MAX-1, 0),
+        (constants.INT32_MIN+1, 0),
+        (0, constants.INT32_MAX-1),
+        (0, constants.INT32_MIN+1),
         (0, 0),
         (100, 100),
         (-100, -100),
@@ -141,85 +141,33 @@ async def test_patch_character_location_invalid_character(client: AsyncClient) -
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
 
-    invalidId = uuid.uuid4()
+    invalid_id = uuid.uuid4()
 
     character_location = {"x": 0, "y": 0}
 
     response = await client.patch(
-        f"{url}/{invalidId}", headers=header, json=character_location
+        f"{url}/{invalid_id}", headers=header, json=character_location
     )
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 @pytest.mark.anyio
-async def test_character_location_method_not_allowed_get(client: AsyncClient) -> None:
-    """Test that GET method is not allowed for the character location endpoint."""
+@pytest.mark.parametrize(
+    "method",
+    [
+        "get",
+        "post",
+        "put",
+        "delete",
+        "options",
+        "head"
+    ],
+)
+async def test_character_location_method_not_allowed(client: AsyncClient, method: str) -> None:
+    """Test that various HTTP methods are not allowed for the character locations endpoint: 405."""
 
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
+    http_method = getattr(client, method)
+    character_id = uuid.uuid4()
 
-    character = await factories.CharacterFactory.create(user=user)
-
-    response = await client.get(f"{url}/{character.id}", headers=header)
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_location_method_not_allowed_post(client: AsyncClient) -> None:
-    """Test that POST method is not allowed for the character location endpoint: 405."""
-
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
-
-    character = await factories.CharacterFactory.create(user=user)
-
-    response = await client.post(
-        f"{url}/{character.id}", headers=header, json={"x": 10, "y": 20}
-    )
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_location_method_not_allowed_put(client: AsyncClient) -> None:
-    """Test that PUT method is not allowed for the character location endpoint: 405."""
-
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
-
-    character = await factories.CharacterFactory.create(user=user)
-    response = await client.put(
-        f"{url}/{character.id}", headers=header, json={"x": 10, "y": 20}
-    )
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_location_method_not_allowed_delete(
-    client: AsyncClient,
-) -> None:
-    """Test that DELETE method is not allowed for the endpoint: 405."""
-
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
-
-    character = await factories.CharacterFactory.create(user=user)
-
-    response = await client.delete(f"{url}/{character.id}", headers=header)
-
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_character_location_method_not_allowed_options(
-    client: AsyncClient,
-) -> None:
-    """Test that OPTIONS method is not allowed for the endpoint: 405."""
-
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
-
-    character = await factories.CharacterFactory.create(user=user)
-
-    response = await client.options(f"{url}/{character.id}", headers=header)
-
+    response = await http_method(f"{url}/{character_id}")
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

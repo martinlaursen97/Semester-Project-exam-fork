@@ -53,20 +53,20 @@ async def test_get_base_classes_populated_list_2(client: AsyncClient) -> None:
 
 @pytest.mark.anyio  
 @pytest.mark.parametrize(  
-    "method, params",  
+    "method",  
     [  
-        ("post", {"json": {"name": "NewClass"}}),
-        ("put", {"json": {"name": "UpdatedClass"}}),  
-        ("delete", {}),  
-        ("patch", {"json": {"name": "PatchedClass"}}),  
-        ("options", {}),  
-        ("head", {})  
+        "post",
+        "put",  
+        "delete",  
+        "patch",  
+        "options",  
+        "head",  
     ],  
 )  
-async def test_base_classes_method_not_allowed(client: AsyncClient, method: str, params: dict) -> None:  
-    """Test that various HTTP methods are not allowed for the base-classes endpoint: 405."""  
+async def test_base_classes_method_not_allowed(client: AsyncClient, method: str) -> None:  
+    """Test that various HTTP methods are not allowed for the base classes endpoint: 405."""  
 
     http_method = getattr(client, method)  
 
-    response = await http_method(url, **params)  
+    response = await http_method(url)  
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
