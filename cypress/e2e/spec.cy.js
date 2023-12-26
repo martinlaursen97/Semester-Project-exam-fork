@@ -1,8 +1,11 @@
+import 'cypress-real-events/support';
+
 describe('Login and Character test', () => {
   const pageLoadTime = 1000;
   const loginWaitTime = 3000;
   const createCharacterWaitTime = 2000;
   const enterWorldWaitTime = 2000;
+  const numberinY = -200;
  
   beforeEach(() => {
     cy.visit('http://localhost:3000/login');
@@ -31,10 +34,18 @@ describe('Login and Character test', () => {
       cy.get('[data-test="directionButtonsUp"]').click();
     }
     
-    cy.wait(10000)
+    cy.wait(3000)
     
     for (let i = 0; i < 10; i++) {
       cy.get('[data-test="directionButtonsDown"]').click();
     }
+
+    cy.get('[data-test="placeName"]').type('Kea')
+    cy.get('[data-test="Xcoordinate"]').type('200')
+    for (let i = 0; i < 3; i++) {
+    cy.get('[data-test="Ycoordinate"]').type('0').realType('{downarrow}');
+    }
+    cy.get('[data-test="placeRadius"]').type('75')
+    cy.get('[data-test="submitPlace"]').click()
   })
 });
