@@ -19,10 +19,10 @@ url = "/api/postgres/character-locations"
         (constants.INT32_MIN, 0),
         (0, constants.INT32_MAX),
         (0, constants.INT32_MIN),
-        (constants.INT32_MAX-1, 0),
-        (constants.INT32_MIN+1, 0),
-        (0, constants.INT32_MAX-1),
-        (0, constants.INT32_MIN+1),
+        (constants.INT32_MAX - 1, 0),
+        (constants.INT32_MIN + 1, 0),
+        (0, constants.INT32_MAX - 1),
+        (0, constants.INT32_MIN + 1),
         (0, 0),
         (100, 100),
         (-100, -100),
@@ -154,17 +154,15 @@ async def test_patch_character_location_invalid_character(client: AsyncClient) -
 @pytest.mark.anyio
 @pytest.mark.parametrize(
     "method",
-    [
-        "get",
-        "post",
-        "put",
-        "delete",
-        "options",
-        "head"
-    ],
+    ["get", "post", "put", "delete", "options", "head"],
 )
-async def test_character_location_method_not_allowed(client: AsyncClient, method: str) -> None:
-    """Test that various HTTP methods are not allowed for the character locations endpoint: 405."""
+async def test_character_location_method_not_allowed(
+    client: AsyncClient, method: str
+) -> None:
+    """
+    Test that various HTTP methods are not allowed
+    for the character locations endpoint: 405.
+    """
 
     http_method = getattr(client, method)
     character_id = uuid.uuid4()

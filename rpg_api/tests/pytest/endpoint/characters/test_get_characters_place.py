@@ -212,8 +212,13 @@ async def test_get_character_place_no_token(client: AsyncClient) -> None:
         "head",
     ],
 )
-async def test_character_place_method_not_allowed(client: AsyncClient, method: str) -> None:
-    """Test that various HTTP methods are not allowed for the character place endpoint: 405."""
+async def test_character_place_method_not_allowed(
+    client: AsyncClient, method: str
+) -> None:
+    """
+    Test that various HTTP methods are not
+    allowed for the character place endpoint: 405.
+    """
 
     http_method = getattr(client, method)
     character_id = uuid.uuid4()

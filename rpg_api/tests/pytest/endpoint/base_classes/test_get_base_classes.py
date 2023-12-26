@@ -51,22 +51,27 @@ async def test_get_base_classes_populated_list_2(client: AsyncClient) -> None:
     assert len(response_data) == 2
 
 
-@pytest.mark.anyio  
-@pytest.mark.parametrize(  
-    "method",  
-    [  
+@pytest.mark.anyio
+@pytest.mark.parametrize(
+    "method",
+    [
         "post",
-        "put",  
-        "delete",  
-        "patch",  
-        "options",  
-        "head",  
-    ],  
-)  
-async def test_base_classes_method_not_allowed(client: AsyncClient, method: str) -> None:  
-    """Test that various HTTP methods are not allowed for the base classes endpoint: 405."""  
+        "put",
+        "delete",
+        "patch",
+        "options",
+        "head",
+    ],
+)
+async def test_base_classes_method_not_allowed(
+    client: AsyncClient, method: str
+) -> None:
+    """
+    Test that various HTTP methods are not
+    allowed for the base classes endpoint: 405.
+    """
 
-    http_method = getattr(client, method)  
+    http_method = getattr(client, method)
 
-    response = await http_method(url)  
+    response = await http_method(url)
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
