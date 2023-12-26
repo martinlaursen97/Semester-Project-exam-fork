@@ -45,18 +45,9 @@ async def test_get_characters_populated_list(client: AsyncClient) -> None:
     assert response_data[0]["level"] == character.level
     assert response_data[0]["xp"] == character.xp
     assert response_data[0]["money"] == character.money
-    assert (
-        response_data[0]["base_class"].get("name")
-        == character.base_class.name
-    )
-    assert (
-        response_data[0]["character_location"]["x"]
-        == character.character_location.x
-    )
-    assert (
-        response_data[0]["character_location"]["y"]
-        == character.character_location.y
-    )
+    assert response_data[0]["base_class"].get("name") == character.base_class.name
+    assert response_data[0]["character_location"]["x"] == character.character_location.x
+    assert response_data[0]["character_location"]["y"] == character.character_location.y
     assert len(response_data) == 1
 
 
@@ -87,17 +78,12 @@ async def test_get_characters_populated_list_2(client: AsyncClient) -> None:
     assert response_data[0]["level"] == character1.level
     assert response_data[0]["xp"] == character1.xp
     assert response_data[0]["money"] == character1.money
+    assert response_data[0]["base_class"].get("name") == character1.base_class.name
     assert (
-        response_data[0]["base_class"].get("name")
-        == character1.base_class.name
+        response_data[0]["character_location"]["x"] == character1.character_location.x
     )
     assert (
-        response_data[0]["character_location"]["x"]
-        == character1.character_location.x
-    )
-    assert (
-        response_data[0]["character_location"]["y"]
-        == character1.character_location.y
+        response_data[0]["character_location"]["y"] == character1.character_location.y
     )
     assert response_data[1]["id"] == str(character2.id)
     assert response_data[1]["gender"] == character2.gender
@@ -106,17 +92,12 @@ async def test_get_characters_populated_list_2(client: AsyncClient) -> None:
     assert response_data[1]["level"] == character2.level
     assert response_data[1]["xp"] == character2.xp
     assert response_data[1]["money"] == character2.money
+    assert response_data[1]["base_class"].get("name") == character2.base_class.name
     assert (
-        response_data[1]["base_class"].get("name")
-        == character2.base_class.name
+        response_data[1]["character_location"]["x"] == character2.character_location.x
     )
     assert (
-        response_data[1]["character_location"]["x"]
-        == character2.character_location.x
-    )
-    assert (
-        response_data[1]["character_location"]["y"]
-        == character2.character_location.y
+        response_data[1]["character_location"]["y"] == character2.character_location.y
     )
     assert len(response_data) == 2
 

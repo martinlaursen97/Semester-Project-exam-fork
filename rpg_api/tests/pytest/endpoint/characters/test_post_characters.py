@@ -58,18 +58,20 @@ async def test_create_character_some_missing_data(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 @pytest.mark.parametrize(
-        "invalid_value",
-        [
-            1,  # int
-            9.99,  # float
-            True,  # boolean
-            None,  # NoneType
-            [1, 2, 3],  # list
-            {"x": 1},  # dict
-            (1, 2),  # tuple
-        ],
-	)
-async def test_create_character_invalid_data_type(client: AsyncClient, invalid_value: Any) -> None:
+    "invalid_value",
+    [
+        1,  # int
+        9.99,  # float
+        True,  # boolean
+        None,  # NoneType
+        [1, 2, 3],  # list
+        {"x": 1},  # dict
+        (1, 2),  # tuple
+    ],
+)
+async def test_create_character_invalid_data_type(
+    client: AsyncClient, invalid_value: Any
+) -> None:
     """Test character creation with invalid data types: 422."""
 
     user = await factories.BaseUserFactory.create()
