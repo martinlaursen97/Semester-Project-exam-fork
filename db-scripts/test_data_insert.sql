@@ -110,8 +110,8 @@ CROSS JOIN attribute a;
 -- * 5 non-overlapping places
 INSERT INTO place(id, name, description, radius, x, y, created_at)
 VALUES
-    (gen_random_uuid(), 'Stormwind', 'The capital of the Alliance', 50, 50, 50, now()),
-    (gen_random_uuid(), 'Ironforge', 'The capital of the Dwarves', 40, -110, -100, now()),
-    (gen_random_uuid(), 'Darnassus', 'The capital of the Night Elves', 30, -200, 200, now()),
-    (gen_random_uuid(), 'Exodar', 'The capital of the Draenei', 60, 150, -180, now()),
-    (gen_random_uuid(), 'Orgrimmar', 'The capital of the Horde', 70, -25, 200, now());
+    (gen_random_uuid(), 'Stormwind', 'The capital of the Alliance', 50.0, 50, 50, now()),
+    (gen_random_uuid(), 'Ironforge', 'The capital of the Dwarves', 40.0, -110, -100, now()),
+    (gen_random_uuid(), 'Darnassus', 'The capital of the Night Elves', 30.0, -200, 200, now()),
+    (gen_random_uuid(), 'Exodar', 'The capital of the Draenei', 60.0, 150, -180, now()),
+    (gen_random_uuid(), 'Orgrimmar', 'The capital of the Horde', 70.0, -25, 200, now());

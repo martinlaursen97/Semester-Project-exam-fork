@@ -27,6 +27,11 @@ test: ## Run tests
 	@echo "Running tests..."
 	docker container exec $$(docker ps | grep api-1 | awk '{print $$1}') pytest ./rpg_api/tests/pytest -s
 
+test-filter:  ## Run specific tests. Example: 'make test-filter filter="<name_of_test_file>"
+	@echo "Running tests file: $(filter) ..."
+	docker container exec $$(docker ps | grep rpg_api | awk '{print $$1}') pytest ./rpg_api/tests/pytest -s -v -k $(filter)
+
+
 migration-generate:  ## Generate a new migration file
 	@echo "Generation migrations..."
 	docker container exec $$(docker ps | grep rpg_api | awk '{print $$1}') alembic revision --autogenerate

@@ -20,21 +20,25 @@
       </select>
     </form>
 
-    <button data-test="createCharacter" @click="createCharacter" type="submit">Create character</button>
+    <button data-test="createCharacter" @click="createCharacter" type="submit">
+      Create character
+    </button>
     <br />
     <br />
 
-    <button
-      data-test="enterWorld"
-      @click="enterWorld(character)"
-      v-for="character in characters"
-      :key="character.id"
-    >
-      Name: {{ character.character_name }} Gender: {{ character.gender }} Alive:
-      {{ character.alive }} Level: {{ character.level }} XP:
-      {{ character.xp }} Money: {{ character.money }} Class:
-      {{ character.base_class.name }} ID: {{ character.id }}
-    </button>
+    <div class="character-list">
+      <div
+        class="character-item"
+        v-for="character in characters"
+        :key="character.id"
+      >
+        <button @click="enterWorld(character)" data-test="enterWorld">
+          Name: {{ character.character_name }} - Gender:
+          {{ character.gender }} - Alive: {{ character.alive }} - Level:
+          {{ character.level }} - Class: {{ character.base_class.name }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -67,19 +71,37 @@ const fetchClasses = async () => {
   }
 };
 
-// ..
-
 const createCharacter = async () => {
+  if (!character_name.value) {
+    alert("Name is required");
+    return;
+  }
+
+  if (!selected_class.value) {
+    alert("Class is required");
+    return;
+  }
+
+  if (!selected_gender) {
+    alert("Gender is required");
+    return;
+  }
+
   try {
-    await post("/characters", {
+    const { data, error } = await post("/characters", {
       character_name: character_name.value,
       base_class_id: selected_class.value,
       gender: selected_gender.value,
     });
 
+    if (error.value) {
+      throw new Error(error.value.data.detail);
+    }
+
     await fetchCharacters();
   } catch (error) {
     console.error("Error creating character:", error);
+    alert(error);
   }
 };
 
@@ -101,3 +123,26 @@ onMounted(() => {
   fetchClasses();
 });
 </script>
+
+
+<style>
+.character-list {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.character-item {
+  margin-bottom: 4px;
+}
+
+.character-item button {
+  font-size: 1.2em;
+  cursor: pointer;
+  border: 1px solid #ddd;
+}
+
+.character-item button:hover {
+  background-color: #ddd;
+}
+</style>

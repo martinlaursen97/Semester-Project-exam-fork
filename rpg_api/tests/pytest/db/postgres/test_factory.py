@@ -120,3 +120,17 @@ async def test_character_location_factory(daos: AllDAOs) -> None:
 
     db_character_locations = await daos.character_location.filter()
     assert len(db_character_locations) == CREATE_NUM
+
+
+@pytest.mark.anyio
+async def test_class_ability_factory(daos: AllDAOs) -> None:
+    """Test factory can create class abilities."""
+
+    await factories.ClassAbilityFactory.create(
+        ability=await factories.AbilityFactory.create(),
+    )
+
+    query = sa.select(sa.func.count(models.ClassAbility.id))
+    result = await daos.session.execute(query)
+
+    assert result.scalar_one() == 1
