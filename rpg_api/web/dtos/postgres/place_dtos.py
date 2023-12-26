@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 from rpg_api.utils import dtos
+from rpg_api import constants
 
 
 class PlaceBaseDTO(dtos.OrmBasicModel):
@@ -8,7 +9,7 @@ class PlaceBaseDTO(dtos.OrmBasicModel):
 
     name: str
     description: str | None = None
-    radius: int
+    radius: float
     x: int
     y: int
 
@@ -22,12 +23,23 @@ class PlaceDTO(PlaceBaseDTO):
 class PlaceInputDTO(PlaceBaseDTO):
     """Input DTO for Place."""
 
+    name: str = Field(
+        ...,
+        description="Name of place.",
+        min_length=constants.MIN_LENGTH_PLACE_NAME,
+        max_length=constants.MAX_LENGTH_PLACE_NAME,
+    )
+    description: str | None = None
+    radius: float = 0.0
+    x: int = 0
+    y: int = 0
+
 
 class PlaceUpdateDTO(BaseModel):
     """Update DTO for Place."""
 
     name: str | None = None
     description: str | None = None
-    radius: int | None = None
+    radius: float | None = None
     x: int | None = None
     y: int | None = None

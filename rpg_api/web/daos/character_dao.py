@@ -83,12 +83,14 @@ class NeoCharacterDAO(
         SET r = $relationship_props
         RETURN r
         """
-        result = await self.session.run(
-            create_rel_query,
-            node1_id=rel_dto.node1_id,
-            node2_id=rel_dto.node2_id,
-            relationship_props=rel_dto.relationship_props,
-        )
+
+        if self.session._transaction:
+            result = await self.session._transaction.run(
+                create_rel_query,
+                node1_id=rel_dto.node1_id,
+                node2_id=rel_dto.node2_id,
+                relationship_props=rel_dto.relationship_props,
+            )
         record = await result.single()
 
         if record:
@@ -106,7 +108,8 @@ class NeoCharacterDAO(
         RETURN c, id(c) as id
         """
 
-        result = await self.session.run(query=query, id=user_id)
+        if self.session._transaction:
+            result = await self.session._transaction.run(query=query, id=user_id)
 
         for node in await result.data():
             node_data = convert_to_valid_time(node["c"])
@@ -126,9 +129,10 @@ class NeoCharacterDAO(
         RETURN c
         """
 
-        result = await self.session.run(
-            query=query, user_id=user_id, character_id=character_id
-        )
+        if self.session._transaction:
+            result = await self.session._transaction.run(
+                query=query, user_id=user_id, character_id=character_id
+            )
         record = await result.single()
 
         if not record:

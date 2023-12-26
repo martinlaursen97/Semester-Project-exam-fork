@@ -56,7 +56,10 @@ class NeoBaseUserDAO(
         """
 
         query = f"MATCH (n:{self._label}) WHERE n.email = $email RETURN n"
-        result = await self.session.run(query=query, email=email)
+
+        if self.session._transaction:
+            result = await self.session._transaction.run(query=query, email=email)
+
         record = await result.single()
 
         if not record:
@@ -84,12 +87,15 @@ class NeoBaseUserDAO(
         SET r = $relationship_props
         RETURN r
         """
-        result = await self.session.run(
-            create_rel_query,
-            node1_id=rel_dto.node1_id,
-            node2_id=rel_dto.node2_id,
-            relationship_props=rel_dto.relationship_props,
-        )
+
+        if self.session._transaction:
+            result = await self.session._transaction.run(
+                create_rel_query,
+                node1_id=rel_dto.node1_id,
+                node2_id=rel_dto.node2_id,
+                relationship_props=rel_dto.relationship_props,
+            )
+
         record = await result.single()
 
         if record:
