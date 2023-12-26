@@ -1,1 +1,13 @@
 Method,Name,Error,Occurrences
+GET,/api/postgres/base-classes,CatchResponseError('Got unexpected status code 0: None'),407
+POST,/api/postgres/auth/register,CatchResponseError('Got unexpected status code 500: Internal Server Error'),27
+DELETE,/api/postgres/base-user,CatchResponseError('Got unexpected status code 0: None'),4
+POST,/api/postgres/auth/login-email,CatchResponseError('Got unexpected status code 500: Internal Server Error'),32
+POST,/api/postgres/auth/login-email,CatchResponseError('Got unexpected status code 0: None'),11
+DELETE,/api/postgres/base-user,CatchResponseError('Got unexpected status code 502: '),62
+POST,/api/postgres/auth/register,CatchResponseError('Got unexpected status code 502: '),56
+POST,/api/postgres/characters,CatchResponseError('Got unexpected status code 500: Internal Server Error'),34
+POST,/api/postgres/auth/register,CatchResponseError('Got unexpected status code 0: None'),4132
+GET,/api/postgres/base-classes,CatchResponseError('Got unexpected status code 502: '),2
+GET,/api/postgres/base-classes,CatchResponseError('Got unexpected status code 500: Internal Server Error'),49
+POST,/api/postgres/characters,CatchResponseError('Got unexpected status code 0: None'),12

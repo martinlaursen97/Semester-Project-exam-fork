@@ -1,1 +1,35 @@
 Count,Message,Traceback,Nodes
+51,Expecting value: line 1 column 1 (char 0),"  File ""/Users/mohamedibrahim/Library/Caches/pypoetry/virtualenvs/rpg-api-QVed4W39-py3.12/lib/python3.12/site-packages/locust/user/task.py"", line 343, in run
+    self.execute_next_task()
+  File ""/Users/mohamedibrahim/Library/Caches/pypoetry/virtualenvs/rpg-api-QVed4W39-py3.12/lib/python3.12/site-packages/locust/user/task.py"", line 376, in execute_next_task
+    self.execute_task(self._task_queue.pop(0))
+  File ""/Users/mohamedibrahim/Library/Caches/pypoetry/virtualenvs/rpg-api-QVed4W39-py3.12/lib/python3.12/site-packages/locust/user/task.py"", line 497, in execute_task
+    task(self.user)
+  File ""/Users/mohamedibrahim/Desktop/rpg.nosync/Semester-Project/rpg_api/tests/locust/locust_spiketest.py"", line 48, in create_character
+    response_data = utils.get_data(response=response)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/Users/mohamedibrahim/Desktop/rpg.nosync/Semester-Project/rpg_api/tests/locust/utils.py"", line 20, in get_data
+    return json.loads(response.content.decode(""utf-8""))[""data""]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/opt/homebrew/Cellar/python@3.12/3.12.0/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py"", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/opt/homebrew/Cellar/python@3.12/3.12.0/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/decoder.py"", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/opt/homebrew/Cellar/python@3.12/3.12.0/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/decoder.py"", line 355, in raw_decode
+    raise JSONDecodeError(""Expecting value"", s, err.value) from None
+",local
+407,'NoneType' object has no attribute 'decode',"  File ""/Users/mohamedibrahim/Library/Caches/pypoetry/virtualenvs/rpg-api-QVed4W39-py3.12/lib/python3.12/site-packages/locust/user/task.py"", line 343, in run
+    self.execute_next_task()
+  File ""/Users/mohamedibrahim/Library/Caches/pypoetry/virtualenvs/rpg-api-QVed4W39-py3.12/lib/python3.12/site-packages/locust/user/task.py"", line 376, in execute_next_task
+    self.execute_task(self._task_queue.pop(0))
+  File ""/Users/mohamedibrahim/Library/Caches/pypoetry/virtualenvs/rpg-api-QVed4W39-py3.12/lib/python3.12/site-packages/locust/user/task.py"", line 497, in execute_task
+    task(self.user)
+  File ""/Users/mohamedibrahim/Desktop/rpg.nosync/Semester-Project/rpg_api/tests/locust/locust_spiketest.py"", line 48, in create_character
+    response_data = utils.get_data(response=response)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/Users/mohamedibrahim/Desktop/rpg.nosync/Semester-Project/rpg_api/tests/locust/utils.py"", line 20, in get_data
+    return json.loads(response.content.decode(""utf-8""))[""data""]
+                      ^^^^^^^^^^^^^^^^^^^^^^^
+",local
