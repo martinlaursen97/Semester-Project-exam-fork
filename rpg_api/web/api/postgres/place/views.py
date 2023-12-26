@@ -4,6 +4,7 @@ from fastapi.routing import APIRouter
 from rpg_api.utils.daos import GetDAOs
 from pydantic import BaseModel, Field
 
+
 from rpg_api import exceptions
 
 
@@ -19,7 +20,7 @@ class PlaceFilterDTO(BaseModel):
     )
 
 
-@router.get("", status_code=200)  # , dependencies=[Depends(get_current_user)])
+@router.get("", status_code=200)
 async def get_places(
     daos: GetDAOs,
     filter_dto: PlaceFilterDTO = Depends(),
@@ -45,10 +46,11 @@ async def create_place(
     if place_name_taken:
         raise exceptions.HttpBadRequest("Place name already taken")
 
-    try:
-        # Before insert trigger will check for overlaps
-        return dtos.DefaultCreatedResponse(
-            data=await daos.place.create(input_dto),
-        )
-    except Exception:
+    place_overlaps = await daos.place.check_overlaps(
+        input_dto.x, input_dto.y, input_dto.radius
+    )
+
+    if place_overlaps:
         raise exceptions.HttpBadRequest("New place overlaps with existing place")
+
+    return dtos.DefaultCreatedResponse(data=await daos.place.create(input_dto))

@@ -31,7 +31,7 @@ class CharacterInputDTO(BaseModel):
     base_class_id: UUID
     user_id: UUID
     gender: Gender
-    character_name: str
+    character_name: str = Field(..., min_length=1, max_length=50)
     alive: bool = True
     level: int = 1
     xp: int = 1

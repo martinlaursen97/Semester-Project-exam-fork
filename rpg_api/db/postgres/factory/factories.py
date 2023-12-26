@@ -62,9 +62,9 @@ class PlaceFactory(AsyncFactory[models.Place]):
         model = models.Place
 
     name = factory.LazyAttribute(lambda _: fake.name())
-    radius = factory.LazyAttribute(lambda _: fake.random_int(min=1, max=100))
-    x = factory.LazyAttribute(lambda _: fake.random_int(min=1, max=100))
-    y = factory.LazyAttribute(lambda _: fake.random_int(min=1, max=100))
+    radius = 0.0
+    x = 0
+    y = 0
 
 
 class RelationFactory(AsyncFactory[models.Relation]):
