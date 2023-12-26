@@ -41,7 +41,7 @@ async def get_current_user(
     token_data = auth_utils.decode_token(token)
 
     user = await daos.base_user.filter_first(id=token_data.user_id)
-    
+
     if not user:
         raise exceptions.HttpNotFound("Decoded user not found.")
 
