@@ -53,11 +53,13 @@ async def test_get_character_place_named_place(
         name=place_name, radius=0, x=x_coordinate, y=y_coordinate
     )
     character = await factories.CharacterFactory.create(user=user)
+    assert character.character_location_id is not None
     character_location = await daos.character_location.get_by_id(
         character.character_location_id
     )
     update_data = CharacterLocationUpdateDTO(x=x_coordinate, y=y_coordinate)
     await daos.character_location.update(character_location.id, update_data)
+    assert character.character_location is not None
     assert character.character_location.x == x_coordinate
     assert character.character_location.y == y_coordinate
 
@@ -97,11 +99,13 @@ async def test_get_character_place_named_place_radius_inside_boundary(
         name=name_place, radius=radius_place, x=x_place, y=y_place
     )
     character = await factories.CharacterFactory.create(user=user)
+    assert character.character_location_id is not None
     character_location = await daos.character_location.get_by_id(
         character.character_location_id
     )
     update_data = CharacterLocationUpdateDTO(x=x_character, y=y_character)
     await daos.character_location.update(character_location.id, update_data)
+    assert character.character_location is not None
     assert character.character_location.x == x_character
     assert character.character_location.y == y_character
 
@@ -141,11 +145,13 @@ async def test_get_character_place_named_place_outside_radius_boundary(
         name=name_place, radius=radius_place, x=x_place, y=y_place
     )
     character = await factories.CharacterFactory.create(user=user)
+    assert character.character_location_id is not None
     character_location = await daos.character_location.get_by_id(
         character.character_location_id
     )
     update_data = CharacterLocationUpdateDTO(x=x_character, y=y_character)
     await daos.character_location.update(character_location.id, update_data)
+    assert character.character_location is not None
     assert character.character_location.x == x_character
     assert character.character_location.y == y_character
 
