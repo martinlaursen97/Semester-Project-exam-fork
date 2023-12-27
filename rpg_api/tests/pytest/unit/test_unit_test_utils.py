@@ -83,9 +83,9 @@ def test_get_data() -> None:
     with patch.object(Response, "json", return_value={"data": expected_data}):
         response = Response(status_code=200)
 
-    data = get_data(response)
+        data = get_data(response)
 
-    assert data == expected_data
+        assert data == expected_data
 
 
 def test_get_data_missing_key() -> None:
@@ -96,8 +96,8 @@ def test_get_data_missing_key() -> None:
     with patch.object(Response, "json", return_value={"not_data": "test_data"}):
         response = Response(status_code=200)
 
-    with pytest.raises(KeyError):
-        get_data(response)
+        with pytest.raises(KeyError):
+            get_data(response)
 
 
 def test_get_data_invalid_json() -> None:
