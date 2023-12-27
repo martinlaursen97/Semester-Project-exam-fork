@@ -40,12 +40,12 @@ async def get_current_user(
     """Get current user from token data."""
     token_data = auth_utils.decode_token(token)
 
-    try:
-        return await daos.base_user.filter_first(
-            id=token_data.user_id,  # type: ignore
-        )
-    except exceptions.RowNotFoundError:
+    user = await daos.base_user.filter_first(id=token_data.user_id)
+
+    if not user:
         raise exceptions.HttpNotFound("Decoded user not found.")
+
+    return user  # type: ignore
 
 
 async def get_character_if_user_owns(
@@ -54,6 +54,7 @@ async def get_character_if_user_owns(
     current_user: dtos.BaseUserDTO = Depends(get_current_user),
 ) -> Character:
     """Get character if current user owns it."""
+
     character = await daos.character.filter_first(
         id=character_id,
         user_id=current_user.id,
