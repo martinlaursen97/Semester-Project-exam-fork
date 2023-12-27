@@ -14,15 +14,15 @@ describe('Login and Character test', () => {
 
   it('should login and create a character', () => {
     // Login
-    cy.get('[data-test="e-mail"]').clear().type('erol-taskiran@hotmail.com')
-    cy.get('[data-test="password"]').clear().type(12345678)
+    cy.get('[data-test="e-mail"]').clear().type('user0@example.com')
+    cy.get('[data-test="password"]').clear().type('password')
     cy.get('[data-test="loginButton"]').click()
     cy.wait(loginWaitTime)
 
     // Create Character
-    cy.get('[data-test="nameCharacter"]').should('be.visible').type('Yasuo')
-    cy.get('[data-test="selectClass"]').select('Shaman')
-    cy.get('[data-test="selectGender"]').select('female')
+    cy.get('[data-test="nameCharacter"]').should('be.visible').type('Orc')
+    cy.get('[data-test="selectClass"]').select('Warrior')
+    cy.get('[data-test="selectGender"]').select('other')
     cy.get('[data-test="createCharacter"]').click()
     cy.wait(createCharacterWaitTime)
     
