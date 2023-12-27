@@ -12,6 +12,9 @@ def test_get_user_header_valid_user_id() -> None:
     when provided with a valid user_id.
     """
     user_id = uuid.uuid4()
+    expected_token = "test_token"
+    expected_header = {"Authorization": f"Bearer {expected_token}"}
+
     with (
         patch("rpg_api.utils.dtos.TokenData") as mock_token_data,
         patch(
@@ -20,8 +23,9 @@ def test_get_user_header_valid_user_id() -> None:
         ),
     ):
         header = get_user_header(user_id)
+
         mock_token_data.assert_called_with(user_id=str(user_id))
-        assert header == {"Authorization": "Bearer test_token"}
+        assert header == expected_header
 
 
 def test_get_user_header_no_user_id() -> None:
@@ -30,6 +34,9 @@ def test_get_user_header_no_user_id() -> None:
     when no user_id is provided.
     """
     user_id = uuid.uuid4()
+    expected_token = "test_token"
+    expected_header = {"Authorization": f"Bearer {expected_token}"}
+
     with (
         patch("uuid.uuid4", return_value=user_id) as mock_id,
         patch("rpg_api.utils.dtos.TokenData") as mock_token_data,
@@ -39,9 +46,10 @@ def test_get_user_header_no_user_id() -> None:
         ),
     ):
         header = get_user_header()
+
         mock_id.assert_called_once()
         mock_token_data.assert_called_with(user_id=str(user_id))
-        assert header == {"Authorization": "Bearer test_token"}
+        assert header == expected_header
 
 
 def test_get_user_header_invalid_user_id() -> None:
@@ -71,10 +79,13 @@ def test_get_user_header_token_creation_failure() -> None:
 
 def test_get_data() -> None:
     """Test that get_data returns the correct data from a response."""
-    with patch.object(Response, "json", return_value={"data": "test_data"}):
+    expected_data = "test_data"
+    with patch.object(Response, "json", return_value={"data": expected_data}):
         response = Response(status_code=200)
-        data = get_data(response)
-        assert data == "test_data"
+
+    data = get_data(response)
+
+    assert data == expected_data
 
 
 def test_get_data_missing_key() -> None:
@@ -84,13 +95,15 @@ def test_get_data_missing_key() -> None:
     """
     with patch.object(Response, "json", return_value={"not_data": "test_data"}):
         response = Response(status_code=200)
-        with pytest.raises(KeyError):
-            get_data(response)
+
+    with pytest.raises(KeyError):
+        get_data(response)
 
 
 def test_get_data_invalid_json() -> None:
     """Test that get_data raises a ValueError when the response is not valid json."""
     with patch.object(Response, "json", side_effect=ValueError):
         response = Response(status_code=200)
-        with pytest.raises(ValueError):
-            get_data(response)
+
+    with pytest.raises(ValueError):
+        get_data(response)
