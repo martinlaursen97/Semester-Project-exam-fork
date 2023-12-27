@@ -47,7 +47,7 @@ class EmptyDefaultResponse(SuccessAndMessage):
 class DefaultResponse(SuccessAndMessage, Generic[DataT]):
     """Default response model."""
 
-    data: DataT | None = Field(None, description="Primary data.")
+    data: DataT | None = Field(default=None, description="Primary data.")
 
 
 class DefaultCreatedResponse(BaseModel):

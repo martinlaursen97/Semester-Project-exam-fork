@@ -55,6 +55,13 @@ class BaseDAO(Generic[Model, BaseDTO, InputDTO, UpdateDTO]):  # noqa: WPS338
         await self.session.execute(query)
         await self.session.commit()
 
+    async def delete(self, id: UUID) -> None:
+        """Delete an instance of the model in the database by id."""
+
+        query = sa.delete(self.model).where(self.model.id == id)
+        await self.session.execute(query)
+        await self.session.commit()
+
     async def _base_filter(
         self,
         order_by: str | None = None,
