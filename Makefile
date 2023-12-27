@@ -25,7 +25,7 @@ reset-db:  ## Remove database
 
 test: ## Run tests
 	@echo "Running tests..."
-	docker container exec $$(docker ps | grep api-1 | awk '{print $$1}') pytest ./rpg_api/tests/pytest -s
+	docker container exec $$(docker ps | grep api-1 | awk '{print $$1}') pytest ./rpg_api/tests/pytest -s 
 
 test-filter:  ## Run specific tests. Example: 'make test-filter filter="<name_of_test_file>"
 	@echo "Running tests file: $(filter) ..."
