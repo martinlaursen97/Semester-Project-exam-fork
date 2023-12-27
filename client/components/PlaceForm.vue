@@ -4,6 +4,9 @@
       <label for="name">Name:</label>
       <input v-model="place.name" type="text" id="name" required />
 
+      <label for="description">Description:</label>
+      <input v-model="place.description" type="text" id="description" />
+
       <label for="x">X Coordinate:</label>
       <input v-model="place.x" type="number" id="x" required />
 
@@ -23,6 +26,7 @@ import { post } from "~/requests";
 
 const place = ref({
   name: "",
+  description: "",
   x: 0,
   y: 0,
   radius: 0,
