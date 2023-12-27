@@ -1,6 +1,7 @@
 import pytest
 from httpx import AsyncClient
 from fastapi import status
+from rpg_api import constants
 from rpg_api.db.postgres.factory import factories
 from rpg_api.tests.pytest import test_utils
 from rpg_api.utils.daos import AllDAOs
@@ -28,13 +29,17 @@ async def test_get_character_place_wilderness(client: AsyncClient) -> None:
 
 @pytest.mark.anyio
 @pytest.mark.parametrize(
-    "x_coordinate, y_coordinate, place_name",
+    "x_coordinate, y_coordinate",
     [
-        (0, -432662, "Goldshire"),
-        (-10, -35, "Orgrimmar"),
-        (-888, 10, "Darnassus"),
-        (245, 100, "Thunder Bluff"),
-        (0, 0, "Elwynn Forest"),
+        (0, 0),
+        (0, constants.INT32_MAX),
+        (
+            constants.INT32_MAX,
+            0,
+        ),
+        (-1000, 1000),
+        (-100, -100),
+        (100, 100),
     ],
 )
 async def test_get_character_place_named_place(
@@ -42,15 +47,14 @@ async def test_get_character_place_named_place(
     daos: AllDAOs,
     x_coordinate: int,
     y_coordinate: int,
-    place_name: str,
 ) -> None:
-    """Test get character in a named place: 200."""
+    """Test get character on the exact coordinates of a named place: 200."""
 
     user = await factories.BaseUserFactory.create()
     header = test_utils.get_user_header(user.id)
 
     await factories.PlaceFactory.create(
-        name=place_name, radius=0, x=x_coordinate, y=y_coordinate
+        name="Goldshire", radius=0, x=x_coordinate, y=y_coordinate
     )
     character = await factories.CharacterFactory.create(user=user)
     assert character.character_location_id is not None
@@ -67,17 +71,24 @@ async def test_get_character_place_named_place(
     assert response.status_code == status.HTTP_200_OK
 
     response_data = test_utils.get_data(response)
-    assert response_data["name"] == place_name
+    assert response_data["name"] == "Goldshire"
 
 
 @pytest.mark.anyio
 @pytest.mark.parametrize(
-    "x_character, y_character, radius_place, x_place, y_place, name_place",
+    "x_character, y_character, radius_place, x_place, y_place",
     [
-        (2, -1, 3, 0, 0, "Goldshire"),
-        (-10, -60, 10, -10, -50, "Stormwind"),
-        (75, 50, 25, 75, 25, "Orgrimmar"),
-        (1, -99, 100, 1, 1, "Thunder Bluff"),
+        (10, 0, 10.000001, 0, 0),
+        (0, 10, 10.000002, 0, 0),
+        (-10, 0, 10.000001, -10, -10),
+        (0, -10, 10.000002, -10, -10),
+        ((constants.INT32_MAX - 1), 0, 1.000001, (constants.INT32_MAX - 2), 0),
+        (0, (constants.INT32_MAX - 1), 1.000002, 0, (constants.INT32_MAX - 2)),
+        ((constants.INT32_MIN + 1), 0, 1.000001, (constants.INT32_MIN + 2), 0),
+        (0, (constants.INT32_MIN + 1), 1.000002, 0, (constants.INT32_MIN + 2)),
+        (5, 5, 10.5, 0, 0),
+        (-5, -5, 10.5, 0, 0),
+        (5, 5, 10, 0, 0),
     ],
 )
 async def test_get_character_place_named_place_radius_inside_boundary(
@@ -85,10 +96,9 @@ async def test_get_character_place_named_place_radius_inside_boundary(
     daos: AllDAOs,
     x_character: int,
     y_character: int,
-    radius_place: int,
+    radius_place: float,
     x_place: int,
     y_place: int,
-    name_place: str,
 ) -> None:
     """Test get character in the radius of a named place: 200."""
 
@@ -96,7 +106,7 @@ async def test_get_character_place_named_place_radius_inside_boundary(
     header = test_utils.get_user_header(user.id)
 
     await factories.PlaceFactory.create(
-        name=name_place, radius=radius_place, x=x_place, y=y_place
+        name="Goldshire", radius=radius_place, x=x_place, y=y_place
     )
     character = await factories.CharacterFactory.create(user=user)
     assert character.character_location_id is not None
@@ -113,17 +123,24 @@ async def test_get_character_place_named_place_radius_inside_boundary(
     assert response.status_code == status.HTTP_200_OK
 
     response_data = test_utils.get_data(response)
-    assert response_data["name"] == name_place
+    assert response_data["name"] == "Goldshire"
 
 
 @pytest.mark.anyio
 @pytest.mark.parametrize(
-    "x_character, y_character, radius_place, x_place, y_place, name_place",
+    "x_character, y_character, radius_place, x_place, y_place",
     [
-        (2, -3, 3, 0, 0, "Goldshire"),
-        (0, 4, 3, 0, 0, "Stormwind"),
-        (-4, 0, 3, 0, 0, "Orgrimmar"),
-        (49, 1, 50, 100, 1, "Thunder Bluff"),
+        (10, 0, 9.999999, 0, 0),
+        (0, 10, 9.999998, 0, 0),
+        (-10, 0, 9.999999, -10, -10),
+        (0, -10, 9.999998, -10, -10),
+        ((constants.INT32_MAX - 1), 0, 0.999999, (constants.INT32_MAX - 2), 0),
+        (0, (constants.INT32_MAX - 1), 0.999998, 0, (constants.INT32_MAX - 2)),
+        ((constants.INT32_MIN + 1), 0, 0.999999, (constants.INT32_MIN + 2), 0),
+        (0, (constants.INT32_MIN + 1), 0.999998, 0, (constants.INT32_MIN + 2)),
+        (10, 10, 9.5, 0, 0),
+        (-10, -10, 9.5, 0, 0),
+        (10, 10, 9, 0, 0),
     ],
 )
 async def test_get_character_place_named_place_outside_radius_boundary(
@@ -131,10 +148,9 @@ async def test_get_character_place_named_place_outside_radius_boundary(
     daos: AllDAOs,
     x_character: int,
     y_character: int,
-    radius_place: int,
+    radius_place: float,
     x_place: int,
     y_place: int,
-    name_place: str,
 ) -> None:
     """Test get character in an invalid EP boundary of the radius: 200."""
 
@@ -142,7 +158,7 @@ async def test_get_character_place_named_place_outside_radius_boundary(
     header = test_utils.get_user_header(user.id)
 
     await factories.PlaceFactory.create(
-        name=name_place, radius=radius_place, x=x_place, y=y_place
+        name="Goldshire", radius=radius_place, x=x_place, y=y_place
     )
     character = await factories.CharacterFactory.create(user=user)
     assert character.character_location_id is not None
