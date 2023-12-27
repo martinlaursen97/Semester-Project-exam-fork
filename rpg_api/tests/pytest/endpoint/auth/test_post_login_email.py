@@ -1,16 +1,10 @@
 import pytest
 from httpx import AsyncClient
 from fastapi import status
-from rpg_api.utils import dtos
-from rpg_api.utils.daos import AllDAOs
-from rpg_api.web.api.postgres.auth.token_store import token_store
-from rpg_api.web.api.postgres.auth import auth_utils as utils
-from rpg_api import constants
-from uuid import uuid4
 from rpg_api.db.postgres.factory import factories
 
 
-login_url = "/api/postgres/auth/login-email"
+URL = "/api/postgres/auth/login-email"
 
 
 @pytest.mark.anyio
@@ -24,7 +18,7 @@ async def test_login_successful_and_access_token_in_response(
 
     # Perform login
     response = await client.post(
-        login_url, json={"email": user.email, "password": "password"}
+        URL, json={"email": user.email, "password": "password"}
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -42,7 +36,7 @@ async def test_login_incorrect_password(client: AsyncClient) -> None:
     login_data = {"email": user.email, "password": "incorrect_password"}
 
     # Perform login
-    response = await client.post(login_url, json=login_data)
+    response = await client.post(URL, json=login_data)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert "Wrong email or password" in response.json()["detail"]
 
@@ -52,13 +46,13 @@ async def test_login_incorrect_email(client: AsyncClient) -> None:
     """Test login incorrect email: 401."""
 
     # Create a user in the database
-    user = await factories.BaseUserFactory.create()
+    await factories.BaseUserFactory.create()
 
     # Login request with incorrect email
     login_data = {"email": "some_email@email.com", "password": "password"}
 
     # Perform login
-    response = await client.post(login_url, json=login_data)
+    response = await client.post(URL, json=login_data)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert "Wrong email or password" in response.json()["detail"]
 
@@ -80,7 +74,7 @@ async def test_login_incorrect_email(client: AsyncClient) -> None:
         "user@.com",
         "user@.domain.com",
         "user@domain..com",
-        "special@!$#%.com" "test+email@example.com",
+        "special@!$#%.comtest+email@example.com",
         ("longemail" * 10 + "@example.com"),  # Long email
         "test@ example.com",  # white space
     ],
@@ -93,7 +87,7 @@ async def test_login_invalid_email_format(
     login_data = {"email": invalid_email, "password": "password"}
 
     # Login
-    response = await client.post(login_url, json=login_data)
+    response = await client.post(URL, json=login_data)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -107,18 +101,18 @@ async def test_login_invalid_json_input(
     """Test login invalid json input: 422."""
 
     # Login
-    response = await client.post(login_url, json=json_input)
+    response = await client.post(URL, json=json_input)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 @pytest.mark.anyio
 async def test_login_case_sensitivity(client: AsyncClient) -> None:
-    """Test case sensitivity of email address. 401"""
+    """Test case sensitivity of email address. 401."""
 
-    user = await factories.BaseUserFactory.create(email="TestEmail@example.com")
+    await factories.BaseUserFactory.create(email="TestEmail@example.com")
     response = await client.post(
-        login_url, json={"email": "testemail@example.com", "password": "password"}
+        URL, json={"email": "testemail@example.com", "password": "password"}
     )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -134,12 +128,32 @@ async def test_login_case_sensitivity(client: AsyncClient) -> None:
     ],
 )
 async def test_login_email_extra_spaces(email: str, client: AsyncClient) -> None:
-    """Test login with valid email having extra spaces. 200"""
+    """Test login with valid email having extra spaces. 200."""
 
-    user = await factories.BaseUserFactory.create(email=email.strip())
+    await factories.BaseUserFactory.create(email=email.strip())
 
-    response = await client.post(
-        login_url, json={"email": email, "password": "password"}
-    )
+    response = await client.post(URL, json={"email": email, "password": "password"})
 
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize(
+    "method",
+    [
+        "put",
+        "delete",
+        "patch",
+        "options",
+        "head",
+    ],
+)
+async def test_place_method_not_allowed(client: AsyncClient, method: str) -> None:
+    """
+    Test for method that are not allowed.
+    """
+
+    http_method = getattr(client, method)
+
+    response = await http_method(URL)
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
