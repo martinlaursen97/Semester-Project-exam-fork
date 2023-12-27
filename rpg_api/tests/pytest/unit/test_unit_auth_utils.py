@@ -93,10 +93,11 @@ def test_hash_and_verify_password_edge_cases(pw: str) -> None:
 def test_verify_password() -> None:
     """Test verify_password verifies the password correctly."""
     password = "password"
+    different_password = "different_password"
     hashed_password = hash_password(password)
 
     verified_password = verify_password(password, hashed_password)
-    wrong_password = verify_password("wrong_password", hashed_password)
+    wrong_password = verify_password(different_password, hashed_password)
 
     assert verified_password is True
     assert wrong_password is False
