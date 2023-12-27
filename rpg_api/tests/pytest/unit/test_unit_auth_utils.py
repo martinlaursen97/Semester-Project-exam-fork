@@ -25,6 +25,12 @@ def test_hash_password_always_different_hash() -> None:
     assert hashed_password1 != hashed_password2
 
 
+def test_hash_password_with_null_input() -> None:
+    """Test hashing with a None input."""
+    with pytest.raises(TypeError):
+        hash_password(None)  # type: ignore[arg-type]
+
+
 def test_hash_password_format() -> None:
     """Test hashing with a None input."""
     password = "password"
@@ -87,8 +93,20 @@ def test_hash_and_verify_password_edge_cases(pw: str) -> None:
 def test_verify_password() -> None:
     """Test verify_password verifies the password correctly."""
     password = "password"
-
     hashed_password = hash_password(password)
 
-    assert verify_password(password, hashed_password) is True
-    assert verify_password("wrong_password", hashed_password) is False
+    verified_password = verify_password(password, hashed_password)
+    wrong_password = verify_password("wrong_password", hashed_password)
+
+    assert verified_password is True
+    assert wrong_password is False
+
+
+def test_verify_password_with_null_input() -> None:
+    """Test hashing with a None input."""
+    password = "password"
+    hashed_password = hash_password(password)
+
+    with pytest.raises(TypeError):
+        verify_password(None, hashed_password)  # type: ignore[arg-type]
+        verify_password(password, None)  # type: ignore[arg-type]
