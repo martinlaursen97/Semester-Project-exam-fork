@@ -8,6 +8,7 @@ from rpg_api.db.postgres.factory.async_base_factory import (
 from rpg_api.utils import models
 from typing import Any
 from sqlalchemy import orm
+from rpg_api.web.api.postgres.auth import auth_utils
 
 
 fake = Faker()
@@ -22,7 +23,7 @@ class BaseUserFactory(AsyncFactory[models.BaseUser]):
         model = models.BaseUser
 
     email = factory.LazyAttribute(lambda _: fake.email())
-    password = "password"
+    password = auth_utils.hash_password("password")
     status = enums.UserStatus.active
 
 
