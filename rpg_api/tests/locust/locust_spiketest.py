@@ -65,8 +65,8 @@ class WebUser(FastHttpUser):
 def change_load(
     environment: Any, user_count: int, spawn_rate: int, length_in_seconds: int
 ) -> None:
-    """Change the load during execution of the test."""
-    # Change the number of users
+    """Change the load (number for users) during execution of the test."""
+
     environment.runner.start(user_count, spawn_rate, wait=False)
     gevent.sleep(length_in_seconds)
 
@@ -74,30 +74,32 @@ def change_load(
 @events.test_start.add_listener
 def on_test_start(environment: Any, **kwargs: dict[Any, Any]) -> None:
     """
-    Add eventlistner, this allows us to controle the execution flow of the test,
+    Add event listener, this allows us to control the execution of the test,
     allowing us to spike users during the test.
     """
+
+    # Do not execute this on master or worker nodes, if we want to run test distributed
     if isinstance(environment.runner, (MasterRunner, WorkerRunner)):
-        return  # Do not execute this on master or worker nodes
+        return
 
     # Schedule the stages of the test
 
-    # Normal load phase 100 users
+    # Normal load phase 50 users for 300 seconds
     gevent.spawn(
         change_load, environment, user_count=50, spawn_rate=1, length_in_seconds=300
     )
 
-    # Spike phase - after 300 seconds we go 1000 users
+    # Spike phase - after 300 seconds we go 150 users for 120 seconds
     gevent.spawn_later(
         300,
         change_load,
         environment,
-        user_count= 150,
+        user_count=150,
         spawn_rate=1,
         length_in_seconds=120,
     )
 
-    # Back to normal phase - after 120 seconds back to 100 users
+    # Back to normal phase - back to 50 users for 300 seconds
     gevent.spawn_later(
         420,
         change_load,

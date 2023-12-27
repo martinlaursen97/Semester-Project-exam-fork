@@ -12,7 +12,7 @@ history = pd.read_csv(f"{INPUT_BASE_PATH}data/locust_report_stats_history.csv")
 # Check the column names in the 'history' DataFrame
 # print(history.columns)
 
-history['Timestamp'] = pd.to_datetime(history['Timestamp'], unit='s')
+history["Timestamp"] = pd.to_datetime(history["Timestamp"], unit="s")
 
 # Create figure for Requests/s
 fig, ax1 = plt.subplots(figsize=(12, 6))
