@@ -93,9 +93,10 @@ def test_get_data_missing_key() -> None:
     Test that get_data raises a KeyError when the response
     is missing the 'data' key.
     """
-    with patch.object(Response, "json", return_value={"not_data": "test_data"}):
-        response = Response(status_code=200)
+    response_data = {"not_data": "test_data"}
+    response = Response(status_code=200)
 
+    with patch.object(Response, "json", return_value=response_data):
         with pytest.raises(KeyError):
             get_data(response)
 
