@@ -94,7 +94,7 @@ class MClass(MBaseMixins):
 class MPlace(MBaseMixins):
     """Place model for mongodb."""
 
-    radius: int
+    radius: float
     location: EmbedLocation | None = None
 
     class Settings:

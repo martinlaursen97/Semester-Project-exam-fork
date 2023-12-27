@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 
-api_url = "http://localhost:7070/api/openapi.json"
+api_url = "http://localhost:8080/api/openapi.json"
 
 response = requests.get(api_url)
 api_spec = response.json()

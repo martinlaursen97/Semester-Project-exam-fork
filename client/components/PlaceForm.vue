@@ -31,11 +31,28 @@ const place = ref({
 const emit = defineEmits(["placeCreated"]);
 
 const createPlace = async () => {
+  if (
+    !place.value.name ||
+    place.value.x === undefined ||
+    place.value.y == null ||
+    place.value.radius == null
+  ) {
+    alert("Please fill out all fields");
+    return;
+  }
+
   try {
-    await post("/places", place.value);
+    const { data, error } = await post("/places", place.value);
+
+    if (error.value) {
+      throw new Error(error.value.data.detail);
+    }
+
+    console.log("Create place response:", data);
     emit("placeCreated");
-  } catch (err) {
-    console.error("Error creating place:", err);
+  } catch (error) {
+    console.error("Error creating place:", error);
+    alert(error);
   }
 };
 </script>

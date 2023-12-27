@@ -75,7 +75,7 @@ class Place(AbstractSearchableModel):
 
     __tablename__ = "place"
 
-    radius: Mapped[int] = mapped_column(sa.Integer)
+    radius: Mapped[float] = mapped_column(sa.Float)
     x: Mapped[int] = mapped_column(sa.Integer)
     y: Mapped[int] = mapped_column(sa.Integer)
 
