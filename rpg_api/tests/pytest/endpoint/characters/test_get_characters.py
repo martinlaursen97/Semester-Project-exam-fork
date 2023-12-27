@@ -72,7 +72,6 @@ async def test_get_characters_multiple_characters(client: AsyncClient) -> None:
         assert character.character_location is not None
         assert character.base_class is not None
 
-
     response = await client.get(url, headers=header)
     assert response.status_code == status.HTTP_200_OK
 
@@ -85,13 +84,20 @@ async def test_get_characters_multiple_characters(client: AsyncClient) -> None:
         assert response_data[index]["level"] == character.level
         assert response_data[index]["xp"] == character.xp
         assert response_data[index]["money"] == character.money
-        assert response_data[index]["base_class"].get("name") == character.base_class.name
-        assert (
-        response_data[index]["character_location"]["x"] == character.character_location.x
-        )
-        assert (
-        response_data[index]["character_location"]["y"] == character.character_location.y
-        )
+        if character.base_class is not None:
+            assert (
+                response_data[index]["base_class"].get("name")
+                == character.base_class.name
+            )
+        if character.character_location is not None:
+            assert (
+                response_data[index]["character_location"]["x"]
+                == character.character_location.x
+            )
+            assert (
+                response_data[index]["character_location"]["y"]
+                == character.character_location.y
+            )
     assert len(response_data) == 2
 
 
