@@ -54,7 +54,10 @@ def test_get_user_header_invalid_user_id() -> None:
 
 
 def test_get_user_header_token_creation_failure() -> None:
-    """Test that get_user_header raises an PyJWTError when access token creation fails."""
+    """
+    Test that get_user_header raises an PyJWTError
+    when access token creation fails.
+    """
     with (
         patch("rpg_api.utils.dtos.TokenData"),
         patch(
