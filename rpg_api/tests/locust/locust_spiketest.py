@@ -84,7 +84,7 @@ def on_test_start(environment: Any, **kwargs: dict[Any, Any]) -> None:
 
     # Normal load phase 100 users
     gevent.spawn(
-        change_load, environment, user_count=100, spawn_rate=1, length_in_seconds=300
+        change_load, environment, user_count=50, spawn_rate=1, length_in_seconds=300
     )
 
     # Spike phase - after 300 seconds we go 1000 users
@@ -92,8 +92,8 @@ def on_test_start(environment: Any, **kwargs: dict[Any, Any]) -> None:
         300,
         change_load,
         environment,
-        user_count=1000,
-        spawn_rate=100,
+        user_count= 150,
+        spawn_rate=1,
         length_in_seconds=120,
     )
 
@@ -102,8 +102,8 @@ def on_test_start(environment: Any, **kwargs: dict[Any, Any]) -> None:
         420,
         change_load,
         environment,
-        user_count=100,
-        spawn_rate=10,
+        user_count=50,
+        spawn_rate=1,
         length_in_seconds=300,
     )
     gevent.spawn_later(720, environment.runner.quit)

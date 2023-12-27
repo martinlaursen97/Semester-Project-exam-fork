@@ -43,9 +43,6 @@ def setup_user(user: FastHttpUser) -> tuple[list[str], dict[str, Any]]:
         json={
             "email": email,
             "password": "password",
-            "first_name": "string",
-            "last_name": "string",
-            "phone": "string",
         },
         catch_response=True,
     ) as response_test_user:
