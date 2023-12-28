@@ -18,7 +18,10 @@ class LoginResponse(BaseModel):
 class UserLoginDTO(BaseModel):
     """DTO for logging in with user."""
 
-    email: EmailStr
+    email: EmailStr = Field(
+        ...,
+        max_length=constants.MAX_LENGTH_EMAIL,
+    )
     password: SecretStr
 
 
