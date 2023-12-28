@@ -6,14 +6,12 @@ from rpg_api.utils.daos import GetDAOs
 router = APIRouter()
 
 
-@router.delete("")
+@router.delete("", status_code=200)
 async def delete_current_user(
     current_user: GetCurrentUser,
     daos: GetDAOs,
 ) -> dtos.EmptyDefaultResponse:
-    """
-    Delete current user.
-    """
+    """Delete current user."""
 
     await daos.base_user.delete(
         id=current_user.id,

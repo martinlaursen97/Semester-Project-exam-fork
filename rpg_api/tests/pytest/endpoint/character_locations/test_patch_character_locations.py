@@ -1,7 +1,7 @@
 from typing import Any
 import pytest
 from httpx import AsyncClient
-from fastapi import status
+from fastapi import Response, status
 from rpg_api import constants
 from rpg_api.db.postgres.factory import factories
 from rpg_api.tests.pytest import test_utils
@@ -34,7 +34,7 @@ async def test_patch_character_location_valid_boundaries(
     """Test updating character location with valid boundaries: 200."""
 
     user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
+    user_header = test_utils.get_user_header(user.id)
 
     character = await factories.CharacterFactory.create(user=user)
     # This ensures mypy knows that character_location is not None
@@ -42,7 +42,7 @@ async def test_patch_character_location_valid_boundaries(
     character_location = {"x": x, "y": y}
 
     response = await client.patch(
-        f"{url}/{character.id}", headers=header, json=character_location
+        f"{url}/{character.id}", headers=user_header, json=character_location
     )
     assert response.status_code == status.HTTP_200_OK
 
@@ -57,7 +57,7 @@ async def test_patch_character_location_updating_one_coordinate(
     """Test updating character location with one missing coordinate: 200."""
 
     user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
+    user_header = test_utils.get_user_header(user.id)
 
     character = await factories.CharacterFactory.create(user=user)
     # This ensures mypy knows that character_location is not None
@@ -67,7 +67,7 @@ async def test_patch_character_location_updating_one_coordinate(
     assert expected_y == 0
 
     response = await client.patch(
-        f"{url}/{character.id}", headers=header, json=character_location
+        f"{url}/{character.id}", headers=user_header, json=character_location
     )
     assert response.status_code == status.HTTP_200_OK
 
@@ -94,13 +94,13 @@ async def test_patch_character_location_invalid_data_type(
     """Test updating character location with invalid data type and 0 valid ones: 422."""
 
     user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
+    user_header = test_utils.get_user_header(user.id)
 
     character = await factories.CharacterFactory.create(user=user)
     character_location = {"x": invalid_value}
 
     response = await client.patch(
-        f"{url}/{character.id}", headers=header, json=character_location
+        f"{url}/{character.id}", headers=user_header, json=character_location
     )
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
@@ -110,13 +110,13 @@ async def test_patch_character_location_invalid_token(client: AsyncClient) -> No
     """Test updating character location with invalid token: 401."""
 
     user = await factories.BaseUserFactory.create()
-    header = {"Authorization": "Bearer invalid"}
+    user_header = {"Authorization": "Bearer invalid"}
 
     character = await factories.CharacterFactory.create(user=user)
     character_location = {"x": 0, "y": 0}
 
     response = await client.patch(
-        f"{url}/{character.id}", headers=header, json=character_location
+        f"{url}/{character.id}", headers=user_header, json=character_location
     )
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -139,14 +139,14 @@ async def test_patch_character_location_invalid_character(client: AsyncClient) -
     """Test updating character location with invalid character id: 404."""
 
     user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
+    user_header = test_utils.get_user_header(user.id)
 
     invalid_id = uuid.uuid4()
 
     character_location = {"x": 0, "y": 0}
 
     response = await client.patch(
-        f"{url}/{invalid_id}", headers=header, json=character_location
+        f"{url}/{invalid_id}", headers=user_header, json=character_location
     )
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -167,5 +167,5 @@ async def test_character_location_method_not_allowed(
     http_method = getattr(client, method)
     character_id = uuid.uuid4()
 
-    response = await http_method(f"{url}/{character_id}")
+    response: Response = await http_method(f"{url}/{character_id}")
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

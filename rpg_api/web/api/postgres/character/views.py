@@ -1,4 +1,3 @@
-from loguru import logger
 from rpg_api.utils import dtos, models
 from rpg_api.utils.dependencies import GetCurrentUser
 from fastapi.routing import APIRouter
@@ -50,7 +49,6 @@ async def character_place_details(
     place_name = await daos.character.get_place(
         character_id=character.id,
     )
-    logger.info(place_name)
     return dtos.DataResponse(data=CharacterPlaceDTO(name=place_name))
 
 

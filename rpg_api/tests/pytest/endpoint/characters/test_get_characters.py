@@ -1,113 +1,77 @@
+from typing import Any
 import pytest
 from httpx import AsyncClient
-from fastapi import status
+from fastapi import Response, status
 from rpg_api.db.postgres.factory import factories
 from rpg_api.tests.pytest import test_utils
+from rpg_api.utils import models
 
 url = "/api/postgres/characters"
 
 
-@pytest.mark.anyio
-async def test_get_characters_empty_list(client: AsyncClient) -> None:
-    """Test get all characters with 0 characters in the database: 200."""
+def _assert_character_details(
+    response_character: dict[str, Any], character: models.Character
+) -> None:
+    """Assert that the response character matches the character in the database."""
+    assert response_character["id"] == str(character.id)
+    assert response_character["gender"] == character.gender
+    assert response_character["character_name"] == character.character_name
+    assert response_character["alive"] == character.alive
+    assert response_character["level"] == character.level
+    assert response_character["xp"] == character.xp
+    assert response_character["money"] == character.money
 
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
+    if character.base_class:
+        assert response_character["base_class"]["name"] == character.base_class.name
 
-    response = await client.get(url, headers=header)
-    assert response.status_code == status.HTTP_200_OK
-
-    response_data = test_utils.get_data(response)
-    assert response_data == []
-    assert len(response_data) == 0
-
-
-@pytest.mark.anyio
-async def test_get_characters_one_character(client: AsyncClient) -> None:
-    """Test get all characters with 1 character in the database: 200."""
-
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
-
-    character = await factories.CharacterFactory.create(user=user)
-    assert character.character_location is not None
-    assert character.base_class is not None
-
-    response = await client.get(url, headers=header)
-    assert response.status_code == status.HTTP_200_OK
-
-    response_data = test_utils.get_data(response)
-    assert response_data[0]["id"] == str(character.id)
-    assert response_data[0]["gender"] == character.gender
-    assert response_data[0]["character_name"] == character.character_name
-    assert response_data[0]["alive"] == character.alive
-    assert response_data[0]["level"] == character.level
-    assert response_data[0]["xp"] == character.xp
-    assert response_data[0]["money"] == character.money
-    assert response_data[0]["base_class"].get("name") == character.base_class.name
-    assert response_data[0]["character_location"]["x"] == character.character_location.x
-    assert response_data[0]["character_location"]["y"] == character.character_location.y
-    assert len(response_data) == 1
+    if character.character_location:
+        assert (
+            response_character["character_location"]["x"]
+            == character.character_location.x
+        )
+        assert (
+            response_character["character_location"]["y"]
+            == character.character_location.y
+        )
 
 
 @pytest.mark.anyio
-async def test_get_characters_multiple_characters(client: AsyncClient) -> None:
-    """
-    Test get all characters with 3 characters in the database,
-    but the user sending the request only has access to 2: 200.
-    """
+@pytest.mark.parametrize(
+    "create_num",
+    [
+        0,  # empty
+        1,  # single
+        2,  # multiple
+    ],
+)
+async def test_get_characters(client: AsyncClient, create_num: int) -> None:
+    """Test get all characters with various db states: 200."""
 
     user = await factories.BaseUserFactory.create()
-    user_2 = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
+    characters = await factories.CharacterFactory.create_batch(create_num, user=user)
 
-    user_characters = [
-        await factories.CharacterFactory.create(user=user),
-        await factories.CharacterFactory.create(user=user),
-    ]
-    user_2_characters = await factories.CharacterFactory.create(user=user_2)
-    assert user_2_characters.character_location is not None
-    assert user_2_characters.base_class is not None
-    for character in user_characters:
-        assert character.character_location is not None
-        assert character.base_class is not None
+    # Create a character for another user which should not be returned
+    await factories.CharacterFactory.create()
 
-    response = await client.get(url, headers=header)
+    user_header = test_utils.get_user_header(user.id)
+
+    response = await client.get(url, headers=user_header)
     assert response.status_code == status.HTTP_200_OK
 
     response_data = test_utils.get_data(response)
-    for index, character in enumerate(user_characters):
-        assert response_data[index]["id"] == str(character.id)
-        assert response_data[index]["gender"] == character.gender
-        assert response_data[index]["character_name"] == character.character_name
-        assert response_data[index]["alive"] == character.alive
-        assert response_data[index]["level"] == character.level
-        assert response_data[index]["xp"] == character.xp
-        assert response_data[index]["money"] == character.money
-        if character.base_class is not None:
-            assert (
-                response_data[index]["base_class"].get("name")
-                == character.base_class.name
-            )
-        if character.character_location is not None:
-            assert (
-                response_data[index]["character_location"]["x"]
-                == character.character_location.x
-            )
-            assert (
-                response_data[index]["character_location"]["y"]
-                == character.character_location.y
-            )
-    assert len(response_data) == 2
+    assert len(response_data) == create_num
+
+    for index, character in enumerate(characters):
+        _assert_character_details(response_data[index], character)
 
 
 @pytest.mark.anyio
 async def test_get_characters_invalid_token(client: AsyncClient) -> None:
     """Test get all characters with invalid token: 401."""
 
-    header = {"Authorization": "Bearer invalid"}
+    user_header = {"Authorization": "Bearer invalid"}
 
-    response = await client.get(url, headers=header)
+    response = await client.get(url, headers=user_header)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -138,5 +102,5 @@ async def test_characters_method_not_allowed(client: AsyncClient, method: str) -
 
     http_method = getattr(client, method)
 
-    response = await http_method(url)
+    response: Response = await http_method(url)
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

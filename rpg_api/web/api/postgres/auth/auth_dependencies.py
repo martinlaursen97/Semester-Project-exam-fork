@@ -45,14 +45,14 @@ async def get_current_user(
     if not user:
         raise exceptions.HttpNotFound("Decoded user not found.")
 
-    return user  # type: ignore
+    return dtos.BaseUserDTO.model_validate(user)
 
 
 async def get_character_if_user_owns(
     character_id: UUID,
     daos: GetDAOs,
     current_user: dtos.BaseUserDTO = Depends(get_current_user),
-) -> Character:
+) -> dtos.CharacterDTO:
     """Get character if current user owns it."""
 
     character = await daos.character.filter_first(
@@ -63,7 +63,7 @@ async def get_character_if_user_owns(
     if not character:
         raise exceptions.HttpNotFound("Character not found.")
 
-    return character
+    return dtos.CharacterDTO.model_validate(character)
 
 
 GetCharacterIfUserOwns = Annotated[Character, Depends(get_character_if_user_owns)]

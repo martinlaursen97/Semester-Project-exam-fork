@@ -13,7 +13,7 @@ def test_get_user_header_valid_user_id() -> None:
     """
     user_id = uuid.uuid4()
     expected_token = "test_token"
-    expected_header = {"Authorization": f"Bearer {expected_token}"}
+    expected_user_header = {"Authorization": f"Bearer {expected_token}"}
 
     with (
         patch("rpg_api.utils.dtos.TokenData") as mock_token_data,
@@ -22,10 +22,10 @@ def test_get_user_header_valid_user_id() -> None:
             return_value="test_token",
         ),
     ):
-        header = get_user_header(user_id)
+        user_header = get_user_header(user_id)
 
         mock_token_data.assert_called_with(user_id=str(user_id))
-        assert header == expected_header
+        assert user_header == expected_user_header
 
 
 def test_get_user_header_no_user_id() -> None:
@@ -35,7 +35,7 @@ def test_get_user_header_no_user_id() -> None:
     """
     user_id = uuid.uuid4()
     expected_token = "test_token"
-    expected_header = {"Authorization": f"Bearer {expected_token}"}
+    expected_user_header = {"Authorization": f"Bearer {expected_token}"}
 
     with (
         patch("uuid.uuid4", return_value=user_id) as mock_id,
@@ -45,11 +45,11 @@ def test_get_user_header_no_user_id() -> None:
             return_value="test_token",
         ),
     ):
-        header = get_user_header()
+        user_header = get_user_header()
 
         mock_id.assert_called_once()
         mock_token_data.assert_called_with(user_id=str(user_id))
-        assert header == expected_header
+        assert user_header == expected_user_header
 
 
 def test_get_user_header_invalid_user_id() -> None:
