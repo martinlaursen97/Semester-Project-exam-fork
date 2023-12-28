@@ -34,4 +34,5 @@ Cypress.Commands.add('login', (email, password) => {
     cy.get('[data-test="e-mail"]').clear().type(email)
     cy.get('[data-test="password"]').clear().type(password)
     cy.get('[data-test="loginButton"]').click()
+    cy.wait(3000)
 });

@@ -12,12 +12,10 @@ describe('Login and Character test', () => {
     cy.wait(pageLoadTime);
   });
 
+  // Login
   it('should login and create a character', () => {
-    // Login
-    cy.get('[data-test="e-mail"]').clear().type('user0@example.com')
-    cy.get('[data-test="password"]').clear().type('password')
-    cy.get('[data-test="loginButton"]').click()
-    cy.wait(loginWaitTime)
+    
+    cy.login('user0@example.com', 'password')
 
     // Create Character
     cy.get('[data-test="nameCharacter"]').should('be.visible').type('Orc')
@@ -27,7 +25,7 @@ describe('Login and Character test', () => {
     cy.wait(createCharacterWaitTime)
     
     // Enter World
-    cy.get('[data-test="enterWorld"]').click()
+    cy.get('[data-test="enterWorld"]').first().click()
     cy.wait(enterWorldWaitTime)
     
     for (let i = 0; i < 10; i++) {

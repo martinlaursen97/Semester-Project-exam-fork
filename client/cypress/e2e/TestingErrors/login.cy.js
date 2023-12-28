@@ -16,7 +16,7 @@ describe('Login Page Tests', () => {
     cy.get('[data-test="loginButton"]').click();
     cy.checkAlert('Please fill out all fields');
   });
-
+  
   it('Should validate password length', () => {
     cy.get('[data-test="e-mail"]').type('user0@example.com');
     cy.get('[data-test="password"]').type('short');
