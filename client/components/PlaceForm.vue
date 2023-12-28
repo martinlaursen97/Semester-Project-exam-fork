@@ -1,22 +1,22 @@
 <template>
   <div>
     <form @submit.prevent="createPlace">
-      <label for="name">Name:</label>
+      <label data-test="placeName" for="name">Name:</label>
       <input v-model="place.name" type="text" id="name" required />
 
       <label for="description">Description:</label>
       <input v-model="place.description" type="text" id="description" />
 
-      <label for="x">X Coordinate:</label>
+      <label data-test="Xcoordinate" for="x">X Coordinate:</label>
       <input v-model="place.x" type="number" id="x" required />
 
-      <label for="y">Y Coordinate:</label>
+      <label data-test="Ycoordinate" for="y">Y Coordinate:</label>
       <input v-model="place.y" type="number" id="y" required />
 
-      <label for="radius">Radius:</label>
+      <label data-test="placeRadius" for="radius">Radius:</label>
       <input v-model="place.radius" type="number" id="radius" required />
 
-      <button type="submit">Submit</button>
+      <button data-test="submitPlace" type="submit">Submit</button>
     </form>
   </div>
 </template>

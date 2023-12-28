@@ -12,11 +12,32 @@
 
     <div>
       <button
-        v-for="direction in ['Up', 'Down', 'Left', 'Right']"
+        data-test="directionButtonsUp"
         :key="direction"
-        @click="move(direction)"
+        @click="move('Up')"
       >
-        {{ direction }}
+        Up
+      </button>
+      <button
+        data-test="directionButtonsDown"
+        :key="direction"
+        @click="move('Down')"
+      >
+        Down
+      </button>
+      <button
+        data-test="directionButtonsLeft"
+        :key="direction"
+        @click="move('Left')"
+      >
+        Left
+      </button>
+      <button
+        data-test="directionButtonsRight"
+        :key="direction"
+        @click="move('Right')"
+      >
+        Right
       </button>
     </div>
     <PlaceForm @placeCreated="handleCreated" />

@@ -1,7 +1,7 @@
 {
   "name": "nuxt-app",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -11,12 +11,14 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "nuxt": "^3.8.1",
+    "cypress": "^13.6.2",
+    "nuxt": "^3.8.2",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
+    "cypress-real-events": "^1.11.0",
     "pinia": "^2.1.7"
   }
 }

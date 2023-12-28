@@ -1,9 +1,15 @@
 <template>
   <div>
     <form @submit="login">
-      <input type="email" v-model="email" />
-      <input type="password" v-model="password" minlength="8" maxlength="32" />
-      <button type="submit">Login</button>
+      <input data-test="e-mail" type="email" v-model="email" />
+      <input
+        data-test="password"
+        type="password"
+        v-model="password"
+        minlength="8"
+        maxlength="32"
+      />
+      <button data-test="loginButton" type="submit">Login</button>
     </form>
     <p>
       Don't have an account? <router-link to="/register">Register</router-link>
@@ -33,20 +39,25 @@ const login = async (e) => {
     return;
   }
 
-  const { data } = await post("/auth/login-email", {
-    email: email.value,
-    password: password.value,
-  });
+  try {
+    const { data, error } = await post("/auth/login-email", {
+      email: email.value,
+      password: password.value,
+    });
 
-  const { access_token } = data.value.data;
+    if (error.value) {
+      throw new Error(error.value.data.detail);
+    }
 
-  if (!access_token) {
-    throw new Error("No access token");
+    const { access_token } = data.value.data;
+
+    const accessToken = useCookie("access_token");
+    accessToken.value = access_token;
+
+    router.push("/characters");
+  } catch (error) {
+    alert(error);
+    return;
   }
-
-  const accessToken = useCookie("access_token");
-  accessToken.value = access_token;
-
-  router.push("/characters");
 };
 </script>
