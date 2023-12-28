@@ -9,6 +9,7 @@ import uuid
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Any
+from rpg_api import constants
 
 
 class BaseUser(Base):
@@ -16,7 +17,9 @@ class BaseUser(Base):
 
     __tablename__ = "base_user"
 
-    email: Mapped[str] = mapped_column(sa.String(100), unique=True)
+    email: Mapped[str] = mapped_column(
+        sa.String(constants.MAX_LENGTH_EMAIL), unique=True
+    )
     password: Mapped[str] = mapped_column(sa.String(255))
     status: Mapped[UserStatus] = mapped_column(
         sa.Enum(UserStatus, name="user_status"), default=UserStatus.active
