@@ -3,42 +3,32 @@ from httpx import AsyncClient
 from fastapi import status
 from rpg_api.db.postgres.factory import factories
 from rpg_api.tests.pytest import test_utils
+from rpg_api.tests.pytest.test_utils import get_data
 
 url = "/api/postgres/places"
 
 
-@pytest.mark.anyio
-@pytest.mark.parametrize(
-    "name_place, radius, x_place, y_place",
-    [
-        ("Goldshire", 40, 25, -100),
-        ("Stormwind City", 100, -150, 50),
-        ("Ironforge", 70, 100, 100),
-    ],
-)
-async def test_get_all_places(client: AsyncClient, name_place: str, radius: float, x_place: int, y_place: int) -> None:
-    """Test get all places: 200."""
+@pytest.mark.anyio  
+@pytest.mark.parametrize("create_num", [0, 1, 2]  )  
+async def test_get_all_places(client: AsyncClient, create_num: int) -> None:  
+    """Test get all places: 200."""  
 
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
+    # x = i is used to avoid overlapping places  
+    places = [await factories.PlaceFactory.create(x=i) for i in range(create_num)]  
 
-    place = await factories.PlaceFactory.create(name=name_place, radius=radius, x=x_place, y=y_place)
-    assert place.name is not None
-    assert place.radius is not None
-    assert place.x is not None
-    assert place.y is not None
+    response = await client.get(url)  
+    assert response.status_code == status.HTTP_200_OK  
 
-    response = await client.get(url, headers=header)
-    assert response.status_code == status.HTTP_200_OK
+    response_data = get_data(response)  
+    assert len(response_data) == create_num  
 
-    response_data = test_utils.get_data(response)
-    assert isinstance(response_data, list)
-    assert len(response_data) == 1
-
-    assert response_data[0]["name"] == name_place
-    assert response_data[0]["radius"] == radius
-    assert response_data[0]["x"] == x_place
-    assert response_data[0]["y"] == y_place
+    for index, place in enumerate(places):  
+        assert response_data[index]["id"] == str(place.id)  
+        assert response_data[index]["name"] == place.name  
+        assert response_data[index]["description"] == place.description  
+        assert response_data[index]["x"] == place.x  
+        assert response_data[index]["y"] == place.y  
+        assert response_data[index]["radius"] == place.radius  
 
 
 @pytest.mark.anyio
@@ -63,19 +53,3 @@ async def test_place_method_not_allowed(
 
     response = await http_method(url)
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.anyio
-async def test_get_emptyplace(client: AsyncClient) -> None:
-    """Test fetching a place when there is none."""
-
-    user = await factories.BaseUserFactory.create()
-    header = test_utils.get_user_header(user.id)
-
-    response = await client.get(url, headers=header)
-
-    assert response.status_code == status.HTTP_200_OK
-    response_data = test_utils.get_data(response)
-
-    assert isinstance(response_data, list)
-    assert len(response_data) == 0
