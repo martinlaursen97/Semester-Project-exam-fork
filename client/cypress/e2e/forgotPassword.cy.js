@@ -10,14 +10,16 @@ it("Forget password success", () => {
   button.should("contain", "Reset Password");
   button.click();
 
+  cy.intercept("POST", "/api/postgres/auth/forgot-password").as(
+    "passwordReset"
+  );
+
   cy.get("form").submit();
 
+  cy.checkAlert("Check your email for a reset link");
 
-  cy.on("window:alert", (text) => {
-    expect(text).to.contains("Check your email for a reset link");
-  });
-
-  cy.wait(1000);
+  // Wait for the request to complete before proceeding
+  cy.wait("@passwordReset");
 
   cy.url().should("eq", "http://localhost:3000/login");
 });
