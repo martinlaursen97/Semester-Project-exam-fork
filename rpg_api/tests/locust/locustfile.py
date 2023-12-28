@@ -24,7 +24,7 @@ class WebUser(FastHttpUser):
 
     def on_stop(self) -> None:
         with self.client.delete(
-            url=f"{PREFIX}/base-user",
+            url=f"{PREFIX}/base-users",
             headers=self.token_header,
             catch_response=True,
         ) as response:

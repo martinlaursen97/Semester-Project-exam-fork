@@ -11,7 +11,7 @@ from rpg_api.web.api.postgres import base_user
 pg_router = APIRouter(tags=["postgres"])
 
 pg_router.include_router(auth.router, prefix="/auth")
-pg_router.include_router(base_user.router, prefix="/base-user")
+pg_router.include_router(base_user.router, prefix="/base-users")
 pg_router.include_router(character.router, prefix="/characters")
 pg_router.include_router(character_location.router, prefix="/character-locations")
 pg_router.include_router(base_class.router, prefix="/base-classes")

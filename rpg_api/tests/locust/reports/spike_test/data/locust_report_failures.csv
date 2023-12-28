@@ -4,7 +4,7 @@ POST,/api/postgres/auth/register,CatchResponseError('Got unexpected status code 
 POST,/api/postgres/auth/login-email,CatchResponseError('Got unexpected status code 502: '),1
 POST,/api/postgres/auth/login-email,CatchResponseError('Got unexpected status code 500: Internal Server Error'),11
 POST,/api/postgres/characters,CatchResponseError('Got unexpected status code 502: '),2
-DELETE,/api/postgres/base-user,"CatchResponseError('Got unexpected status code 404: {""detail"":""Not Found""}')",71
+DELETE,/api/postgres/base-users,"CatchResponseError('Got unexpected status code 404: {""detail"":""Not Found""}')",71
 POST,/api/postgres/characters,CatchResponseError('Got unexpected status code 500: Internal Server Error'),49
 POST,/api/postgres/auth/register,CatchResponseError('Got unexpected status code 0: None'),56
 GET,/api/postgres/base-classes,CatchResponseError('Got unexpected status code 502: '),5
