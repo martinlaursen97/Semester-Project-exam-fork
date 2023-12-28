@@ -156,5 +156,3 @@ async def test_reset_password_invalid_input(
         url, json={"token": token, "new_password": new_password}
     )
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
-print(len("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com"))
