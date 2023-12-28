@@ -1,4 +1,4 @@
-FROM python:3.12.0-slim-bullseye as prod
+FROM python:3.12.0-slim-bullseye AS prod
 RUN apt-get update && apt-get install -y \
   gcc \
   && rm -rf /var/lib/apt/lists/*
@@ -26,6 +26,6 @@ RUN poetry install --only main
 
 CMD ["/usr/local/bin/python", "-m", "rpg_api"]
 
-FROM prod as dev
+FROM prod AS dev
 
 RUN poetry install 
