@@ -5,8 +5,7 @@ it('displays character Name and Race in the world', () => {
   cy.login('user0@example.com', 'password');
 
  
-
-  // Kontroller om navnet, gender og class er synlige
+  //checking if the name, gender and class is visible
   cy.contains(`Name: Orc`).should('be.visible')
   cy.contains(`Gender: other`).should('be.visible')
   cy.contains(`Class: Warrior`).should('be.visible')
