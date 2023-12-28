@@ -26,3 +26,4 @@ class BaseClassUpdateDTO(BaseModel):
     """Base class update DTO."""
 
     name: str | None = None
+
