@@ -23,6 +23,15 @@ describe('Login and Character test', () => {
     cy.get('[data-test="selectGender"]').select('other')
     cy.get('[data-test="createCharacter"]').click()
     cy.wait(createCharacterWaitTime)
+
+    // Create Character
+    cy.get('[data-test="nameCharacter"]').clear()
+    cy.get('[data-test="nameCharacter"]').should('be.visible').type('Yasuo')
+    cy.get('[data-test="selectClass"]').select('Warrior')
+    cy.get('[data-test="selectGender"]').select('other')
+    cy.get('[data-test="createCharacter"]').click()
+    cy.wait(createCharacterWaitTime)
+    
     
     // Enter World
     cy.get('[data-test="enterWorld"]').first().click()
