@@ -1,6 +1,6 @@
 import pytest
 from httpx import AsyncClient
-from fastapi import status
+from fastapi import Response, status
 from rpg_api.db.postgres.factory import factories
 from rpg_api.tests.pytest import test_utils
 
@@ -73,5 +73,5 @@ async def test_base_classes_method_not_allowed(
 
     http_method = getattr(client, method)
 
-    response = await http_method(url)
+    response: Response = await http_method(url)
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
