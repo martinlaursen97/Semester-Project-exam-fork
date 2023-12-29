@@ -106,7 +106,7 @@ describe("User Registration and Login Workflow", () => {
     cy.url().should("include", "/register");
   }); */
 
-  it("Logs the registered user in", () => {
+  it("Logs the registered user in and out", () => {
     cy.intercept("POST", `${baseApiUrl}/auth/login-email`).as("userLogin");
 
     cy.visit(`${baseClientUrl}/login`);
@@ -117,18 +117,16 @@ describe("User Registration and Login Workflow", () => {
     cy.wait("@userLogin").then(({ response }) => {
       accessToken = response.body.data.access_token;
     });
-  });
 
+    cy.url().should("include", "/characters");
+
+    cy.get('a:nth-child(1)').click();
+    cy.url().should("include", "/login");
+  });
 
   after(() => {
     if (accessToken) {
-      cy.request({
-        method: "DELETE",
-        url: `${baseApiUrl}/base-users`,
-        headers: {
-          "Authorization": `Bearer ${accessToken}`,
-        }
-      });
+      cy.deleteCurrentUser(accessToken)
     }
   });
 });
