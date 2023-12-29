@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from uuid import UUID, uuid4
+from uuid import uuid4
 from rpg_api.utils import dtos
 from typing import Any
 

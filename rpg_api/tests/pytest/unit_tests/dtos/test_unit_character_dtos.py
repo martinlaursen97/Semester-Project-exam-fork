@@ -110,7 +110,7 @@ def test_character_input_dto_invalid_base_class_uuids(invalid_uuid: Any) -> None
     "invalid_gender", ["invalid", 123, None, "", "fema", "mal", 1.0, True]
 )
 def test_character_input_dto_invalid_gender(invalid_gender: Any) -> None:
-    """Test invalid gender, should raise ValidationError"""
+    """Test invalid gender, should raise ValidationError."""
     with pytest.raises(ValidationError):
         dtos.CharacterInputDTO(
             base_class_id=uuid4(),
@@ -124,15 +124,16 @@ def test_character_input_dto_invalid_gender(invalid_gender: Any) -> None:
 @pytest.mark.parametrize(
     "invalid_name",
     [
-        "",# Empty name
-        "a" * 51, # Long name
-        1, # integer 
+        "",  # Empty name
+        "a" * 51,  # Long name
+        1,  # integer
         None,  # Null value
         True,  # Boolean
         1.0,  # Floating point number
     ],
 )
 def test_character_input_dto_invalid_name(invalid_name: Any) -> None:
+    """Test invalid character names, should raise ValidationError."""
     with pytest.raises(ValidationError):
         dtos.CharacterInputDTO(
             base_class_id=uuid4(),
