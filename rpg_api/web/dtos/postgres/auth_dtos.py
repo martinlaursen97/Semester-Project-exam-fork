@@ -20,6 +20,7 @@ class UserLoginDTO(BaseModel):
 
     email: EmailStr = Field(
         ...,
+        min_length=constants.MIN_LENGTH_EMAIL,
         max_length=constants.MAX_LENGTH_EMAIL,
     )
     password: SecretStr = Field(

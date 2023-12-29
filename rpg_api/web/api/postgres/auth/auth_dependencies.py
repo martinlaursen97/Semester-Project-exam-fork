@@ -1,6 +1,5 @@
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
-from loguru import logger
 
 from rpg_api import exceptions
 from rpg_api.db.postgres.models.models import Character
@@ -32,7 +31,6 @@ auth_scheme = RpgHTTPBearer()
 
 def get_token(token: str = Depends(auth_scheme)) -> str:
     """Return access token as str."""
-    logger.info(f"Token: {token}")
     return token
 
 

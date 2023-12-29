@@ -28,7 +28,10 @@ class PlaceInputDTO(PlaceBaseDTO):
         min_length=constants.MIN_LENGTH_PLACE_NAME,
         max_length=constants.MAX_LENGTH_PLACE_NAME,
     )
-    description: str | None = None
+    description: str | None = Field(
+        None,
+        max_length=constants.MAX_LENGTH_DESCRIPTION,
+    )
     radius: float = Field(
         default=0,
         ge=0,
