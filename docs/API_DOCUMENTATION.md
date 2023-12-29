@@ -4,6 +4,7 @@
 | /api/postgres/auth/register                      | POST     | Register                | Register by email and password.                  |
 | /api/postgres/auth/forgot-password               | POST     | Forgot Password         | Forgot password.                                 |
 | /api/postgres/auth/reset-password                | POST     | Reset Password          | Reset password.                                  |
+| /api/postgres/base-users                         | DELETE   | Delete Current User     | Delete current user.                             |
 | /api/postgres/characters                         | GET      | Characters Me           | My characters.                                   |
 | /api/postgres/characters                         | POST     | Create Character        | Create character.                                |
 | /api/postgres/characters/place/{character_id}    | GET      | Character Place Details | Get place of character.                          |
