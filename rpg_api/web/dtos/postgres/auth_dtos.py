@@ -22,7 +22,11 @@ class UserLoginDTO(BaseModel):
         ...,
         max_length=constants.MAX_LENGTH_EMAIL,
     )
-    password: SecretStr
+    password: SecretStr = Field(
+        ...,
+        min_length=constants.MIN_LENGTH_PASSWORD,
+        max_length=constants.MAX_LENGTH_PASSWORD,
+    )
 
 
 class UserCreateDTO(BaseModel):
