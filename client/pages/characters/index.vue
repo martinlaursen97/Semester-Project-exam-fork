@@ -77,6 +77,11 @@ const createCharacter = async () => {
     return;
   }
 
+  if (character_name.value.length < 1 || character_name.value.length > 50) {
+    alert("Name must be between 1 and 50 characters");
+    return;
+  }
+
   if (!selected_class.value) {
     alert("Class is required");
     return;
@@ -118,10 +123,8 @@ const enterWorld = async (char) => {
   }
 };
 
-onMounted(() => {
-  fetchCharacters();
-  fetchClasses();
-});
+await fetchCharacters();
+await fetchClasses();
 </script>
 
 
