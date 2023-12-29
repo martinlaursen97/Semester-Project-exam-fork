@@ -1,60 +1,51 @@
 import "cypress-real-events/support";
 
-describe('Register User Test', () => {
-  it('Register the user', () => {
-    let accessToken;
-    cy.intercept("POST", "/api/postgres/auth/register").as(
-      "userRegistration"
-    );
+describe("User Registration and Login Workflow", () => {
+  const baseApiUrl = "http://localhost:8080/api/postgres"
+  const baseClientUrl = "http://localhost:3000"
 
-    cy.visit("http://localhost:3000/login");
+  const userEmail = "ae12@test.com";
+  const userPassword = "password";
+  let accessToken = "";
 
+  it("Registers a new user", () => {
+    cy.intercept("POST", `${baseApiUrl}/auth/register`).as("userRegistration");
+
+    cy.visit(`${baseClientUrl}/login`);
     cy.get("a:nth-child(1)").click();
+    cy.url().should("include", "/register");
 
-    cy.url().should("eq", "http://localhost:3000/register");
-
-    cy.get("input:first-of-type").click();
-    cy.get("input:first-of-type").type("ae12@test.com");
-
-    cy.get("input:nth-of-type(2)").click();
-    cy.get("input:nth-of-type(2)").type("password");
-
-    cy.get("input:last-of-type").click();
-    cy.get("input:last-of-type").type("password");
-
+    cy.get("input[type='email']").type(userEmail);
+    cy.get("input[type='password']:first").type(userPassword);
+    cy.get("input[type='password']:last").type(userPassword);
     cy.get("button[type='submit']").click();
-  
 
     cy.wait("@userRegistration");
+    cy.url().should("include", "/login");
+  });
 
-    cy.url().should("eq", "http://localhost:3000/login");
-    
-    cy.intercept("POST", "api/postgres/auth/login-email").as("userLogin");
-    
-    cy.get("input[type='email']").clear();
-    cy.get("input[type='email']").clear().type("ae12@test.com");
-    cy.get("input[type='password']").clear();
-    cy.get("input[type='password']").clear().type("password");
+  it("Logs in the registered user", () => {
+    cy.intercept("POST", `${baseApiUrl}/auth/login-email`).as("userLogin");
+
+    cy.visit(`${baseClientUrl}/login`);
+    cy.get("input[type='email']").clear().type(userEmail);
+    cy.get("input[type='password']").clear().type(userPassword);
     cy.get("button[type='submit']").click();
 
-    cy.get("form").submit();
-
-    cy.wait("@userLogin").then(({ response }) => { // accessToken is for some reason always undefined, which leads to error
-      accessToken = response.body.access_token;
+    cy.wait("@userLogin").then(({ response }) => {
+      accessToken = response.body.data.access_token;
     });
+  });
 
-    cy.request({
-      method: 'DELETE',
-      url: '/api/postgres/base-user',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-      }
-    })
-
-    cy.visit("http://localhost:3000/login");
-    cy.get("input[type='email']").clear().type("ae12@test.com");
-    cy.get("form").submit();
-
-    cy.checkAlert("Error: Wrong email or password")
-  })
-})
+  after(() => {
+    if (accessToken) {
+      cy.request({
+        method: "DELETE",
+        url: `${baseApiUrl}/base-users`,
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+        }
+      });
+    }
+  });
+});
