@@ -95,6 +95,7 @@ async def test_create_place_overlaps(
         {"name": "a" * (constants.MIN_LENGTH_PLACE_NAME - 1)},
         {"name": "a" * (constants.MIN_LENGTH_PLACE_NAME - 2)},
         {"name": "a" * (constants.MAX_LENGTH_PLACE_NAME + 1)},
+        {"name": "a" * (constants.MAX_LENGTH_PLACE_NAME + 1)},
         {"name": "a" * (constants.MAX_LENGTH_PLACE_NAME + 2)},
         # Invalid types
         {},  # Missing required fields

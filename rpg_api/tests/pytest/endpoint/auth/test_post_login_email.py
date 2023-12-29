@@ -79,6 +79,7 @@ async def test_login_incorrect_email(client: AsyncClient) -> None:
             "a" * 45 + "@example" + "a" * 44 + ".com"
         ),  # Long email max is 100, total length we are testing is: 45+44+12 = 101
         "a" * 65 + "@example.com",  # Long email before @, limit is 76, we test for 77
+        "short@e.c",  # Short email, min is 10, we test for 9
         "test@ example.com",  # white space
     ],
 )
