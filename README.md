@@ -1,4 +1,10 @@
 
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=kea-semester-1_Semester-Project&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=kea-semester-1_Semester-Project)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=kea-semester-1_Semester-Project&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=kea-semester-1_Semester-Project)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kea-semester-1_Semester-Project&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kea-semester-1_Semester-Project)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kea-semester-1_Semester-Project&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kea-semester-1_Semester-Project)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kea-semester-1_Semester-Project&metric=coverage)](https://sonarcloud.io/summary/new_code?id=kea-semester-1_Semester-Project)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=kea-semester-1_Semester-Project&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=kea-semester-1_Semester-Project)
 # Project Source Code
 
 Access the complete source code of the project on GitHub: [Semester Project Repository](https://github.com/kea-semester-1/Semester-Project).
