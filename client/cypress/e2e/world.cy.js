@@ -12,8 +12,8 @@ describe("Test world", () => {
     cy.visit("http://localhost:3000/characters");
 
     cy.intercept("GET", "http://localhost:8080/api/postgres/places").as("getPlaces");
-    cy.get('[data-test="enterWorld"]').first().click()
-    cy.get('[data-test="enterWorld"]').first().click()
+    cy.get("[data-test=\"enterWorld\"]").first().click()
+    cy.get("[data-test=\"enterWorld\"]").first().click()
     cy.wait("@getPlaces");
   });
 
@@ -26,26 +26,26 @@ describe("Test world", () => {
   });
 
   it("Should select a point on the canvas", () => {
-    cy.get('canvas').click(250, 250);
-    cy.get('.info-box').should('be.visible');
+    cy.get("canvas").click(250, 250);
+    cy.get(".info-box").should("be.visible");
 
   });
 
   it("Should display the character name", () => {
-    cy.get('canvas').click(250, 250);
-    cy.get('.info-box').should('contain', `"character_name": "${characterName}",`);
-    cy.get('.info-box').should('contain', 'character_location');
-    cy.get('.info-box').should('contain', "money");
-    cy.get('.info-box').should('contain', "xp");
-    cy.get('.info-box').should('contain', "level");
+    cy.get("canvas").click(250, 250);
+    cy.get(".info-box").should("contain", `"character_name": "${characterName}",`);
+    cy.get(".info-box").should("contain", "character_location");
+    cy.get(".info-box").should("contain", "money");
+    cy.get(".info-box").should("contain", "xp");
+    cy.get(".info-box").should("contain", "level");
   });
 
   it("Should move the character", () => {
-    cy.get('canvas').click(250, 250);
+    cy.get("canvas").click(250, 250);
     for (let i = 1; i < 10; i++) {
-      cy.get('[data-test="directionButtonsUp"]').click();
+      cy.get("[data-test=\"directionButtonsUp\"]").click();
       if (i > 1) {
-        cy.get('.info-box').should("contain", `"y": -${i * 10}`)
+        cy.get(".info-box").should("contain", `"y": -${i * 10}`)
       }
     }
   });
