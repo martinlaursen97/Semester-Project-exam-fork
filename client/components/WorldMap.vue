@@ -11,32 +11,16 @@
     </div>
 
     <div>
-      <button
-        data-test="directionButtonsUp"
-        :key="direction"
-        @click="move('Up')"
-      >
+      <button data-test="directionButtonsUp" :key="direction" @click="move('Up')">
         Up
       </button>
-      <button
-        data-test="directionButtonsDown"
-        :key="direction"
-        @click="move('Down')"
-      >
+      <button data-test="directionButtonsDown" :key="direction" @click="move('Down')">
         Down
       </button>
-      <button
-        data-test="directionButtonsLeft"
-        :key="direction"
-        @click="move('Left')"
-      >
+      <button data-test="directionButtonsLeft" :key="direction" @click="move('Left')">
         Left
       </button>
-      <button
-        data-test="directionButtonsRight"
-        :key="direction"
-        @click="move('Right')"
-      >
+      <button data-test="directionButtonsRight" :key="direction" @click="move('Right')">
         Right
       </button>
     </div>
@@ -62,6 +46,28 @@ const offset = computed(() => ({
   x: (width - scale) / 2,
   y: (height - scale) / 2,
 }));
+
+
+const worldMapImage = ref(new Image());
+
+onMounted(async () => {
+  await loadWorld();
+  initializeCanvas();
+  setupCanvasClickListener();
+  worldMapImage.value.src = "images/world.png";
+  worldMapImage.value.onload = render; // Set the render function to be called once the image is loaded
+});
+
+function render() {
+  clearCanvas();
+  if (worldMapImage.value.complete) { // Check if the image is loaded
+    context.value?.drawImage(worldMapImage.value, 0, 0, width, height); // Draw the image on the canvas
+  }
+  renderPlaces();
+  renderPlayer();
+
+}
+
 
 watch(player.character_location, async () => {
   // update player `place` property on location change
@@ -89,12 +95,6 @@ const handleCreated = async () => {
   await loadWorld();
 };
 
-onMounted(async () => {
-  await loadWorld();
-  initializeCanvas();
-  setupCanvasClickListener();
-  render();
-});
 
 function initializeCanvas() {
   context.value = canvasElement.value?.getContext("2d") || undefined;
@@ -109,11 +109,6 @@ function setupCanvasClickListener() {
   );
 }
 
-function render() {
-  clearCanvas();
-  renderPlaces();
-  renderPlayer();
-}
 
 function clearCanvas() {
   context.value?.clearRect(0, 0, width, height);
@@ -137,13 +132,13 @@ function renderPlaces() {
     drawPoint(
       point.x + offset.value.x,
       point.y + offset.value.y,
-      selected.value?.id === point.id ? "green" : "blue"
+      selected.value?.id === point.id ? "blue" : "yellow"
     );
     drawCircleAroundPoint(
       point.x + width / 2,
       point.y + height / 2,
       point.radius,
-      "red"
+      "white"
     );
   });
 }
@@ -153,15 +148,20 @@ function drawPoint(x, y, color) {
   context.value?.fillRect(x, y, scale, scale);
 }
 
-function drawCircleAroundPoint(x, y, radius, color) {
-  setDrawingStyle(color);
+function drawCircleAroundPoint(x, y, radius, color, lineWidth = 2) {
+  setStrokeStyle(color);
   context.value?.beginPath();
   context.value?.arc(x, y, radius, 0, 2 * Math.PI);
+  context.value.lineWidth = lineWidth;
   context.value?.stroke();
 }
 
 function setDrawingStyle(color) {
   context.value.fillStyle = color;
+}
+
+function setStrokeStyle(color) {
+  context.value.strokeStyle = color;
 }
 
 function setSelected(point) {
