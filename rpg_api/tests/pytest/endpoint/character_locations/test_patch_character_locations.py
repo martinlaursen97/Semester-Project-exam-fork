@@ -86,6 +86,10 @@ async def test_patch_character_location_updating_one_coordinate(
         [1, 2, 3],  # list
         {"x": 1},  # dict
         (1, 2),  # tuple
+        (constants.INT32_MAX + 1, 0),
+        (constants.INT32_MIN - 1, 0),
+        (0, constants.INT32_MAX + 1),
+        (0, constants.INT32_MIN - 1),
     ],
 )
 async def test_patch_character_location_invalid_data_type(
