@@ -54,7 +54,7 @@ onMounted(async () => {
   await loadWorld();
   initializeCanvas();
   setupCanvasClickListener();
-  worldMapImage.value.src = "images/world.png"; // Replace with the actual path to your image
+  worldMapImage.value.src = "images/world.png";
   worldMapImage.value.onload = render; // Set the render function to be called once the image is loaded
 });
 
