@@ -32,7 +32,6 @@ jobs:
         run: |
           new_branch="update-api-doc-$(date +%Y%m%d-%H%M%S)"
           git checkout -b $new_branch
-
       - name: Commit and push if changed
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -42,7 +41,8 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "Update API Documentation"
-            git push origin $new_branch
+            new_branch="update-api-doc-$(date +%Y%m%d-%H%M%S)"
+            git push --set-upstream origin $new_branch
           fi
 
       - name: Install GitHub CLI
