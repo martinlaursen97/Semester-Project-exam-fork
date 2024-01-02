@@ -37,6 +37,7 @@ class AbstractSearchableModel(Base):
     name: Mapped[str] = mapped_column(sa.String(constants.MAX_LENGTH_NAME), unique=True)
     description: Mapped[str | None] = mapped_column(sa.String(500))
 
+    # test
     ts_vector = sa.Column(  # type: ignore
         TSVector(),
         sa.Computed(
