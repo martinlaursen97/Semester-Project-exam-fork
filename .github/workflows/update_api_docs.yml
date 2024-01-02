@@ -1,59 +1,59 @@
-name: Update API Documentation
+# name: Update API Documentation
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
 
-jobs:
-  update-api-doc:
-    runs-on: ubuntu-latest
+# jobs:
+#   update-api-doc:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # Ensures all history is checked out
+#     steps:
+#       - name: Check out repository
+#         uses: actions/checkout@v2
+#         with:
+#           fetch-depth: 0 # Ensures all history is checked out
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.12"
+#       - name: Set up Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: "3.12"
 
-      - name: Install dependencies
-        run: |
-          pip install requests pandas tabulate
+#       - name: Install dependencies
+#         run: |
+#           pip install requests pandas tabulate
 
-      - name: Generate API Documentation
-        run: python scripts/api_docs_md.py
+#       - name: Generate API Documentation
+#         run: python scripts/api_docs_md.py
 
-      - name: Create a new branch for the changes
-        run: |
-          new_branch="update-api-doc-$(date +%Y%m%d-%H%M%S)"
-          git checkout -b $new_branch
-      - name: Commit and push if changed
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git add docs/API_DOCUMENTATION.md
-          if git diff --staged --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "Update API Documentation"
-            new_branch="update-api-doc-$(date +%Y%m%d-%H%M%S)"
-            git push --set-upstream origin $new_branch
-          fi
+#       - name: Create a new branch for the changes
+#         run: |
+#           new_branch="update-api-doc-$(date +%Y%m%d-%H%M%S)"
+#           git checkout -b $new_branch
+#       - name: Commit and push if changed
+#         run: |
+#           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#           git config --global user.name "github-actions[bot]"
+#           git add docs/API_DOCUMENTATION.md
+#           if git diff --staged --quiet; then
+#             echo "No changes to commit."
+#           else
+#             git commit -m "Update API Documentation"
+#             new_branch="update-api-doc-$(date +%Y%m%d-%H%M%S)"
+#             git push --set-upstream origin $new_branch
+#           fi
 
-      - name: Install GitHub CLI
-        run: |
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          sudo apt update
-          sudo apt install gh
+#       - name: Install GitHub CLI
+#         run: |
+#           curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+#           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+#           sudo apt update
+#           sudo apt install gh
 
-      - name: Create a pull request to main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr create --title "Update API Documentation" --body "Automated API documentation update" --base main || echo "No new commits to submit as a PR."
+#       - name: Create a pull request to main
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         run: |
+#           gh pr create --title "Update API Documentation" --body "Automated API documentation update" --base main || echo "No new commits to submit as a PR."
